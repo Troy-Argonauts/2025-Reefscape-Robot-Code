@@ -6,16 +6,22 @@ import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 
+import edu.wpi.first.util.datalog.DataLog;
+import edu.wpi.first.util.datalog.DoubleLogEntry;
+import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class Manipulator extends SubsystemBase{
+    private DoubleLogEntry currentManipulatorVelocityLog;
+    private DoubleLogEntry topMotorSupplyCurrentLog;
+    private DoubleLogEntry bottomMotorSupplyCurrentLog;
+
     private double currentManipulatorVelocity;
     private double desiredManipulatorVelocity;
 
     private double currentLateratorPosition; 
     private double desiredLateratorPosition;
-    
 
     private TalonFX topMotor;
     private TalonFX bottomMotor;
@@ -45,10 +51,21 @@ public class Manipulator extends SubsystemBase{
         topMotor.getConfigurator().apply(topConfiguration);
         bottomMotor.getConfigurator().apply(bottomConfiguration);
 
+        DataLog log = DataLogManager.getLog();
 
-
+        currentManipulatorVelocityLog = new DoubleLogEntry((log), "Current Manipulator Velocity");
+        topMotorSupplyCurrentLog = new DoubleLogEntry((log), "Top Motor Supply Current");
+    
     }
 
+    @Override
+    public void periodic() {
+
+    currentManipulatorVelocityLog.append(currentManipulatorVelocity);
+    topMotorSupplyCurrentLog.append(topMotor.getSupplyCurrent().getValueAsDouble());
+
+    }
+ 
     public enum ManipulatorStates {
         IN(-800),
 

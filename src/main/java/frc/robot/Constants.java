@@ -16,4 +16,14 @@ public final class Constants {
   public static class OperatorConstants {
     public static final int kDriverControllerPort = 0;
   }
-}
+
+  public interface Manipulator {
+    public final double P = 0;
+    public final double I = 0.;
+    public final double D = 0;
+    public final double V = 0;
+    public final int TOP_MOTOR_CAN_ID = 0;
+    public final int BOTTOM_MOTOR_CAN_ID = 0;
+  } 
+} //Evan is not cool. Ved is cool.
+
