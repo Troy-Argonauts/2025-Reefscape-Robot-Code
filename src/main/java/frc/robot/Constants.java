@@ -18,12 +18,21 @@ public final class Constants {
   }
 
   public interface Manipulator {
-    public final double P = 0;
-    public final double I = 0.;
-    public final double D = 0;
-    public final double V = 0;
-    public final int TOP_MOTOR_CAN_ID = 0;
-    public final int BOTTOM_MOTOR_CAN_ID = 0;
+
+    public static final double P = 0;
+    public static final double I = 0.;
+    public static final double D = 0;
+    public static final double V = 0;
+
+    public static final int TOP_MOTOR_CAN_ID = 0;
+    public static final int BOTTOM_MOTOR_CAN_ID = 0;
+    public static final int LATERATOR_MOTOR_CAN_ID = 0;
+    public static final int LATERATOR_LIMIT_SWITCH = 0;
+    public static final int FUNNEL_BEAM_BREAK = 0;
+    public static final int MANIPULATOR_A_BEAM_BREAK = 0;
+    public static final int MANIPULATOR_B_BEAM_BREAK = 0;
+
+    public static final double MAX_LATERATOR_POSITION = 0.0;
   } 
 } //Evan is not cool. Ved is cool.
 
