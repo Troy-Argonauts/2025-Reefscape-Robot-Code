@@ -30,6 +30,7 @@ public class Elevator extends SubsystemBase {
     TalonFXConfiguration config = new TalonFXConfiguration();
 
     PositionVoltage positionVoltage = new PositionVoltage(null);
+    Slot0Configs slot0Configs = new Slot0Configs();
 
     public Elevator() {
         TalonFXConfiguration leftMotorConfigs = new TalonFXConfiguration();
@@ -46,14 +47,16 @@ public class Elevator extends SubsystemBase {
         leftMotorConfigs.CurrentLimits.SupplyCurrentLimit = 40;
         rightMotorConfigs.CurrentLimits.SupplyCurrentLimit = 40;
 
-        leftMotorConfigs.kP = P;
-        leftMotorConfigs.kI = I;
-        leftMotorConfigs.kD = D;
-        leftMotorConfigs.kV = V;
-        leftMotorConfigs.kG = G;
+        slot0Configs.kP = P;
+        slot0Configs.kI = I;
+        slot0Configs.kD = D;
+        slot0Configs.kV = V;
+        slot0Configs.kG = G;
 
         leftMotor.getConfigurator().apply(leftMotorConfigs);
         rightMotor.getConfigurator().apply(rightMotorConfigs);
+
+        positionVoltage.Slot = 0;
 
         rightMotor.setControl(new Follower(1, true));
 
