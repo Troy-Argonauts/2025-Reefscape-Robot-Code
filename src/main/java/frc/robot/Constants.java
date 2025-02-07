@@ -16,4 +16,13 @@ public final class Constants {
   public static class OperatorConstants {
     public static final int kDriverControllerPort = 0;
   }
+
+  public interface Elevator {
+    double P = 0;
+    double I = 0;
+    double D = 0;
+    double V = 0;
+    double G = 0;
+  }
 }
+
