@@ -14,7 +14,7 @@ import edu.wpi.first.wpilibj.motorcontrol.Talon;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-
+import frc.robot.Constants;
 import frc.robot.Constants.Elevator.*;
 
 public class Elevator extends SubsystemBase {
@@ -47,11 +47,11 @@ public class Elevator extends SubsystemBase {
         leftMotorConfigs.CurrentLimits.SupplyCurrentLimit = 40;
         rightMotorConfigs.CurrentLimits.SupplyCurrentLimit = 40;
 
-        slot0Configs.kP = P;
-        slot0Configs.kI = I;
-        slot0Configs.kD = D;
-        slot0Configs.kV = V;
-        slot0Configs.kG = G;
+        slot0Configs.kP = Constants.Elevator.P;
+        slot0Configs.kI = Constants.Elevator.I;
+        slot0Configs.kD = Constants.Elevator.D;
+        slot0Configs.kV = Constants.Elevator.V;
+        slot0Configs.kG = Constants.Elevator.G;
 
         leftMotor.getConfigurator().apply(leftMotorConfigs);
         rightMotor.getConfigurator().apply(rightMotorConfigs);
