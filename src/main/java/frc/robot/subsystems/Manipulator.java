@@ -105,7 +105,7 @@ public class Manipulator extends SubsystemBase {
      */
     @Override
     public void periodic() {
-        currentManipRPM = (topMotor.getVelocity().getValueAsDouble() + bottomMotor.getVelocity().getValueAsDouble()) / 2 * 60;
+        currentManipRPM = (topMotor.getVelocity().getValueAsDouble() + bottomMotor.getVelocity().getValueAsDouble()) / (2 * 60);
 
         currentManipRPMLog.append(currentManipRPM);
         topMotorSupplyCurrentLog.append(topMotor.getSupplyCurrent().getValueAsDouble());
@@ -136,6 +136,14 @@ public class Manipulator extends SubsystemBase {
 
     }
 
+    public enum LateratorStates {
+        IN,
+
+        OUT,
+
+        OFF;
+    }
+
     /**
      * Sets the manipulator's state.
      * @param state The desired state of the manipulator.
@@ -143,18 +151,44 @@ public class Manipulator extends SubsystemBase {
     public void setManipState(ManipulatorStates state) {
         manipTargetRPM = state.manipulatorVelocity;
     }
+    
+    /**
+     * Sets the laterator's state until it reaches the max laterator position if out or until it reaches 0 if in
+     * @param state The desired state of the laterator
+     */
+    public void setLateratorState(LateratorStates state) {
+        switch (state) {
+            case IN: 
+                setLateratorRawPower(-0.3);
+            case OUT: 
+                setLateratorRawPower(0.3);
+            case OFF:
+                setLateratorRawPower(0);
+        }
+    }
+
+    /**
+     * Checks if laterator encoder has reached the max laterator position
+     * @return True if encoder hits max laterator position, false if not
+     */
+    public boolean lateratorExtended() {
+        if (lateratorMotor.getPosition().getValueAsDouble() >= Constants.Manipulator.MAX_LATERATOR_POSITION) {
+            return true;
+        }
+        return false;
+    }
 
     /**
      * Checks if the top PID loop has finished.
-     * @return true if the top PID loop has finished, false otherwise.
+     * @return True if the top PID loop has finished, false otherwise.
      */
     public boolean isTopPidFinished() {
-        return (Math.abs(manipTargetRPM - getVelocity()) <= 50);
+        return (Math.abs(manipTargetRPM - getAverageRPM()) <= 50);
     }
 
     /**
      * Checks if the limit switch is pressed.
-     * @return true if the limit switch is pressed, false otherwise.
+     * @return True if the limit switch is pressed, false otherwise.
      */
     public boolean getLateratorLimit(){
         return lateratorLimit.get();
@@ -162,7 +196,7 @@ public class Manipulator extends SubsystemBase {
 
     /**
      * Checks if the funnel beam break is detected.
-     * @return true if the funnel beam break is detected, false otherwise.
+     * @return True if the funnel beam break is detected, false otherwise.
      */
     public boolean getFunnelBeamBreak() {
         return funnel.get();
@@ -170,7 +204,7 @@ public class Manipulator extends SubsystemBase {
 
     /**
      * Checks if the manipulator A beam break is detected.
-     * @return true if the manipulator A beam break is detected, false otherwise.
+     * @return True if the manipulator A beam break is detected, false otherwise.
      */
     public boolean getManipBeamBreakA() {
         return manipulatorA.get();
@@ -178,7 +212,7 @@ public class Manipulator extends SubsystemBase {
 
     /**
      * Checks if the manipulator B beam break is detected.
-     * @return true if the manipulator B beam break is detected, false otherwise.
+     * @return True if the manipulator B beam break is detected, false otherwise.
      */
     public boolean getManipBeamBreakB() {
         return manipulatorB.get();
@@ -190,21 +224,21 @@ public class Manipulator extends SubsystemBase {
      * Gets the current velocity of the manipulator.
      * @return The current velocity of the manipulator in RPM.
      */
-    public double getVelocity() {
+    public double getAverageRPM() {
         return (topMotor.getVelocity().getValueAsDouble() + bottomMotor.getVelocity().getValueAsDouble()) / (2 * 60);
     } 
 
     /**
-     * returns top motor's RPM
-     * @return top motor's RPM
+     * Gets the top motor's current RPM
+     * @return Top motor's current RPM
      */
     public double getTopRPM() {
         return (topMotor.getVelocity().getValueAsDouble() * 60);
     }
 
     /**
-     * returns bottom motor's RPM
-     * @return bottom motor's RPM
+     * Gets bottom motor's current RPM
+     * @return Bottom motor's current RPM
      */
     public double getBottomRPM() {
         return (bottomMotor.getVelocity().getValueAsDouble() * 60);
@@ -239,7 +273,7 @@ public class Manipulator extends SubsystemBase {
      * @return if manipulator motor PID is finished
      */
     public boolean isManipulatorPIDFinished() {
-        return (Math.abs(manipTargetRPM - topMotor.getPosition().getValueAsDouble() * 60) <= 0.03);
+        return (Math.abs(manipTargetRPM - topMotor.getVelocity().getValueAsDouble() * 60) <= 0.03);
     }
 
     /**
