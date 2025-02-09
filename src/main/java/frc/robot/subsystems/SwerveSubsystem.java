@@ -321,7 +321,7 @@ public class SwerveSubsystem extends SubsystemBase {
    /**
    * Sets the wheels into an X formation to prevent movement.
    */
-    public void setToZero(boolean aState) {
+    public void setToZero() {
         frontLeftModule.setDesiredState(new SwerveModuleState(0, Rotation2d.fromDegrees(0)));
         frontRightModule.setDesiredState(new SwerveModuleState(0, Rotation2d.fromDegrees(0)));
         backLeftModule.setDesiredState(new SwerveModuleState(0, Rotation2d.fromDegrees(0)));
