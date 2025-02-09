@@ -22,7 +22,7 @@ import frc.robot.Constants;
  */
 public class Elevator extends SubsystemBase {
     private TalonFX leftMotor, rightMotor;
-    private final DigitalInput topLimitSwitch, bottomLimitSwitch;
+    private DigitalInput topLimitSwitch, bottomLimitSwitch;
 
     private double encoderValue, target, oldtarget = 0;
 
@@ -139,7 +139,7 @@ public class Elevator extends SubsystemBase {
      * Sets enumerators for encoder positions of various Elevator States
      */
     public enum ElevatorStates{
-        INTAKE(0),
+        HOME(0),
         LV1(0),
         LV2(0),
         LV3(0),
@@ -170,9 +170,9 @@ public class Elevator extends SubsystemBase {
         double newTarget = target + (joyStickValue * 20);
         if ((target <= 5 || target >= 0) && newTarget > 0 && target != newTarget) {
             target = newTarget;
-        } else if (newTarget < target && bottomLimitSwitch.get()) { // If elevator is moving down (new encoder value is less than current encoder value) and bottomLimitSwitch is not pressed
+        } else if (newTarget > target && bottomLimitSwitch.get()) { // If elevator is moving down (new encoder value is less than current encoder value) and bottomLimitSwitch is not pressed
             target = newTarget;
-        } else if (newTarget > target && topLimitSwitch.get()) {
+        } else if (newTarget < target && topLimitSwitch.get()) {
             target = newTarget;
         }
     }
