@@ -89,7 +89,7 @@ public class Elevator extends SubsystemBase {
 
         leftMotor.setControl(positionVoltage.withPosition(target));
 
-        if (getBottomLimitSwitch() == true) {
+        if (getBottomLimit() == true) {
             resetEncoder();
         }
     }
