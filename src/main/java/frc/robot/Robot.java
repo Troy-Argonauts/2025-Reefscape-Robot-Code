@@ -5,80 +5,111 @@
 
 package frc.robot;
 
-import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj.TimedRobot;
-import edu.wpi.first.wpilibj.livewindow.LiveWindow;
-import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
-import edu.wpi.first.wpilibj2.command.WaitCommand;
+import frc.robot.subsystems.Elevator;
 import frc.robot.subsystems.SwerveSubsystem;
 
 /**
- * The VM is configured to automatically run this class, and to call the methods corresponding to
- * each mode, as described in the TimedRobot documentation. If you change the name of this class or
- * the package after creating this project, you must also update the build.gradle file in the
+ * The VM is configured to automatically run this class, and to call the methods
+ * corresponding to
+ * each mode, as described in the TimedRobot documentation. If you change the
+ * name of this class or
+ * the package after creating this project, you must also update the
+ * build.gradle file in the
  * project.
  */
 public class Robot extends TimedRobot {
-  private final SendableChooser<Command> chooser = new SendableChooser<>();
-  private Command autonomousCommand;
-  private static SwerveSubsystem drivetrain;
+    private Command m_autonomousCommand;
+    private static SwerveSubsystem drivetrain;
+    private static Elevator elevator;
+    private final RobotContainer m_robotContainer;
 
+    /**
+     * This function is run when the robot is first started up and should be used
+     * for any
+     * initialization code.
+     */
+    public Robot() {
+        // Instantiate our RobotContainer. This will perform all our button bindings,
+        // and put our
+        // autonomous chooser on the dashboard.
+        elevator = new Elevator();
+        drivetrain = new SwerveSubsystem();
+        m_robotContainer = new RobotContainer();
 
-  @Override
-  public void robotInit() {
-    LiveWindow.disableAllTelemetry();
-    LiveWindow.setEnabled(false);
-
-    DataLogManager.start("/media/sda1/logs");
-
-    new RobotContainer();
-    drivetrain = new SwerveSubsystem();
-
-    CameraServer.startAutomaticCapture().setFPS(14);
-
-    SmartDashboard.putData("Autonomous modes", chooser);
-    chooser.addOption("Nothing", new WaitCommand(15));
-  }
-
-  @Override
-  public void robotPeriodic() {
-    CommandScheduler.getInstance().run();
-  }
-
-  @Override
-  public void disabledInit() {
-  }
-
-  @Override
-  public void autonomousInit() {
-    autonomousCommand = chooser.getSelected();
-    if (autonomousCommand != null) {
-      autonomousCommand.schedule();
-    }
+        DataLogManager.start("/media/sda1/logs");
     }
 
-  @Override
-  public void teleopInit() {
-    if (autonomousCommand != null) {
-      autonomousCommand.cancel();
+    /**
+     * This function is called every 20 ms, no matter the mode. Use this for items
+     * like diagnostics
+     * that you want ran during disabled, autonomous, teleoperated and test.
+     *
+     * <p>
+     * This runs after the mode specific periodic functions, but before LiveWindow
+     * and
+     * SmartDashboard integrated updating.
+     */
+    @Override
+    public void robotPeriodic() {
+        CommandScheduler.getInstance().run();
     }
-  }
 
-  @Override
-  public void testInit() {
-    // Cancels all running commands at the start of test mode.
-    CommandScheduler.getInstance().cancelAll();
-  }
-
-  public static SwerveSubsystem getDrivetrain(){
-    if (drivetrain == null){
-      drivetrain = new SwerveSubsystem();
+    @Override
+    public void disabledInit() {
     }
-    return drivetrain;
-  }
+
+    @Override
+    public void autonomousInit() {
+        // schedule the autonomous command (example)
+        if (m_autonomousCommand != null) {
+            m_autonomousCommand.schedule();
+        }
+    }
+
+    @Override
+    public void teleopInit() {
+        if (m_autonomousCommand != null) {
+            m_autonomousCommand.cancel();
+        }
+    }
+
+    @Override
+    public void testInit() {
+        // Cancels all running commands at the start of test mode.
+        CommandScheduler.getInstance().cancelAll();
+    }
+
+    /** This function is called periodically during test mode. */
+    @Override
+    public void testPeriodic() {
+    }
+
+    /** This function is called once when the robot is first started up. */
+    @Override
+    public void simulationInit() {
+    }
+
+    /** This function is called periodically whilst in simulation. */
+    @Override
+    public void simulationPeriodic() {
+    }
+
+    public static Elevator getElevator() {
+        if (elevator == null){
+            elevator = new Elevator();
+        }
+        return elevator;
+    }
+
+    public static SwerveSubsystem getDrivetrain() {
+        if (drivetrain == null) {
+            drivetrain = new SwerveSubsystem();
+        }
+        return drivetrain;
+    }
 
 }

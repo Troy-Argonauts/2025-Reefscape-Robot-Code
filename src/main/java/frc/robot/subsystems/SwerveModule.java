@@ -20,14 +20,14 @@ import static frc.robot.Constants.Swerve.*;
 import static frc.robot.Constants.SwerveModule.*;
 
 /**
-     * Constructor for SwerveModule. Sets up motors, encoders, and configurations.
-     *
-     * @param driveMotorID        ID for the drive motor
-     * @param turnMotorID         ID for the turn motor
-     * @param turnEncoderID       ID for the turn encoder
-     * @param canbusName          CAN bus name
-     * @param chassisAngularOffset Angular offset for chassis
-     * @param driveInverted       Whether the drive motor is inverted
+ * Constructor for SwerveModule. Sets up motors, encoders, and configurations.
+ *
+ * @param driveMotorID        ID for the drive motor
+ * @param turnMotorID         ID for the turn motor
+ * @param turnEncoderID       ID for the turn encoder
+ * @param canbusName          CAN bus name
+ * @param chassisAngularOffset Angular offset for chassis
+ * @param driveInverted       Whether the drive motor is inverted
 */
 public class SwerveModule extends SubsystemBase{
     private TalonFX driveMotor, turnMotor;

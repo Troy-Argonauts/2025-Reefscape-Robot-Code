@@ -84,11 +84,13 @@ public class SwerveSubsystem extends SubsystemBase {
     public SwerveSubsystem() {}
 
     public static double stepTowards(double _current, double _target, double _stepsize) {
-        if (Math.abs(_current - _target) <= _stepsize) { return _target; }
-
-        else if (_target < _current) { return _current - _stepsize; }
-
-        else { return _current + _stepsize; }
+        if (Math.abs(_current - _target) <= _stepsize) { 
+            return _target; 
+        } else if (_target < _current) { 
+            return _current - _stepsize; 
+        } else { 
+            return _current + _stepsize; 
+        }
     }
 
     /**
@@ -106,16 +108,18 @@ public class SwerveSubsystem extends SubsystemBase {
         double stepDirection = Math.signum(_target - _current);
         double difference = Math.abs(_current - _target);
         
-        if (difference <= _stepsize) { return _target; }
-
-        else if (difference > Math.PI) { //does the system need to wrap over eventually?
+        if (difference <= _stepsize) { 
+            return _target; 
+        } else if (difference > Math.PI) { //does the system need to wrap over eventually?
             //handle the special case where you can reach the target in one step while also wrapping
-            if (_current + 2*Math.PI - _target < _stepsize || _target + 2*Math.PI - _current < _stepsize) { return _target; }
-
-            else { return wrapAngle(_current - stepDirection * _stepsize); /*this will handle wrapping gracefully*/ }
+            if (_current + 2*Math.PI - _target < _stepsize || _target + 2*Math.PI - _current < _stepsize) { 
+                return _target; 
+            } else { 
+                return wrapAngle(_current - stepDirection * _stepsize); /*this will handle wrapping gracefully*/ 
+            }
+        } else { 
+            return _current + stepDirection * _stepsize; 
         }
-
-        else { return _current + stepDirection * _stepsize; }
     }
 
     /**
@@ -139,14 +143,11 @@ public class SwerveSubsystem extends SubsystemBase {
 
         if (_angle == twoPi) { // Handle this case separately to avoid floating point errors with the floor after the division in the case below
             return 0.0;
-        }
-        else if (_angle > twoPi) {
+        } else if (_angle > twoPi) {
             return _angle - twoPi*Math.floor(_angle / twoPi);
-        }
-        else if (_angle < 0.0) {
+        } else if (_angle < 0.0) {
             return _angle + twoPi*(Math.floor((-_angle) / twoPi)+1);
-        }
-        else {
+        } else {
             return _angle;
         }
     }
@@ -263,18 +264,15 @@ public class SwerveSubsystem extends SubsystemBase {
                 if (angleDif < 0.45*Math.PI){
                     currentTranslationDir = stepTowardsCircular(currentTranslationDir, inputTranslationDir, directionSlewRate * elapsedTime);
                     currentTranslationMag = magLimiter.calculate(inputTranslationMag);
-                }
-                else if (angleDif > 0.85*Math.PI) {
+                } else if (angleDif > 0.85*Math.PI) {
                     if (currentTranslationMag > 1e-4) { //some small number to avoid floating-point errors with equality checking
                         // keep currentTranslationDir unchanged
                         currentTranslationMag = magLimiter.calculate(0.0);
-                    }
-                    else {
+                    } else {
                         currentTranslationDir = wrapAngle(currentTranslationDir + Math.PI);
                         currentTranslationMag = magLimiter.calculate(inputTranslationMag);
                     }
-                }
-                else {
+                } else {
                     currentTranslationDir = stepTowardsCircular(currentTranslationDir, inputTranslationDir, directionSlewRate * elapsedTime);
                     currentTranslationMag = magLimiter.calculate(0.0);
                 }
@@ -284,8 +282,7 @@ public class SwerveSubsystem extends SubsystemBase {
                 currentRotation = rotLimiter.calculate(rot);
 
 
-            } 
-            else {
+            } else {
                 xSpeedCommanded = xSpeed;
                 ySpeedCommanded = ySpeed;
                 currentRotation = rot;
