@@ -1,14 +1,11 @@
-import edu.wpi.first.util.datalog.DoubleLogEntry;
 import edu.wpi.first.wpilibj.DigitalInput;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class Climber extends SubsystemBase{
     private TalonFX armMotor1, armMotor2, alignMotor, tongueMotor;
     private DigitalInput armLimit, tongueLimit, alignLimit;
-
     public Climber() {}
-
+    
     @Override
     public void periodic() {
         //needs motors instantiated and methods written
@@ -24,7 +21,56 @@ public class Climber extends SubsystemBase{
         //SmartDashboard.putNumber("Arm 2 Encoder Position", getArm1EncoderPosition());
         //SmartDashboard.putNumber("Alignment Encoder Position", getArm1EncoderPosition());
         //SmartDashboard.putNumber("Tongue Encoder Position", getArm1EncoderPosition());
+    }
 
+
+    public double getArmLimit() {
+        return ArmLimit.get();
+    }
+
+    public double getTongueLimit() {
+        return TongueLimit.get();
+    }
+
+    public double getAlignmentLimit() {
+        return AlignmentLimit.get();
+    }
+
+    public enum ClimberStates{
+        IN,
+
+        OUT,
+
+        OFF;
+    }
+
+    public void setState(ClimberStates state) {
+        switch (state){
+            case IN:
+                armMotor1.set(0);
+                armMotor2.set(0);
+                alignMotor.set(0);
+                tongueMotor.set(0);
+                break;
+            case OFF:
+                armMotor1.set(0);
+                armMotor2.set(0);
+                alignMotor.set(0);
+                tongueMotor.set(0);
+                break;
+            case OUT:
+                armMotor1.set(0);
+                armMotor2.set(0);
+                alignMotor.set(0);
+                tongueMotor.set(0);
+                break;
+        }
+        //Change values above
+    }
+
+    public void setRawPower(double power){
+        armMotor1.set(power)
+        armMotor.set(power)
     }
 }
 
