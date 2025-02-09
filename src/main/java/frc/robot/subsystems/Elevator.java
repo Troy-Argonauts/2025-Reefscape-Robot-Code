@@ -17,6 +17,8 @@ import frc.robot.Constants;
 
 /**
  * Class representing Elevator Subsystem
+ * 
+ * @author firearcher2012, VedNakum, Evan13019, Kunal Bareth
  */
 public class Elevator extends SubsystemBase {
     private TalonFX leftMotor, rightMotor;
@@ -34,7 +36,7 @@ public class Elevator extends SubsystemBase {
     Slot0Configs slot0Configs = new Slot0Configs();
 
     /**
-     * Instantiates motors and limit switches; Sets neutral modes; Assigns PID constants.
+     * Instantiates motors and limit switches; Set neutral modes; Assigns PID constants.
      */
     public Elevator() {
         TalonFXConfiguration leftMotorConfigs = new TalonFXConfiguration();
