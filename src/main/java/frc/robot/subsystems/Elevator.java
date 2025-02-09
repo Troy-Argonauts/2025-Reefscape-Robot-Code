@@ -22,7 +22,7 @@ import frc.robot.Constants;
  */
 public class Elevator extends SubsystemBase {
     private TalonFX leftMotor, rightMotor;
-    private final DigitalInput topLimitSwitch, bottomLimitSwitch;
+    private final DigitalInput topLimit, bottomLimit;
 
     private double encoderValue, target, oldtarget = 0;
 
@@ -44,8 +44,8 @@ public class Elevator extends SubsystemBase {
 
         leftMotor = new TalonFX(Constants.Elevator.LEFT_MOTOR_ID);
         rightMotor = new TalonFX(Constants.Elevator.RIGHT_MOTOR_ID);
-        topLimitSwitch = new DigitalInput(Constants.Elevator.TOP_LIMIT_SWITCH_SLOT);
-        bottomLimitSwitch = new DigitalInput(Constants.Elevator.BOTTOM_LIMIT_SWITCH_SLOT);
+        topLimit = new DigitalInput(Constants.Elevator.TOP_LIMIT_SWITCH_SLOT);
+        bottomLimit = new DigitalInput(Constants.Elevator.BOTTOM_LIMIT_SWITCH_SLOT);
 
         leftMotor.setNeutralMode(NeutralModeValue.Brake);
         rightMotor.setNeutralMode(NeutralModeValue.Brake);
@@ -166,13 +166,13 @@ public class Elevator extends SubsystemBase {
      * Changes target depending on joystick position
      * @param joyStickValue joystick value between 1 and -1
      */
-    public void setPower(double joyStickValue) {
+    public void adjustSetpoint(double joyStickValue) {
         double newTarget = target + (joyStickValue * 20);
         if ((target <= 5 || target >= 0) && newTarget > 0 && target != newTarget) {
             target = newTarget;
-        } else if (newTarget < target && bottomLimitSwitch.get()) { // If elevator is moving down (new encoder value is less than current encoder value) and bottomLimitSwitch is not pressed
+        } else if (newTarget < target && bottomLimit.get()) { // If elevator is moving down (new encoder value is less than current encoder value) and bottomLimitSwitch is not pressed
             target = newTarget;
-        } else if (newTarget > target && topLimitSwitch.get()) {
+        } else if (newTarget > target && topLimit.get()) {
             target = newTarget;
         }
     }
@@ -181,15 +181,15 @@ public class Elevator extends SubsystemBase {
      * Returns whether the top limit switch is pressed
      * @return whether it is pressed
      */
-    public boolean getTopLimitSwitch() {
-        return topLimitSwitch.get();
+    public boolean getTopLimit() {
+        return topLimit.get();
     }
 
     /**
      * Returns whether the bottom limit switch is pressed
      */
-    public boolean getBottomLimitSwitch() {
-        return bottomLimitSwitch.get();
+    public boolean getBottomLimit() {
+        return bottomLimit.get();
     }
 
     /**
