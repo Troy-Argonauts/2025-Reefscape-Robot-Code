@@ -70,10 +70,15 @@ public class Elevator extends SubsystemBase {
         ElevatorRightOutputCurrentLog = new DoubleLogEntry(log, "ElevatorRightOutputCurrent");
     }
 
+   
     /**
-     * Sets data logs
+     * Gets encoder value; Logs data; Sets position setpoint to target; Resets encoder.
      */
-    public void logData() {
+    @Override
+    public void periodic() {
+        encoderValue = leftMotor.getPosition().getValueAsDouble();
+
+        SmartDashboard.putNumber("target", target);
         SmartDashboard.putNumber("Encoder Value", encoderValue);
         SmartDashboard.putNumber("Left Motor Current", leftMotor.getSupplyCurrent().getValueAsDouble());
         SmartDashboard.putNumber("Right Motor Current", rightMotor.getSupplyCurrent().getValueAsDouble());
@@ -81,17 +86,9 @@ public class Elevator extends SubsystemBase {
         
         ElevatorLeftOutputCurrentLog.append(leftMotor.getSupplyCurrent().getValueAsDouble());
         ElevatorRightOutputCurrentLog.append(rightMotor.getSupplyCurrent().getValueAsDouble());
-    }
 
-    /**
-     * Gets encoder value; Sets position setpoint to target.
-     */
-    @Override
-    public void periodic() {
-        encoderValue = leftMotor.getPosition().getValueAsDouble();
-        SmartDashboard.putNumber("target", target);
-        logData();
         leftMotor.setControl(positionVoltage.withPosition(target));
+
         if (getBottomLimitSwitch() == true) {
             resetEncoder();
         }
