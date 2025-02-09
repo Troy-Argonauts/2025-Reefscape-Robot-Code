@@ -239,10 +239,10 @@ public class SwerveSubsystem extends SubsystemBase {
         double ySpeedCommanded;
 
         if (xState){
-            frontLeftModule.setDesiredState(new SwerveModuleState(3, Rotation2d.fromDegrees(0)));
-            frontRightModule.setDesiredState(new SwerveModuleState(3, Rotation2d.fromDegrees(0)));
-            backLeftModule.setDesiredState(new SwerveModuleState(3, Rotation2d.fromDegrees(0)));
-            backRightModule.setDesiredState(new SwerveModuleState(3, Rotation2d.fromDegrees(0)));
+            frontLeftModule.setDesiredState(new SwerveModuleState(0, Rotation2d.fromDegrees(45)));
+            frontRightModule.setDesiredState(new SwerveModuleState(0, Rotation2d.fromDegrees(-45)));
+            backLeftModule.setDesiredState(new SwerveModuleState(0, Rotation2d.fromDegrees(-45)));
+            backRightModule.setDesiredState(new SwerveModuleState(0, Rotation2d.fromDegrees(45)));
         } else {
             if (rateLimit) {
                 // Convert XY to polar for rate limiting
@@ -322,17 +322,10 @@ public class SwerveSubsystem extends SubsystemBase {
    * Sets the wheels into an X formation to prevent movement.
    */
     public void setToZero(boolean aState) {
-        if (aState) {    
-            frontLeftModule.setDesiredState(new SwerveModuleState(4, Rotation2d.fromDegrees(0)));
-            frontRightModule.setDesiredState(new SwerveModuleState(4, Rotation2d.fromDegrees(0)));
-            backLeftModule.setDesiredState(new SwerveModuleState(4, Rotation2d.fromDegrees(0)));
-            backRightModule.setDesiredState(new SwerveModuleState(4, Rotation2d.fromDegrees(0)));
-        } else {
-            frontLeftModule.setDesiredState(new SwerveModuleState(0, Rotation2d.fromDegrees(0)));
-            frontRightModule.setDesiredState(new SwerveModuleState(0, Rotation2d.fromDegrees(0)));
-            backLeftModule.setDesiredState(new SwerveModuleState(0, Rotation2d.fromDegrees(0)));
-            backRightModule.setDesiredState(new SwerveModuleState(0, Rotation2d.fromDegrees(0)));
-        }
+        frontLeftModule.setDesiredState(new SwerveModuleState(0, Rotation2d.fromDegrees(0)));
+        frontRightModule.setDesiredState(new SwerveModuleState(0, Rotation2d.fromDegrees(0)));
+        backLeftModule.setDesiredState(new SwerveModuleState(0, Rotation2d.fromDegrees(0)));
+        backRightModule.setDesiredState(new SwerveModuleState(0, Rotation2d.fromDegrees(0)));
     }
 
 
