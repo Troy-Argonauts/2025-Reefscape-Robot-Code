@@ -15,6 +15,9 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 
+/**
+ * Class representing Elevator Subsystem
+ */
 public class Elevator extends SubsystemBase {
     private TalonFX leftMotor, rightMotor;
     private final DigitalInput topLimitSwitch, bottomLimitSwitch;
@@ -27,9 +30,12 @@ public class Elevator extends SubsystemBase {
 
     TalonFXConfiguration config = new TalonFXConfiguration();
 
-    PositionVoltage positionVoltage = new PositionVoltage(0);
+    PositionVoltage positionVoltage = new PositionVoltage(0).withSlot(0);
     Slot0Configs slot0Configs = new Slot0Configs();
 
+    /**
+     * Instantiates motors and limit switches; Sets neutral modes; Assigns PID constants.
+     */
     public Elevator() {
         TalonFXConfiguration leftMotorConfigs = new TalonFXConfiguration();
         TalonFXConfiguration rightMotorConfigs = new TalonFXConfiguration();
@@ -62,7 +68,9 @@ public class Elevator extends SubsystemBase {
         ElevatorRightOutputCurrentLog = new DoubleLogEntry(log, "ElevatorRightOutputCurrent");
     }
 
-    // logs data
+    /**
+     * Sets data logs
+     */
     public void logData() {
         SmartDashboard.putNumber("Encoder Value", encoderValue);
         SmartDashboard.putNumber("Left Motor Current", leftMotor.getSupplyCurrent().getValueAsDouble());
@@ -73,6 +81,9 @@ public class Elevator extends SubsystemBase {
         ElevatorRightOutputCurrentLog.append(rightMotor.getSupplyCurrent().getValueAsDouble());
     }
 
+    /**
+     * Gets encoder value; Sets position setpoint to target.
+     */
     @Override
     public void periodic() {
         encoderValue = leftMotor.getPosition().getValueAsDouble();
@@ -84,32 +95,50 @@ public class Elevator extends SubsystemBase {
         }
     }
 
-    // sets raw power for left, right is follower
+    /**
+     * Sets raw power for left, right is follower 
+     * @param power desired power from -1 to 1
+     */
     public void setRawPower(double power) {
         leftMotor.set(power);
     }
 
-    // returns true if PID is done
+    /**
+     * Checks if PID value for left motor is within given range
+     * @return whether PID is finished
+     */
     public boolean isPIDFinished() {
         return (Math.abs(target - leftMotor.getPosition().getValueAsDouble()) < 0.01);
     }
     //change the value above
 
-    // returns left motor position as double
+    /**
+     * Gets motor position
+     * @return left motor position as double
+     */
     public double getPosition() {
         return leftMotor.getPosition().getValueAsDouble();
     }
 
-    // returns target
+    /**
+     * Returns value of current elevator target position
+     * @return current elevator target
+     */
     public double getCurrentTarget() {
         return target;
     }
 
-    // sets the disired target
+    /**
+     * Sets the desired elevator target
+     * @param target desired elevator target
+     */
     public void setDesiredTarget(double target) {
         this.target = target;
     }
 
+    /**
+     * Sets enumerators for encoder positions of various Elevator States
+     */
     public enum ElevatorStates{
         INTAKE(0),
         LV1(0),
@@ -125,13 +154,19 @@ public class Elevator extends SubsystemBase {
         }
     }
 
-    // sets target to the state
+    /**
+     * Sets target as the desired Elevator state
+     * @param state elevator state
+     */
     public void setDesiredState(ElevatorStates state) {
         oldtarget= target;
         target = state.elevatorPosition;
     }
 
-    // changes target depending on joystick position
+    /**
+     * Changes target depending on joystick position
+     * @param joyStickValue joystick value between 1 and -1
+     */
     public void setPower(double joyStickValue) {
         double newTarget = target + (joyStickValue * 20);
         if ((target <= 5 || target >= 0) && newTarget > 0 && target != newTarget) {
@@ -143,17 +178,24 @@ public class Elevator extends SubsystemBase {
         }
     }
 
-    // returns true if top limit switch is pressed
+    /**
+     * Returns whether the top limit switch is pressed
+     * @return whether it is pressed
+     */
     public boolean getTopLimitSwitch() {
         return topLimitSwitch.get();
     }
 
-    // returns true if bottom limit switch is pressed
+    /**
+     * Returns whether the bottom limit switch is pressed
+     */
     public boolean getBottomLimitSwitch() {
         return bottomLimitSwitch.get();
     }
 
-    // resets encoders
+    /**
+     * Resets encoders
+     */
     public void resetEncoder() {
         leftMotor.setPosition(0);
         rightMotor.setPosition(0);
