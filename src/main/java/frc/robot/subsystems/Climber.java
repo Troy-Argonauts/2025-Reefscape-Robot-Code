@@ -13,10 +13,6 @@ import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
-
-import edu.wpi.first.wpilibj.DigitalInput;
-import edu.wpi.first.wpilibj2.command.SubsystemBase;
-
 /**
  * The Climber subsystem controls the motors and sensors associated with the robot's climber mechanism.
  */
@@ -24,11 +20,21 @@ public class Climber extends SubsystemBase{
     private TalonFX armMotorLeft, armMotorRight, alignMotor, tongueMotor;
     private DigitalInput armLimit, tongueLimit, alignLimit;
 
+    private DoubleLogEntry LeftArmMotorPosition;
+    private DoubleLogEntry RightArmMotorPosition;
+    private DoubleLogEntry AlignmentMotorPosition;
+    private DoubleLogEntry TongueMotorPosition;
+    private DoubleLogEntry ClimberLeftOutputCurrentLog;
+    private DoubleLogEntry ClimberRightOutputCurrentLog;
+    private DoubleLogEntry ClimberAlignOutputCurrentLog;
+    private DoubleLogEntry ClimberTongueOutputCurrentLog;
+
+
     /**
      * Initializes the Climber subsystem with the motors and sensors.
      */
     public Climber() {
-        armMotorLeft = new TalonFX(Constants.Climber.LEFT_MOTOR_ID)
+        armMotorLeft = new TalonFX(Constants.Climber.LEFT_MOTOR_ID);
         armMotorRight = new TalonFX(Constants.Climber.RIGHT_MOTOR_ID);
         alignMotor = new TalonFX(Constants.Climber.ALIGN_MOTOR_ID);
         tongueMotor = new TalonFX(Constants.Climber.TONGUE_MOTOR_ID);
@@ -58,7 +64,12 @@ public class Climber extends SubsystemBase{
         tongueMotor.getConfigurator().apply(tongueMotorConfig);
         
 
-        DataLog = DataLogManager.getLog();
+        DataLog log = DataLogManager.getLog();
+
+        LeftArmMotorPosition = new DoubleLogEntry(log, "LeftArmMotorPosition");
+        RightArmMotorPosition = new DoubleLogEntry(log, "RightArmMotorPosition");
+        AlignmentMotorPosition = new DoubleLogEntry(log, "AlignmentMotorPosition");
+        TongueMotorPosition = new DoubleLogEntry(log, "TongueMotorPosition");
 
         ClimberLeftOutputCurrentLog = new DoubleLogEntry(log, "ClimberLeftOutputCurrent");
         ClimberRightOutputCurrentLog = new DoubleLogEntry(log, "ClimberRightOutputCurrent");
@@ -73,40 +84,44 @@ public class Climber extends SubsystemBase{
      */
     @Override
     public void periodic() {
-        //needs motors instantiated and methods written
+        LeftArmMotorPosition.append(armMotorLeft.getPosition().getValueAsDouble());
+        RightArmMotorPosition.append(armMotorRight.getPosition().getValueAsDouble());
+        AlignmentMotorPosition.append(alignMotor.getPosition().getValueAsDouble());
+        TongueMotorPosition.append(tongueMotor.getPosition().getValueAsDouble());
+
         ClimberLeftOutputCurrentLog.append(armMotorLeft.getSupplyCurrent().getValueAsDouble());
         ClimberRightOutputCurrentLog.append(armMotorRight.getSupplyCurrent().getValueAsDouble());
         ClimberAlignOutputCurrentLog.append(alignMotor.getSupplyCurrent().getValueAsDouble());
-        ClimberToungueOutputCurrentLog.append(tongueMotor.getSupplyCurrent().getValueAsDouble());
+        ClimberTongueOutputCurrentLog.append(tongueMotor.getSupplyCurrent().getValueAsDouble());
 
         SmartDashboard.putBoolean("Arm Limit Switch", getArmLimit());
         SmartDashboard.putBoolean("Tongue Limit Switch", getTongueLimit());
-        SmartDashboard.putBoolean("Alignment Limit Switch", getAlighnmentLimit());
-        SmartDashboard.putNumber("Arm 1 Encoder Position", getArm1EncoderPosition());
-        SmartDashboard.putNumber("Arm 2 Encoder Position", getArm1EncoderPosition());
-        SmartDashboard.putNumber("Alignment Encoder Position", getArm1EncoderPosition());
-        SmartDashboard.putNumber("Tongue Encoder Position", getArm1EncoderPosition());
+        SmartDashboard.putBoolean("Alignment Limit Switch", getAlignmentLimit());
+        SmartDashboard.putNumber("Arm 1 Encoder Position", armMotorLeft.getPosition().getValueAsDouble());
+        SmartDashboard.putNumber("Arm 2 Encoder Position", armMotorRight.getPosition().getValueAsDouble());
+        SmartDashboard.putNumber("Alignment Encoder Position", alignMotor.getPosition().getValueAsDouble());
+        SmartDashboard.putNumber("Tongue Encoder Position", tongueMotor.getPosition().getValueAsDouble());
     }
 
     /**
      * @return the state of the arm limit switch.
      */
-    public double getArmLimit() {
-        return ArmLimit.get();
+    public boolean getArmLimit() {
+        return armLimit.get();
     }
 
     /**
      * @return the state of the tongue limit switch.
      */
-    public double getTongueLimit() {
-        return TongueLimit.get();
+    public boolean getTongueLimit() {
+        return tongueLimit.get();
     }
 
     /**
      * @return the state of the alignment limit switch.
      */
-    public double getAlignmentLimit() {
-        return AlignmentLimit.get();
+    public boolean getAlignmentLimit() {
+        return alignLimit.get();
     }
 
     /**
