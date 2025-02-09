@@ -212,6 +212,18 @@ public class Manipulator extends SubsystemBase {
     }
 
 
+    /**
+     * Returns true if beam break A or B is being triggered
+     * @return true if either beam break A or B is true, false if both beam breaks are false
+     */
+    public boolean isCoralReady() {
+        if (getManipBeamBreakA() == true || getManipBeamBreakB() == true) {
+            return true;
+        }
+        return false;
+    }
+
+
     // Evan is cool***!!!
     /**
      * Gets the current velocity of the manipulator.
