@@ -109,7 +109,8 @@ public class Manipulator extends SubsystemBase {
 
         currentManipRPMLog.append(currentManipRPM);
         topMotorSupplyCurrentLog.append(topMotor.getSupplyCurrent().getValueAsDouble());
-        bottomMotorSupplyCurrentLog.append(bottomMotor.getSupplyCurrent().getValueAsDouble());    
+        bottomMotorSupplyCurrentLog.append(bottomMotor.getSupplyCurrent().getValueAsDouble());   
+        lateratorMotorSupplyCurrentLog.append(lateratorMotor.getSupplyCurrent().getValueAsDouble()); 
 
         SmartDashboard.putNumber("Current Roller Velocity", currentManipRPM);
         SmartDashboard.putNumber("Desired Roller Velocity", manipTargetRPM);
@@ -144,14 +145,6 @@ public class Manipulator extends SubsystemBase {
         OFF;
     }
 
-    /**
-     * Sets the manipulator's state.
-     * @param state The desired state of the manipulator.
-     */
-    public void setManipState(ManipulatorStates state) {
-        manipTargetRPM = state.manipulatorVelocity;
-    }
-    
     /**
      * Sets the laterator's state until it reaches the max laterator position if out or until it reaches 0 if in
      * @param state The desired state of the laterator
@@ -248,7 +241,7 @@ public class Manipulator extends SubsystemBase {
      * Gets the desired velocity of the manipulator.
      * @return The desired velocity of the manipulator in RPM.
      */
-    public double getManipulatorTarget() {
+    public double getManipTarget() {
         return manipTargetRPM;
     }
 
@@ -272,7 +265,7 @@ public class Manipulator extends SubsystemBase {
      * gets is manipulator motor PID is finished
      * @return if manipulator motor PID is finished
      */
-    public boolean isManipulatorPIDFinished() {
+    public boolean isManipPIDFinished() {
         return (Math.abs(manipTargetRPM - topMotor.getVelocity().getValueAsDouble() * 60) <= 0.03);
     }
 
@@ -288,7 +281,7 @@ public class Manipulator extends SubsystemBase {
      * sets the manipulator motors state
      * @param state the state to set for the manipulator motor
      */
-    public void setManipulatorState(ManipulatorStates state) {
+    public void setManipState(ManipulatorStates state) {
         manipTargetRPM = state.manipulatorVelocity;
         manipulatorState = state;
     }
