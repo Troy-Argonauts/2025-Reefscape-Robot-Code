@@ -36,7 +36,7 @@ public class Manipulator extends SubsystemBase {
     private TalonFX bottomMotor;
     private TalonFX lateratorMotor;
     
-    private DigitalInput limitSwitch;
+    private DigitalInput lateratorLimit;
 
     private DigitalInput funnel;
     private DigitalInput manipulatorA;
@@ -46,8 +46,7 @@ public class Manipulator extends SubsystemBase {
 
     private final CoastOut coastRequest = new CoastOut();
 
-    private VelocityVoltage velocityVoltage = new VelocityVoltage(null);
-    private PositionVoltage positionVoltage = new PositionVoltage(null);
+    private VelocityVoltage velocityVoltage = new VelocityVoltage(0).withSlot(0);
 
     private TalonFXConfiguration config = new TalonFXConfiguration();
 
@@ -61,11 +60,11 @@ public class Manipulator extends SubsystemBase {
         bottomMotor = new TalonFX(Constants.Manipulator.BOTTOM_MOTOR_CAN_ID);
         lateratorMotor = new TalonFX(Constants.Manipulator.LATERATOR_MOTOR_CAN_ID);
 
-        limitSwitch = new DigitalInput(Constants.Manipulator.LATERATOR_LIMIT_SWITCH);
+        lateratorLimit = new DigitalInput(Constants.Manipulator.LATERATOR_LIMIT_SWITCH);
 
         funnel = new DigitalInput(Constants.Manipulator.FUNNEL_BEAM_BREAK);
-        manipulatorA = new DigitalInput(Constants.Manipulator.MANIPULATOR_A_BEAM_BREAK);
-        manipulatorB = new DigitalInput(Constants.Manipulator.MANIPULATOR_B_BEAM_BREAK);
+        manipulatorA = new DigitalInput(Constants.Manipulator.MANIPULATOR_BEAM_BREAK_A);
+        manipulatorB = new DigitalInput(Constants.Manipulator.MANIPULATOR_BEAM_BREAK_B);
 
         topMotor.setNeutralMode(NeutralModeValue.Coast);
         bottomMotor.setNeutralMode(NeutralModeValue.Coast);
@@ -91,14 +90,12 @@ public class Manipulator extends SubsystemBase {
         bottomMotor.getConfigurator().apply(bottomConfiguration);
         lateratorMotor.getConfigurator().apply(lateratorConfiguration);
 
-        velocityVoltage.Slot = 0;
+        DataLog log = DataLogManager.getLog();
 
-        DataLog RPM = DataLogManager.getLog();
-
-        currentManipRPMLog = new DoubleLogEntry((RPM), "Current Manipulator Velocity");
-        topMotorSupplyCurrentLog = new DoubleLogEntry((RPM), "Top Motor Supply Current");
-        bottomMotorSupplyCurrentLog = new DoubleLogEntry(RPM, "Bottom Motor Supply Current");
-        lateratorMotorSupplyCurrentLog = new DoubleLogEntry(RPM, "Laterator Motor Supply Current");
+        currentManipRPMLog = new DoubleLogEntry((log), "Current Manipulator RPM");
+        topMotorSupplyCurrentLog = new DoubleLogEntry((log), "Top Motor Supply Current");
+        bottomMotorSupplyCurrentLog = new DoubleLogEntry(log, "Bottom Motor Supply Current");
+        lateratorMotorSupplyCurrentLog = new DoubleLogEntry(log, "Laterator Motor Supply Current");
 
     }
 
@@ -108,6 +105,7 @@ public class Manipulator extends SubsystemBase {
      */
     @Override
     public void periodic() {
+        currentManipRPM = (topMotor.getVelocity().getValueAsDouble() + bottomMotor.getVelocity().getValueAsDouble()) / 2 * 60;
 
         currentManipRPMLog.append(currentManipRPM);
         topMotorSupplyCurrentLog.append(topMotor.getSupplyCurrent().getValueAsDouble());
@@ -116,9 +114,11 @@ public class Manipulator extends SubsystemBase {
         SmartDashboard.putNumber("Current Roller Velocity", currentManipRPM);
         SmartDashboard.putNumber("Desired Roller Velocity", manipTargetRPM);
 
-        currentManipRPM = (topMotor.getVelocity().getValueAsDouble() + bottomMotor.getVelocity().getValueAsDouble());
+        topMotor.setControl(velocityVoltage.withVelocity(manipTargetRPM / 60));
 
-        topMotor.setControl(velocityVoltage.withVelocity(manipTargetRPM));
+        if (getLateratorLimit() == true) {
+            resetLateratorEncoder();
+        }
     }
  
     public enum ManipulatorStates {
@@ -136,21 +136,11 @@ public class Manipulator extends SubsystemBase {
 
     }
 
-    public enum LateratorStates {
-        IN(0),
-        OUT(200);
-
-        final double lateratorPosition;
-        LateratorStates(double lateratorPosition) {
-            this.lateratorPosition = lateratorPosition;
-        }
-    }
-
     /**
      * Sets the manipulator's state.
      * @param state The desired state of the manipulator.
      */
-    public void setState(ManipulatorStates state) {
+    public void setManipState(ManipulatorStates state) {
         manipTargetRPM = state.manipulatorVelocity;
     }
 
@@ -166,8 +156,8 @@ public class Manipulator extends SubsystemBase {
      * Checks if the limit switch is pressed.
      * @return true if the limit switch is pressed, false otherwise.
      */
-    public boolean isLimitSwitchPressed(){
-        return limitSwitch.get();
+    public boolean getLateratorLimit(){
+        return lateratorLimit.get();
     }
 
     /**
@@ -182,7 +172,7 @@ public class Manipulator extends SubsystemBase {
      * Checks if the manipulator A beam break is detected.
      * @return true if the manipulator A beam break is detected, false otherwise.
      */
-    public boolean getManipulatorABeamBreak() {
+    public boolean getManipBeamBreakA() {
         return manipulatorA.get();
     }
 
@@ -190,7 +180,7 @@ public class Manipulator extends SubsystemBase {
      * Checks if the manipulator B beam break is detected.
      * @return true if the manipulator B beam break is detected, false otherwise.
      */
-    public boolean getManipulatorBBeamBreak() {
+    public boolean getManipBeamBreakB() {
         return manipulatorB.get();
     }
 
@@ -205,10 +195,26 @@ public class Manipulator extends SubsystemBase {
     } 
 
     /**
+     * returns top motor's RPM
+     * @return top motor's RPM
+     */
+    public double getTopRPM() {
+        return (topMotor.getVelocity().getValueAsDouble() * 60);
+    }
+
+    /**
+     * returns bottom motor's RPM
+     * @return bottom motor's RPM
+     */
+    public double getBottomRPM() {
+        return (bottomMotor.getVelocity().getValueAsDouble() * 60);
+    } 
+
+    /**
      * Gets the desired velocity of the manipulator.
      * @return The desired velocity of the manipulator in RPM.
      */
-    public double getManipulatorDesiredVelocity() {
+    public double getManipulatorTarget() {
         return manipTargetRPM;
     }
 
@@ -216,7 +222,7 @@ public class Manipulator extends SubsystemBase {
      * Gets the current position of the laterator.
      * @return The current position of the laterator.
      */
-    public double getLateratorCurrentPosition() {
+    public double getCurrentLateratorPosition() {
         return lateratorCurrentPosition;
     }
 
@@ -225,9 +231,7 @@ public class Manipulator extends SubsystemBase {
      * @param power The power to set for the laterator motor.
      */
     public void setLateratorRawPower(double power) {
-        if ((isLimitSwitchPressed() == true && power >= 0) || (getLateratorCurrentPosition() >=  Constants.Manipulator.MAX_LATERATOR_POSITION && power <= 0)) {
-            lateratorMotor.set(power);
-        }
+        lateratorMotor.set(power);
     }
 
     /**
@@ -235,14 +239,14 @@ public class Manipulator extends SubsystemBase {
      * @return if manipulator motor PID is finished
      */
     public boolean isManipulatorPIDFinished() {
-        return (Math.abs(manipTargetRPM - topMotor.getPosition().getValueAsDouble()) <= 0.03);
+        return (Math.abs(manipTargetRPM - topMotor.getPosition().getValueAsDouble() * 60) <= 0.03);
     }
 
     /**
      * sets the manipulator motors disered target
      * @param target the target to set for the manipulator motor
      */
-    public void setManipulatorDiseredTarget(double target) {
+    public void setManipDesiredTarget(double target) {
         manipTargetRPM = target;
     }
 
@@ -253,6 +257,32 @@ public class Manipulator extends SubsystemBase {
     public void setManipulatorState(ManipulatorStates state) {
         manipTargetRPM = state.manipulatorVelocity;
         manipulatorState = state;
+    }
+
+    /**
+     * sets laterator raw power to 0.3 until hits max position
+     */
+    public void lateratorIN() {
+        while (getCurrentLateratorPosition() < Constants.Manipulator.MAX_LATERATOR_POSITION) {
+            setLateratorRawPower(0.3);
+        }
+    }
+
+    /**
+     * sets laterator raw power to -0.3 until hits 0
+     */
+    public void lateratorOUT() {
+        while (getCurrentLateratorPosition() > 0) {
+            setLateratorRawPower(-0.3);
+        }
+    }
+
+
+    /**
+     * resets laterator motor encoder
+     */
+    public void resetLateratorEncoder() {
+        lateratorMotor.setPosition(0);
     }
 
     /**

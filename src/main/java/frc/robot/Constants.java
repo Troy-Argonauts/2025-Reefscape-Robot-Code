@@ -29,8 +29,8 @@ public final class Constants {
     public static final int LATERATOR_MOTOR_CAN_ID = 0;
     public static final int LATERATOR_LIMIT_SWITCH = 0;
     public static final int FUNNEL_BEAM_BREAK = 0;
-    public static final int MANIPULATOR_A_BEAM_BREAK = 0;
-    public static final int MANIPULATOR_B_BEAM_BREAK = 0;
+    public static final int MANIPULATOR_BEAM_BREAK_A = 0;
+    public static final int MANIPULATOR_BEAM_BREAK_B = 0;
 
     public static final double MAX_LATERATOR_POSITION = 0.0;
   } 
