@@ -129,11 +129,23 @@ public class Climber extends SubsystemBase{
      * States for the climber mechanism.
      */
     public enum ClimberStates{
-        IN,
+        TONGUE_IN,
 
-        OUT,
+        TONGUE_OUT,
 
-        OFF;
+        TONGUE_OFF,
+
+        ALIGN_IN,
+
+        ALIGN_OUT,
+
+        ALIGN_OFF,
+
+        ARM_IN,
+
+        ARM_OUT,
+
+        ARM_OFF;
     }
 
     /**
@@ -143,19 +155,55 @@ public class Climber extends SubsystemBase{
      */
     public void setState(ClimberStates state) {
         switch (state){
-            case IN:
+            case TONGUE_IN:
                 armMotorLeft.set(0);
                 armMotorRight.set(0);
                 alignMotor.set(0);
                 tongueMotor.set(0);
                 break;
-            case OFF:
+            case TONGUE_OFF:
                 armMotorLeft.set(0);
                 armMotorRight.set(0);
                 alignMotor.set(0);
                 tongueMotor.set(0);
                 break;
-            case OUT:
+            case TONGUE_OUT:
+                armMotorLeft.set(0);
+                armMotorRight.set(0);
+                alignMotor.set(0);
+                tongueMotor.set(0);
+                break;
+            case ALIGN_IN:
+                armMotorLeft.set(0);
+                armMotorRight.set(0);
+                alignMotor.set(0);
+                tongueMotor.set(0);
+                break;
+            case ALIGN_OFF:
+                armMotorLeft.set(0);
+                armMotorRight.set(0);
+                alignMotor.set(0);
+                tongueMotor.set(0);
+                break;
+            case ALIGN_OUT:
+                armMotorLeft.set(0);
+                armMotorRight.set(0);
+                alignMotor.set(0);
+                tongueMotor.set(0);
+                break;
+            case ARM_IN:
+                armMotorLeft.set(0);
+                armMotorRight.set(0);
+                alignMotor.set(0);
+                tongueMotor.set(0);
+                break;
+            case ARM_OFF:
+                armMotorLeft.set(0);
+                armMotorRight.set(0);
+                alignMotor.set(0);
+                tongueMotor.set(0);
+                break;
+            case ARM_OUT:
                 armMotorLeft.set(0);
                 armMotorRight.set(0);
                 alignMotor.set(0);
