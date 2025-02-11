@@ -17,7 +17,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 
-/**
+/** Authors: Kunal, Ved, Evan, Ishan.
  * Handles the manipulator, including motors, sensors, and states.
  */
 public class Manipulator extends SubsystemBase {
@@ -121,7 +121,9 @@ public class Manipulator extends SubsystemBase {
             resetLateratorEncoder();
         }
     }
- 
+    /**
+     * States of the Manipulator (IN, OUT, OFF)
+     */
     public enum ManipulatorStates {
         IN(-800),
 
@@ -136,7 +138,9 @@ public class Manipulator extends SubsystemBase {
         }
 
     }
-
+    /**
+     * States of the Laterator (IN, OUT, OFF)
+     */
     public enum LateratorStates {
         IN,
 
@@ -176,7 +180,7 @@ public class Manipulator extends SubsystemBase {
      * @return True if the top PID loop has finished, false otherwise.
      */
     public boolean isTopPidFinished() {
-        return (Math.abs(manipTargetRPM - getAverageRPM()) <= 50);
+        return (Math.abs(topMotor.getPosition().getValueAsDouble()) <= 50);
     }
 
     /**
@@ -273,24 +277,17 @@ public class Manipulator extends SubsystemBase {
         lateratorMotor.set(power);
     }
 
-    /**
-     * gets is manipulator motor PID is finished
-     * @return if manipulator motor PID is finished
-     */
-    public boolean isManipPIDFinished() {
-        return (Math.abs(manipTargetRPM - topMotor.getVelocity().getValueAsDouble() * 60) <= 0.03);
-    }
 
     /**
-     * sets the manipulator motors disered target
-     * @param target the target to set for the manipulator motor
+     * Sets the manipulator motors desired target
+     * @param target the target to set for the manipulator motor 
      */
     public void setManipDesiredTarget(double target) {
         manipTargetRPM = target;
     }
 
     /**
-     * sets the manipulator motors state
+     * Sets the manipulator motors state (Expecting RPM)
      * @param state the state to set for the manipulator motor
      */
     public void setManipState(ManipulatorStates state) {
@@ -299,7 +296,7 @@ public class Manipulator extends SubsystemBase {
     }
 
     /**
-     * sets laterator raw power to 0.3 until hits max position
+     * Sets laterator raw power to 0.3 until hits max position
      */
     public void lateratorIN() {
         while (getCurrentLateratorPosition() < Constants.Manipulator.MAX_LATERATOR_POSITION) {
