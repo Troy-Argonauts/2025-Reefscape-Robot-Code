@@ -64,7 +64,6 @@ public class Climber extends SubsystemBase{
         armMotorRight.getConfigurator().apply(rightMotorConfig);
         alignMotor.getConfigurator().apply(alignMotorConfig);
         tongueMotor.getConfigurator().apply(tongueMotorConfig);
-        
 
         DataLog log = DataLogManager.getLog();
 
