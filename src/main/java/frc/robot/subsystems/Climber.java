@@ -15,6 +15,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 /**
  * The Climber subsystem controls the motors and sensors associated with the robot's climber mechanism.
+ * 
  * @author firearcher2012, Evan13019, shaquilleinoatmeal
  */
 public class Climber extends SubsystemBase{
