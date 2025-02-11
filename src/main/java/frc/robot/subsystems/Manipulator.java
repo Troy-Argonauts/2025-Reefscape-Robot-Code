@@ -17,8 +17,10 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 
-/** Authors: Kunal, Ved, Evan, Ishan.
+/**
  * Handles the manipulator, including motors, sensors, and states.
+ * 
+ * @author VedNakum, firearcher2012, ASH-will-WIN, Evan13019, shaquilleinoatmeal.
  */
 public class Manipulator extends SubsystemBase {
     private DoubleLogEntry currentManipRPMLog;
