@@ -5,8 +5,13 @@
 package frc.robot;
 
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.ConditionalCommand;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
+import frc.robot.subsystems.Elevator;
+import frc.robot.subsystems.Elevator.ElevatorStates;
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -15,7 +20,11 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
  * subsystems, commands, and trigger mappings) should be declared here.
  */
 public class RobotContainer {
+  
+  public final CommandXboxController driver = new CommandXboxController(0);
+  public final CommandXboxController operator = new CommandXboxController(1);
   // The robot's subsystems and commands are defined here...
+  public Elevator elevator = new Elevator();
 
   // Replace with CommandPS4Controller or CommandJoystick if needed
 
@@ -39,6 +48,36 @@ public class RobotContainer {
 
     // Schedule `exampleMethodCommand` when the Xbox controller's B button is pressed,
     // cancelling on release.
+    elevator.setDefaultCommand( // Drivetrain will execute this command periodically
+        new RunCommand(
+			() -> {
+				double elevatorSpeed = Math.abs(driver.getLeftY());
+				Robot.getElevator().adjustSetpoint(elevatorSpeed);
+			}, Robot.getElevator()
+		)
+    );
+
+
+
+	operator.a().onTrue(
+		new InstantCommand(() -> Robot.getElevator().setDesiredState(ElevatorStates.LV1))
+	);
+
+	operator.b().onTrue(
+		new InstantCommand(() -> Robot.getElevator().setDesiredState(ElevatorStates.LV2))
+	);
+
+	operator.y().onTrue(
+		new InstantCommand(() -> Robot.getElevator().setDesiredState(ElevatorStates.LV3))
+	);
+
+	operator.x().onTrue(
+		new InstantCommand(() -> Robot.getElevator().setDesiredState(ElevatorStates.LV4))
+	);
+
+    driver.rightBumper().whileTrue(null);
+
+  
 
   }
 
