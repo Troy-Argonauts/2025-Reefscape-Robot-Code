@@ -27,7 +27,7 @@ public class Climber extends SubsystemBase{
     private DoubleLogEntry RightArmMotorPosition;
     private DoubleLogEntry AlignmentMotorPosition;
     private DoubleLogEntry TongueMotorPosition;
-    
+
     private DoubleLogEntry ClimberLeftOutputCurrentLog;
     private DoubleLogEntry ClimberRightOutputCurrentLog;
     private DoubleLogEntry ClimberAlignOutputCurrentLog;
@@ -36,6 +36,8 @@ public class Climber extends SubsystemBase{
 
     /**
      * Initializes the Climber subsystem with the motors and sensors.
+     * 
+     * @author firearcher2012, Evan13019, shaquilleinoatmeal
      */
     public Climber() {
         armMotorLeft = new TalonFX(Constants.Climber.LEFT_MOTOR_ID);
