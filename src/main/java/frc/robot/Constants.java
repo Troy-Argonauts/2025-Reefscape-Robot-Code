@@ -50,7 +50,7 @@ public final class Constants {
         public static final double DRIVING_MOTOR_REDUCTION = 6.746;
 
         public static final double drivingEncoderPositionFactor = (WHEEL_DIAMETER_METERS * Math.PI)
-            / DRIVING_MOTOR_REDUCTION;
+                / DRIVING_MOTOR_REDUCTION;
 
         // Driving Parameters - Note that these are not the maximum capable speeds of
         // the robot, rather the allowed maximum speeds
@@ -67,10 +67,10 @@ public final class Constants {
         public static final double WHEEL_BASE = Units.inchesToMeters(21);
         // Distance between front and back wheels on robot
         public static final SwerveDriveKinematics DRIVE_KINEMATICS = new SwerveDriveKinematics(
-            new Translation2d(WHEEL_BASE / 2, TRACK_WIDTH / 2),
-            new Translation2d(WHEEL_BASE / 2, -TRACK_WIDTH / 2),
-            new Translation2d(-WHEEL_BASE / 2, TRACK_WIDTH / 2),
-            new Translation2d(-WHEEL_BASE / 2, -TRACK_WIDTH / 2));
+                new Translation2d(WHEEL_BASE / 2, TRACK_WIDTH / 2),
+                new Translation2d(WHEEL_BASE / 2, -TRACK_WIDTH / 2),
+                new Translation2d(-WHEEL_BASE / 2, TRACK_WIDTH / 2),
+                new Translation2d(-WHEEL_BASE / 2, -TRACK_WIDTH / 2));
 
         // Angular offsets of the modules relative to the chassis in radians
         public static final double FRONT_LEFT_CHASSIS_ANGULAR_OFFSET = -0.2626953125; // -0.25341796875 + Math.PI/4;
@@ -128,13 +128,13 @@ public final class Constants {
         // teeth on the bevel pinion
         public static final double DRIVING_MOTOR_REDUCTION = (45.0 * 22) / (Swerve.DRIVE_MOTOR_PINION_TEETH * 15);
         public static final double DRIVE_WHEEL_FREE_SPEED_RPS = (DRIVING_MOTOR_FREE_SPEED_RPS
-            * WHEEL_CIRCUMFERENCE_METERS) / DRIVING_MOTOR_REDUCTION;
+                * WHEEL_CIRCUMFERENCE_METERS) / DRIVING_MOTOR_REDUCTION;
 
         public static final double DRIVE_ENCODER_POSITION_FACTOR = (WHEEL_DIAMETER_METERS * Math.PI)
-            / DRIVING_MOTOR_REDUCTION; // meters
+                / DRIVING_MOTOR_REDUCTION; // meters
 
         public static final double DRIVE_ENCODER_VELOCITY_FACTOR = ((WHEEL_DIAMETER_METERS * Math.PI)
-            / DRIVING_MOTOR_REDUCTION) / 60.0; // meters per second
+                / DRIVING_MOTOR_REDUCTION) / 60.0; // meters per second
 
         public static final double TURNING_ENCODER_POSITION_FACTOR = (2 * Math.PI); // radians
 
@@ -163,4 +163,21 @@ public final class Constants {
         double V = 0;
         double G = 0;
     }
-}
+
+    public interface Manipulator {
+        public static final double P = 0;
+        public static final double I = 0.;
+        public static final double D = 0;
+        public static final double V = 0;
+
+        public static final int TOP_MOTOR_CAN_ID = 0;
+        public static final int BOTTOM_MOTOR_CAN_ID = 0;
+        public static final int LATERATOR_MOTOR_CAN_ID = 0;
+        public static final int LATERATOR_LIMIT_SWITCH = 0;
+        public static final int FUNNEL_BEAM_BREAK = 0;
+        public static final int MANIPULATOR_BEAM_BREAK_A = 0;
+        public static final int MANIPULATOR_BEAM_BREAK_B = 0;
+
+        public static final double MAX_LATERATOR_POSITION = 0.0;
+    }
+} // Evan is not cool. Ved is cool.

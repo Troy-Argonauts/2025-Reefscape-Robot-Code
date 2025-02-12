@@ -11,6 +11,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.robot.subsystems.Elevator;
 import frc.robot.subsystems.SwerveSubsystem;
+import frc.robot.subsystems.Manipulator;
 
 /**
  * The VM is configured to automatically run this class, and to call the methods
@@ -25,7 +26,8 @@ public class Robot extends TimedRobot {
     private Command m_autonomousCommand;
     private static SwerveSubsystem drivetrain;
     private static Elevator elevator;
-    private final RobotContainer m_robotContainer;
+    private static Manipulator manipulator;
+    private static RobotContainer robotContainer;
 
     /**
      * This function is run when the robot is first started up and should be used
@@ -38,7 +40,9 @@ public class Robot extends TimedRobot {
         // autonomous chooser on the dashboard.
         elevator = new Elevator();
         drivetrain = new SwerveSubsystem();
-        m_robotContainer = new RobotContainer();
+        manipulator = new Manipulator();
+
+        robotContainer = new RobotContainer();
 
         DataLogManager.start("/media/sda1/logs");
     }
@@ -98,13 +102,23 @@ public class Robot extends TimedRobot {
     public void simulationPeriodic() {
     }
 
+    /**
+     * Gets the Elevator object
+     * 
+     * @return Elevator object
+     */
     public static Elevator getElevator() {
-        if (elevator == null){
+        if (elevator == null) {
             elevator = new Elevator();
         }
         return elevator;
     }
 
+    /**
+     * Gets the SwerveSubsystem object
+     * 
+     * @return SwerveSubsystem object
+     */
     public static SwerveSubsystem getDrivetrain() {
         if (drivetrain == null) {
             drivetrain = new SwerveSubsystem();
@@ -112,4 +126,25 @@ public class Robot extends TimedRobot {
         return drivetrain;
     }
 
+    /**
+     * Gets the Manipulator object
+     * 
+     * @return Manipulator object
+     */
+    public static Manipulator getManipulator() {
+        if (manipulator == null)
+            manipulator = new Manipulator();
+        return manipulator;
+    }
+
+    /**
+     * Gets the RobotContainer object
+     * 
+     * @return RobotContainer object
+     */
+    public static RobotContainer getRobotContainer() {
+        if (robotContainer == null)
+        robotContainer = new RobotContainer();
+        return robotContainer;
+    }
 }

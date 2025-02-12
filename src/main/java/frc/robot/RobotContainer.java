@@ -4,7 +4,9 @@
 
 package frc.robot;
 
-import edu.wpi.first.wpilibj2.command.*;
+import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 
 /**
@@ -53,8 +55,7 @@ public class RobotContainer {
 
         driver.x().whileTrue(
                 new InstantCommand(() -> Robot.getDrivetrain().setXState(true))).whileFalse(
-                        new InstantCommand(() -> Robot.getDrivetrain().setXState(false))
-        );
+                        new InstantCommand(() -> Robot.getDrivetrain().setXState(false)));
 
     }
 
@@ -63,6 +64,16 @@ public class RobotContainer {
     }
 
     public static CommandXboxController getOperator() {
-	    return operator;
+        return operator;
+    }
+
+    /**
+     * Use this to pass the autonomous command to the main {@link Robot} class.
+     *
+     * @return the command to run in autonomous
+     */
+    public Command getAutonomousCommand() {
+        // An example command will be run in autonomous
+        return null;
     }
 }
