@@ -20,12 +20,14 @@ import frc.robot.Constants;
  */
 public class Climber extends SubsystemBase{
     private TalonFX armMotorLeft, armMotorRight, alignMotor, tongueMotor;
+
     private DigitalInput armLimit, tongueLimit, alignLimit;
 
     private DoubleLogEntry LeftArmMotorPosition;
     private DoubleLogEntry RightArmMotorPosition;
     private DoubleLogEntry AlignmentMotorPosition;
     private DoubleLogEntry TongueMotorPosition;
+    
     private DoubleLogEntry ClimberLeftOutputCurrentLog;
     private DoubleLogEntry ClimberRightOutputCurrentLog;
     private DoubleLogEntry ClimberAlignOutputCurrentLog;
