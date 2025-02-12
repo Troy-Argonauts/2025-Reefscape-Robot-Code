@@ -281,7 +281,7 @@ public class Manipulator extends SubsystemBase {
 
 
     /**
-     * Sets the manipulator motors desired target
+     * Sets the manipulator motors desired target, expects RPM
      * @param target the target to set for the manipulator motor, needs RPM
      */
     public void setManipDesiredTarget(double target) {
@@ -289,7 +289,7 @@ public class Manipulator extends SubsystemBase {
     }
 
     /**
-     * Sets the manipulator motors state (Expecting RPM)
+     * Sets the manipulator motors state (Expecting manipulater state)
      * @param state the state to set for the manipulator motor
      */
     public void setManipState(ManipulatorStates state) {
