@@ -14,10 +14,10 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 /**
- * The Climber subsystem controls the motors and sensors associated with the robot's climber mechanism.
- * 
- * @author firearcher2012, Evan13019, shaquilleinoatmeal
- */
+* The Climber subsystem controls the motors and sensors associated with the robot's climber mechanism.
+* 
+* @author firearcher2012, Evan13019, shaquilleinoatmeal
+*/
 public class Climber extends SubsystemBase{
     private TalonFX armMotorLeft, armMotorRight, alignMotor, tongueMotor;
 
@@ -35,10 +35,10 @@ public class Climber extends SubsystemBase{
 
 
     /**
-     * Initializes the Climber subsystem with the motors and sensors.
-     * 
-     * @author firearcher2012, Evan13019, shaquilleinoatmeal
-     */
+    * Initializes the Climber subsystem with the motors and sensors.
+    * 
+    * @author firearcher2012, Evan13019, shaquilleinoatmeal
+    */
     public Climber() {
         armMotorLeft = new TalonFX(Constants.Climber.LEFT_MOTOR_ID);
         armMotorRight = new TalonFX(Constants.Climber.RIGHT_MOTOR_ID);
@@ -85,8 +85,8 @@ public class Climber extends SubsystemBase{
     }
 
     /**
-     * This method is called periodically and logs motor current values to the dashboard.
-     */
+    * This method is called periodically and logs motor current values to the dashboard.
+    */
     @Override
     public void periodic() {
         leftArmMotorPosition.append(armMotorLeft.getPosition().getValueAsDouble());
@@ -109,82 +109,82 @@ public class Climber extends SubsystemBase{
     }
 
     /**
-        * This method retrieves the current state of the arm limit switch.
-        *
-        * @return a boolean value representing the state of the arm limit switch;
-        *         true if the limit switch is activated, false otherwise.
+    * This method retrieves the current state of the arm limit switch.
+    *
+    * @return a boolean value representing the state of the arm limit switch;
+    *         true if the limit switch is activated, false otherwise.
     */
     public boolean getArmLimit() {
         return armLimit.get();
     }
 
     /**
-        * This method retrieves the current state of the tongue limit switch.
-        *
-        * @return a boolean value representing the state of the tongue limit switch;
-        *         true if the limit switch is activated, false otherwise.
+    * This method retrieves the current state of the tongue limit switch.
+    *
+    * @return a boolean value representing the state of the tongue limit switch;
+    *         true if the limit switch is activated, false otherwise.
     */
     public boolean getTongueLimit() {
         return tongueLimit.get();
     }
 
     /**
-         This method retrieves the current state of the alignment limit switch.
-        *
-        * @return a boolean value representing the state of the alignment limit switch; 
-        *         true if the limit switch is activated, false otherwise.
+    * This method retrieves the current state of the alignment limit switch.
+    *
+    * @return a boolean value representing the state of the alignment limit switch; 
+    *         true if the limit switch is activated, false otherwise.
     */
     public boolean getAlignmentLimit() {
         return alignLimit.get();
     }
 
     /**
-     * States for the Tongue motor.
-     */
+    * States for the Tongue motor.
+    */
     public enum TongueStates{
-        TONGUE_IN,
+        IN,
 
-        TONGUE_OUT,
+        OUT,
 
-        TONGUE_OFF;
+        OFF;
     }
 
     /**
-     * States for the Alignment motor.
-     */
+    * States for the Alignment motor.
+    */
     public enum AlignStates{
-        ALIGN_IN,
+        IN,
 
-        ALIGN_OUT,
+        OUT,
 
-        ALIGN_OFF;
+        OFF;
     }
 
     /**
-     * States for the Arm motor.
-     */
+    * States for the Arm motor.
+    */
     public enum ArmStates{
-        ARM_IN,
+        IN,
 
-        ARM_OUT,
+        OUT,
 
-        ARM_OFF;
+        OFF;
     }
 
     /**
-     * Sets the state of the Tongue motor.
-     * 
-     * @param state The state to set the tongue motor to.
-     */
+    * Sets the state of the Tongue motor.
+    * 
+    * @param state The state to set the tongue motor to.
+    */
     public void setTongueState(TongueStates state) {
         switch (state){
-            case TONGUE_IN:
+            case IN:
                 tongueMotor.set(0);
                 break;
-            case TONGUE_OFF:
+            case OFF:
                 tongueMotor.set(0);
                 break;
-            case TONGUE_OUT:
+            case OUT:
                 tongueMotor.set(0);
                 break;
         }
@@ -192,19 +192,19 @@ public class Climber extends SubsystemBase{
     }
 
      /**
-     * Sets the state of the Alignment motor.
-     * 
-     * @param state The state to set the alignment motor to.
-     */
+    * Sets the state of the Alignment motor.
+    * 
+    * @param state The state to set the alignment motor to.
+    */
     public void setAlignState(AlignStates state) {
         switch (state){
-            case ALIGN_IN:
+            case IN:
                 alignMotor.set(0);
                 break;
-            case ALIGN_OFF:
+            case OFF:
                 alignMotor.set(0);
                 break;
-            case ALIGN_OUT:
+            case OUT:
                 alignMotor.set(0);
                 break;
         }
@@ -212,19 +212,19 @@ public class Climber extends SubsystemBase{
     }
 
      /**
-        * Sets the state of the climber mechanism.
-        * 
-        * @param state The state to set the climber to.
+    * Sets the state of the climber mechanism.
+    * 
+    * @param state The state to set the climber to.
     */
     public void setArmState(ArmStates state) {
         switch (state){
-            case ARM_IN:
+            case IN:
                 armMotorLeft.set(0);
                 break;
-            case ARM_OFF:
+            case OFF:
                 armMotorLeft.set(0);
                 break;
-            case ARM_OUT:
+            case OUT:
                 armMotorLeft.set(0);
                 break;
         }
@@ -232,12 +232,14 @@ public class Climber extends SubsystemBase{
     }
 
     /**
-        * Sets the raw power of the arm motors.
-        * 
-        * @param power Raw power (-1.0 to 1.0)
+    * Sets the raw power of the arm motors.
+    * 
+    * @param power Raw power (-1.0 to 1.0)
     */
     public void setRawPower(double power){
         armMotorLeft.set(power);
         armMotorRight.set(power);
+        alignMotor.set(power);
+        tongueMotor.set(power);
     }
 }
