@@ -11,8 +11,6 @@ package frc.robot;
  *
  * <p>It is advised to statically import this class (or one of its inner classes) wherever the
  * constants are needed, to reduce verbosity.
- * 
- * @author firearcher2012, Evan13019, shaquilleinoatmeal
  */
 public final class Constants {
     public interface Climber {
