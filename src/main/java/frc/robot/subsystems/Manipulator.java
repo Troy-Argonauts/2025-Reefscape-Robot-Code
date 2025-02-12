@@ -117,7 +117,7 @@ public class Manipulator extends SubsystemBase {
         SmartDashboard.putNumber("Current Roller Velocity", currentManipRPM);
         SmartDashboard.putNumber("Desired Roller Velocity", manipTargetRPM);
 
-        topMotor.setControl(velocityVoltage.withVelocity(manipTargetRPM / 60));
+        run();
 
         if (getLateratorLimit() == true) {
             resetLateratorEncoder();
@@ -182,12 +182,12 @@ public class Manipulator extends SubsystemBase {
      * @return True if the top PID loop has finished, false otherwise.
      */
     public boolean isTopPidFinished() {
-        return (Math.abs(topMotor.getPosition().getValueAsDouble()) <= 50);
+        return (Math.abs(topMotor.getVelocity().getValueAsDouble()) <= 50);
     }
 
     /**
-     * Checks if the limit switch is pressed.
-     * @return True if the limit switch is pressed, false otherwise.
+     * Checks if the limit switch is active.
+     * @return True if the limit switch is active, false otherwise.
      */
     public boolean getLateratorLimit(){
         return lateratorLimit.get();
@@ -219,7 +219,7 @@ public class Manipulator extends SubsystemBase {
 
 
     /**
-     * Returns true if beam break A or B is being triggered
+     * Returns true if beam break A or B is being triggered, this will happen when a coral is ready to score in the manipulator.
      * @return true if either beam break A or B is true, false if both beam breaks are false
      */
     public boolean isCoralReady() {
@@ -232,8 +232,8 @@ public class Manipulator extends SubsystemBase {
 
     // Evan is cool***!!!
     /**
-     * Gets the current velocity of the manipulator.
-     * @return The current velocity of the manipulator in RPM.
+     * Gets the current average velocity of the manipulator.
+     * @return The current average velocity of the manipulator in RPM.
      */
     public double getAverageRPM() {
         return (topMotor.getVelocity().getValueAsDouble() + bottomMotor.getVelocity().getValueAsDouble()) / (2 * 60);
@@ -282,7 +282,7 @@ public class Manipulator extends SubsystemBase {
 
     /**
      * Sets the manipulator motors desired target
-     * @param target the target to set for the manipulator motor 
+     * @param target the target to set for the manipulator motor, needs RPM
      */
     public void setManipDesiredTarget(double target) {
         manipTargetRPM = target;
@@ -298,33 +298,14 @@ public class Manipulator extends SubsystemBase {
     }
 
     /**
-     * Sets laterator raw power to 0.3 until hits max position
-     */
-    public void lateratorIN() {
-        while (getCurrentLateratorPosition() < Constants.Manipulator.MAX_LATERATOR_POSITION) {
-            setLateratorRawPower(0.3);
-        }
-    }
-
-    /**
-     * sets laterator raw power to -0.3 until hits 0
-     */
-    public void lateratorOUT() {
-        while (getCurrentLateratorPosition() > 0) {
-            setLateratorRawPower(-0.3);
-        }
-    }
-
-
-    /**
-     * resets laterator motor encoder
+     * Resets laterator motor encoder
      */
     public void resetLateratorEncoder() {
         lateratorMotor.setPosition(0);
     }
 
     /**
-     * applies rpm and coasts when state off
+     * Runs the PID control on each Manipulator motor, and sets the motors' control mode to CoastOut when Manipulator state is off.
      */
     public void run() {
         if (manipulatorState == ManipulatorStates.OFF) {
