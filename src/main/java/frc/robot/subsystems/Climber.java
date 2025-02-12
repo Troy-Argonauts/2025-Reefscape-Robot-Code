@@ -126,21 +126,31 @@ public class Climber extends SubsystemBase{
     }
 
     /**
-     * States for the climber mechanism.
+     * States for the Tongue motor.
      */
-    public enum ClimberStates{
+    public enum TongueStates{
         TONGUE_IN,
 
         TONGUE_OUT,
 
-        TONGUE_OFF,
+        TONGUE_OFF;
+    }
 
+    /**
+     * States for the Alignment motor.
+     */
+    public enum AlignStates{
         ALIGN_IN,
 
         ALIGN_OUT,
 
-        ALIGN_OFF,
+        ALIGN_OFF;
+    }
 
+    /**
+     * States for the Arm motor.
+     */
+    public enum ArmStates{
         ARM_IN,
 
         ARM_OUT,
@@ -149,65 +159,60 @@ public class Climber extends SubsystemBase{
     }
 
     /**
-     * Sets the state of the climber mechanism.
+     * Sets the state of the Tongue motor.
      * 
-     * @param state The state to set the climber to.
+     * @param state The state to set the tongue motor to.
      */
-    public void setState(ClimberStates state) {
+    public void setTongueState(TongueStates state) {
         switch (state){
             case TONGUE_IN:
-                armMotorLeft.set(0);
-                armMotorRight.set(0);
-                alignMotor.set(0);
                 tongueMotor.set(0);
                 break;
             case TONGUE_OFF:
-                armMotorLeft.set(0);
-                armMotorRight.set(0);
-                alignMotor.set(0);
                 tongueMotor.set(0);
                 break;
             case TONGUE_OUT:
-                armMotorLeft.set(0);
-                armMotorRight.set(0);
-                alignMotor.set(0);
                 tongueMotor.set(0);
                 break;
+        }
+        //Change values above
+    }
+
+     /**
+     * Sets the state of the Alignment motor.
+     * 
+     * @param state The state to set the alignment motor to.
+     */
+    public void setAlignState(AlignStates state) {
+        switch (state){
             case ALIGN_IN:
-                armMotorLeft.set(0);
-                armMotorRight.set(0);
                 alignMotor.set(0);
-                tongueMotor.set(0);
                 break;
             case ALIGN_OFF:
-                armMotorLeft.set(0);
-                armMotorRight.set(0);
                 alignMotor.set(0);
-                tongueMotor.set(0);
                 break;
             case ALIGN_OUT:
-                armMotorLeft.set(0);
-                armMotorRight.set(0);
                 alignMotor.set(0);
-                tongueMotor.set(0);
                 break;
+        }
+        //Change values above
+    }
+
+     /**
+     * Sets the state of the Arm motors.
+     * 
+     * @param state The state to set the arm motors to.
+     */
+    public void setArmState(ArmStates state) {
+        switch (state){
             case ARM_IN:
                 armMotorLeft.set(0);
-                armMotorRight.set(0);
-                alignMotor.set(0);
-                tongueMotor.set(0);
                 break;
             case ARM_OFF:
                 armMotorLeft.set(0);
-                armMotorRight.set(0);
-                alignMotor.set(0);
-                tongueMotor.set(0);
                 break;
             case ARM_OUT:
                 armMotorLeft.set(0);
-                armMotorRight.set(0);
-                alignMotor.set(0);
-                tongueMotor.set(0);
                 break;
         }
         //Change values above
