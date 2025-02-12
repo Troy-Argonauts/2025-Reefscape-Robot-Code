@@ -23,15 +23,15 @@ public class Climber extends SubsystemBase{
 
     private DigitalInput armLimit, tongueLimit, alignLimit;
 
-    private DoubleLogEntry LeftArmMotorPosition;
-    private DoubleLogEntry RightArmMotorPosition;
-    private DoubleLogEntry AlignmentMotorPosition;
-    private DoubleLogEntry TongueMotorPosition;
+    private DoubleLogEntry leftArmMotorPosition;
+    private DoubleLogEntry rightArmMotorPosition;
+    private DoubleLogEntry alignmentMotorPosition;
+    private DoubleLogEntry tongueMotorPosition;
 
-    private DoubleLogEntry ClimberLeftOutputCurrentLog;
-    private DoubleLogEntry ClimberRightOutputCurrentLog;
-    private DoubleLogEntry ClimberAlignOutputCurrentLog;
-    private DoubleLogEntry ClimberTongueOutputCurrentLog;
+    private DoubleLogEntry climberLeftOutputCurrentLog;
+    private DoubleLogEntry climberRightOutputCurrentLog;
+    private DoubleLogEntry climberAlignOutputCurrentLog;
+    private DoubleLogEntry climberTongueOutputCurrentLog;
 
 
     /**
@@ -71,15 +71,15 @@ public class Climber extends SubsystemBase{
 
         DataLog log = DataLogManager.getLog();
 
-        LeftArmMotorPosition = new DoubleLogEntry(log, "LeftArmMotorPosition");
-        RightArmMotorPosition = new DoubleLogEntry(log, "RightArmMotorPosition");
-        AlignmentMotorPosition = new DoubleLogEntry(log, "AlignmentMotorPosition");
-        TongueMotorPosition = new DoubleLogEntry(log, "TongueMotorPosition");
+        leftArmMotorPosition = new DoubleLogEntry(log, "LeftArmMotorPosition");
+        rightArmMotorPosition = new DoubleLogEntry(log, "RightArmMotorPosition");
+        alignmentMotorPosition = new DoubleLogEntry(log, "AlignmentMotorPosition");
+        tongueMotorPosition = new DoubleLogEntry(log, "TongueMotorPosition");
 
-        ClimberLeftOutputCurrentLog = new DoubleLogEntry(log, "ClimberLeftOutputCurrent");
-        ClimberRightOutputCurrentLog = new DoubleLogEntry(log, "ClimberRightOutputCurrent");
-        ClimberAlignOutputCurrentLog = new DoubleLogEntry(log, "ClimberAlignOutputCurrent");
-        ClimberTongueOutputCurrentLog = new DoubleLogEntry(log, "ClimberToungueOutputCurrent");
+        climberLeftOutputCurrentLog = new DoubleLogEntry(log, "ClimberLeftOutputCurrent");
+        climberRightOutputCurrentLog = new DoubleLogEntry(log, "ClimberRightOutputCurrent");
+        climberAlignOutputCurrentLog = new DoubleLogEntry(log, "ClimberAlignOutputCurrent");
+        climberTongueOutputCurrentLog = new DoubleLogEntry(log, "ClimberToungueOutputCurrent");
 
         armMotorLeft.setControl(new Follower(Constants.Climber.LEFT_MOTOR_ID, true));
     }
@@ -89,15 +89,15 @@ public class Climber extends SubsystemBase{
      */
     @Override
     public void periodic() {
-        LeftArmMotorPosition.append(armMotorLeft.getPosition().getValueAsDouble());
-        RightArmMotorPosition.append(armMotorRight.getPosition().getValueAsDouble());
-        AlignmentMotorPosition.append(alignMotor.getPosition().getValueAsDouble());
-        TongueMotorPosition.append(tongueMotor.getPosition().getValueAsDouble());
+        leftArmMotorPosition.append(armMotorLeft.getPosition().getValueAsDouble());
+        rightArmMotorPosition.append(armMotorRight.getPosition().getValueAsDouble());
+        alignmentMotorPosition.append(alignMotor.getPosition().getValueAsDouble());
+        tongueMotorPosition.append(tongueMotor.getPosition().getValueAsDouble());
 
-        ClimberLeftOutputCurrentLog.append(armMotorLeft.getSupplyCurrent().getValueAsDouble());
-        ClimberRightOutputCurrentLog.append(armMotorRight.getSupplyCurrent().getValueAsDouble());
-        ClimberAlignOutputCurrentLog.append(alignMotor.getSupplyCurrent().getValueAsDouble());
-        ClimberTongueOutputCurrentLog.append(tongueMotor.getSupplyCurrent().getValueAsDouble());
+        climberLeftOutputCurrentLog.append(armMotorLeft.getSupplyCurrent().getValueAsDouble());
+        climberRightOutputCurrentLog.append(armMotorRight.getSupplyCurrent().getValueAsDouble());
+        climberAlignOutputCurrentLog.append(alignMotor.getSupplyCurrent().getValueAsDouble());
+        climberTongueOutputCurrentLog.append(tongueMotor.getSupplyCurrent().getValueAsDouble());
 
         SmartDashboard.putBoolean("Arm Limit Switch", getArmLimit());
         SmartDashboard.putBoolean("Tongue Limit Switch", getTongueLimit());
@@ -109,22 +109,31 @@ public class Climber extends SubsystemBase{
     }
 
     /**
-     * @return the state of the arm limit switch.
-     */
+        * This method retrieves the current state of the arm limit switch.
+        *
+        * @return a boolean value representing the state of the arm limit switch;
+        *         true if the limit switch is activated, false otherwise.
+    */
     public boolean getArmLimit() {
         return armLimit.get();
     }
 
     /**
-     * @return the state of the tongue limit switch.
-     */
+        * This method retrieves the current state of the tongue limit switch.
+        *
+        * @return a boolean value representing the state of the tongue limit switch;
+        *         true if the limit switch is activated, false otherwise.
+    */
     public boolean getTongueLimit() {
         return tongueLimit.get();
     }
 
     /**
-     * @return the state of the alignment limit switch.
-     */
+         This method retrieves the current state of the alignment limit switch.
+        *
+        * @return a boolean value representing the state of the alignment limit switch; 
+        *         true if the limit switch is activated, false otherwise.
+    */
     public boolean getAlignmentLimit() {
         return alignLimit.get();
     }
@@ -203,10 +212,10 @@ public class Climber extends SubsystemBase{
     }
 
      /**
-     * Sets the state of the Arm motors.
-     * 
-     * @param state The state to set the arm motors to.
-     */
+        * Sets the state of the climber mechanism.
+        * 
+        * @param state The state to set the climber to.
+    */
     public void setArmState(ArmStates state) {
         switch (state){
             case ARM_IN:
@@ -223,10 +232,10 @@ public class Climber extends SubsystemBase{
     }
 
     /**
-     * Sets the power of the arm motors.
-     * 
-     * @param power The power to set the arm motors to.
-     */
+        * Sets the raw power of the arm motors.
+        * 
+        * @param power Raw power (-1.0 to 1.0)
+    */
     public void setRawPower(double power){
         armMotorLeft.set(power);
         armMotorRight.set(power);
