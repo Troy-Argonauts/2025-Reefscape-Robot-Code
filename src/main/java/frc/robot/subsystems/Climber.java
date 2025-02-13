@@ -33,6 +33,10 @@ public class Climber extends SubsystemBase{
     private DoubleLogEntry climberAlignOutputCurrentLog;
     private DoubleLogEntry climberTongueOutputCurrentLog;
 
+    public double armCurrentPosition;
+    public double tongueCurrentPosition;
+    public double alignCurrentPosition;
+
 
     /**
     * Initializes the Climber subsystem with the motors and sensors.
@@ -45,9 +49,9 @@ public class Climber extends SubsystemBase{
         alignMotor = new TalonFX(Constants.Climber.ALIGN_MOTOR_ID);
         tongueMotor = new TalonFX(Constants.Climber.TONGUE_MOTOR_ID);
 
-        armLimit = new DigitalInput(0);
-        tongueLimit = new DigitalInput(1);
-        alignLimit = new DigitalInput(2);
+        armLimit = new DigitalInput(Constants.Climber.ARM_LIMIT_SWITCH);
+        tongueLimit = new DigitalInput(Constants.Climber.TONGUE_LIMIT_SWITCH);
+        alignLimit = new DigitalInput(Constants.Climber.ALIGN_LIMIT_SWITCH);
         
         armMotorLeft.setNeutralMode(NeutralModeValue.Brake);
         armMotorRight.setNeutralMode(NeutralModeValue.Brake);
@@ -71,15 +75,15 @@ public class Climber extends SubsystemBase{
 
         DataLog log = DataLogManager.getLog();
 
-        leftArmMotorPosition = new DoubleLogEntry(log, "LeftArmMotorPosition");
-        rightArmMotorPosition = new DoubleLogEntry(log, "RightArmMotorPosition");
-        alignmentMotorPosition = new DoubleLogEntry(log, "AlignmentMotorPosition");
-        tongueMotorPosition = new DoubleLogEntry(log, "TongueMotorPosition");
+        leftArmMotorPosition = new DoubleLogEntry(log, "Left ArmMotor Position");
+        rightArmMotorPosition = new DoubleLogEntry(log, "Right ArmMotor Position");
+        alignmentMotorPosition = new DoubleLogEntry(log, "Alignment Motor Position");
+        tongueMotorPosition = new DoubleLogEntry(log, "Tongue Motor Position");
 
-        climberLeftOutputCurrentLog = new DoubleLogEntry(log, "ClimberLeftOutputCurrent");
-        climberRightOutputCurrentLog = new DoubleLogEntry(log, "ClimberRightOutputCurrent");
-        climberAlignOutputCurrentLog = new DoubleLogEntry(log, "ClimberAlignOutputCurrent");
-        climberTongueOutputCurrentLog = new DoubleLogEntry(log, "ClimberToungueOutputCurrent");
+        climberLeftOutputCurrentLog = new DoubleLogEntry(log, "Climber Left Output Current");
+        climberRightOutputCurrentLog = new DoubleLogEntry(log, "Climber Right Output Current");
+        climberAlignOutputCurrentLog = new DoubleLogEntry(log, "Climber Align Output Current");
+        climberTongueOutputCurrentLog = new DoubleLogEntry(log, "Climber Toungue Output Current");
 
         armMotorLeft.setControl(new Follower(Constants.Climber.LEFT_MOTOR_ID, true));
     }
@@ -106,6 +110,21 @@ public class Climber extends SubsystemBase{
         SmartDashboard.putNumber("Arm 2 Encoder Position", armMotorRight.getPosition().getValueAsDouble());
         SmartDashboard.putNumber("Alignment Encoder Position", alignMotor.getPosition().getValueAsDouble());
         SmartDashboard.putNumber("Tongue Encoder Position", tongueMotor.getPosition().getValueAsDouble());
+
+        run(null);
+
+        if (getArmLimit() == true) {
+            resetArmEncoder();
+        }
+
+        if (getAlignmentLimit() == true) {
+            resetAlignEncoder();
+        }
+
+        if (getTongueLimit() == true) {
+            resetTongueEncoder();
+        }
+        
     }
 
     /**
@@ -179,14 +198,11 @@ public class Climber extends SubsystemBase{
     public void setTongueState(TongueStates state) {
         switch (state){
             case IN:
-                tongueMotor.set(0);
-                break;
+                setTongueRawPower(-0.3);
             case OFF:
-                tongueMotor.set(0);
-                break;
+                setTongueRawPower(0.3);
             case OUT:
-                tongueMotor.set(0);
-                break;
+                setTongueRawPower(0);
         }
         //Change values above
     }
@@ -199,14 +215,11 @@ public class Climber extends SubsystemBase{
     public void setAlignState(AlignStates state) {
         switch (state){
             case IN:
-                alignMotor.set(0);
-                break;
+                setAlignRawPower(-0.3);
             case OFF:
-                alignMotor.set(0);
-                break;
+                setAlignRawPower(0.3);
             case OUT:
-                alignMotor.set(0);
-                break;
+                setAlignRawPower(0);
         }
         //Change values above
     }
@@ -219,27 +232,72 @@ public class Climber extends SubsystemBase{
     public void setArmState(ArmStates state) {
         switch (state){
             case IN:
-                armMotorLeft.set(0);
-                break;
+                setArmRawPower(-0.3);
             case OFF:
-                armMotorLeft.set(0);
-                break;
+                setArmRawPower(0.3);
             case OUT:
-                armMotorLeft.set(0);
-                break;
+                setArmRawPower(0);
         }
         //Change values above
     }
 
-    /**
-    * Sets the raw power of the arm motors.
-    * 
-    * @param power Raw power (-1.0 to 1.0)
-    */
-    public void setRawPower(double power){
-        armMotorLeft.set(power);
+    public boolean ArmExtended() {
+        if (armMotorLeft.getPosition().getValueAsDouble() >= Constants.Climber.MAX_ARM_POSITION) {
+            return true;
+        }
+        return false;
+    }
+
+    public boolean TongueExtended() {
+        if (tongueMotor.getPosition().getValueAsDouble() >= Constants.Climber.MAX_Tongue_POSITION) {
+            return true;
+        }
+        return false;
+    }
+
+    public boolean AlignExtended() {
+        if (alignMotor.getPosition().getValueAsDouble() >= Constants.Climber.MAX_Align_POSITION) {
+            return true;
+        }
+        return false;
+    }
+
+    public void resetArmEncoder(){
+        armMotorLeft.setPosition(0);
+        armMotorRight.setPosition(0);
+    }
+
+    public void resetAlignEncoder(){
+        alignMotor.setPosition(0);
+    }
+
+    public void resetTongueEncoder(){
+        tongueMotor.setPosition(0);
+    }
+
+    
+    public void setArmRawPower(double power){
         armMotorRight.set(power);
-        alignMotor.set(power);
+        armMotorLeft.set(power);
+    }
+
+    public void setTongueRawPower(double power){
         tongueMotor.set(power);
+    }
+
+    public void setAlignRawPower(double power){
+        alignMotor.set(power);
+    }
+
+    public double getCurrentTonguePosition() {
+        return tongueCurrentPosition;
+    }
+
+    public double getCurrentAlignPosition() {
+        return alignCurrentPosition;
+    }
+
+    public double getCurrentArmPosition() {
+        return armCurrentPosition;
     }
 }
