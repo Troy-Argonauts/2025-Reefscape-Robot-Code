@@ -85,7 +85,7 @@ public class Climber extends SubsystemBase{
         climberAlignOutputCurrentLog = new DoubleLogEntry(log, "Climber Align Output Current");
         climberTongueOutputCurrentLog = new DoubleLogEntry(log, "Climber Toungue Output Current");
 
-        armMotorLeft.setControl(new Follower(Constants.Climber.LEFT_MOTOR_ID, true));
+        armMotorRight.setControl(new Follower(Constants.Climber.LEFT_MOTOR_ID, true));
     }
 
     /**
