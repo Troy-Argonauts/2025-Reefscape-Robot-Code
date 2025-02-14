@@ -38,7 +38,8 @@ public class Manipulator extends SubsystemBase {
     
     private DigitalInput lateratorLimit;
 
-    private DigitalInput funnel;
+    private DigitalInput funnelBeamBreakA;
+    private DigitalInput funnelBeamBreakB;
     private DigitalInput manipulatorA;
     private DigitalInput manipulatorB;
 
@@ -62,7 +63,8 @@ public class Manipulator extends SubsystemBase {
 
         lateratorLimit = new DigitalInput(Constants.Manipulator.LATERATOR_LIMIT_SWITCH);
 
-        funnel = new DigitalInput(Constants.Manipulator.FUNNEL_BEAM_BREAK);
+        funnelBeamBreakA = new DigitalInput(Constants.Manipulator.FUNNEL_BEAM_BREAK_A);
+        funnelBeamBreakB = new DigitalInput(Constants.Manipulator.FUNNEL_BEAM_BREAK_B);
         manipulatorA = new DigitalInput(Constants.Manipulator.MANIPULATOR_BEAM_BREAK_A);
         manipulatorB = new DigitalInput(Constants.Manipulator.MANIPULATOR_BEAM_BREAK_B);
 
@@ -93,8 +95,8 @@ public class Manipulator extends SubsystemBase {
         DataLog log = DataLogManager.getLog();
 
         currentManipRPMLog = new DoubleLogEntry((log), "Current Manipulator RPM");
-        topMotorSupplyCurrentLog = new DoubleLogEntry((log), "Top Motor Supply Current");
-        bottomMotorSupplyCurrentLog = new DoubleLogEntry(log, "Bottom Motor Supply Current");
+        topMotorSupplyCurrentLog = new DoubleLogEntry((log), "Top Manipulator Motor Supply Current");
+        bottomMotorSupplyCurrentLog = new DoubleLogEntry(log, "Bottom Manipulator Motor Supply Current");
         lateratorMotorSupplyCurrentLog = new DoubleLogEntry(log, "Laterator Motor Supply Current");
 
     }
@@ -192,11 +194,19 @@ public class Manipulator extends SubsystemBase {
     }
 
     /**
-     * Checks if the funnel beam break is detected.
-     * @return True if the funnel beam break is detected, false otherwise.
+     * Checks if the funnel beam break A is detected.
+     * @return True if the funnel beam break A is detected, false otherwise.
      */
-    public boolean getFunnelBeamBreak() {
-        return funnel.get();
+    public boolean getFunnelBeamBreakA() {
+        return funnelBeamBreakA.get();
+    }
+
+     /**
+     * Checks if the funnel beam break B is detected.
+     * @return True if the funnel beam break B is detected, false otherwise.
+     */
+    public boolean getFunnelBeamBreakB() {
+        return funnelBeamBreakB.get();
     }
 
     /**
@@ -311,5 +321,13 @@ public class Manipulator extends SubsystemBase {
         } else {
             topMotor.setControl(velocityVoltage.withVelocity(manipTargetRPM / 60));
         }
+    }
+
+    /**
+     * Returns whether a coral has entered the funnel
+     * @return whether coral has entered funnels
+     */
+    public boolean hasCoralEntered() {
+        return getFunnelBeamBreakA()||getFunnelBeamBreakB();
     }
 }
