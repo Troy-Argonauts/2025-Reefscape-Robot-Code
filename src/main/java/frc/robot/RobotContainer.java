@@ -6,8 +6,13 @@ package frc.robot;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import frc.robot.subsystems.Climber.ArmStates;
+import frc.robot.subsystems.Elevator.ElevatorStates;
+import frc.robot.subsystems.Manipulator.LateratorStates;
+import frc.robot.subsystems.Manipulator.ManipulatorStates;
 
 /**
  * This class is where the bulk of the robot should be declared. Since
@@ -56,6 +61,45 @@ public class RobotContainer {
         driver.x().whileTrue(
                 new InstantCommand(() -> Robot.getDrivetrain().setXState(true))).whileFalse(
                         new InstantCommand(() -> Robot.getDrivetrain().setXState(false)));
+
+        operator.y().onTrue(
+          new InstantCommand(() -> Robot.getElevator().setDesiredState(ElevatorStates.LV4))
+        );
+
+        operator.x().onTrue(
+          new InstantCommand(() -> Robot.getElevator().setDesiredState(ElevatorStates.LV3))
+        );
+
+        operator.b().onTrue(
+          new InstantCommand(() -> Robot.getElevator().setDesiredState(ElevatorStates.LV2))
+        );
+
+        operator.a().onTrue(
+          new InstantCommand(() -> Robot.getElevator().setDesiredState(ElevatorStates.LV1))
+        );
+
+        operator.leftBumper().onTrue(
+          new ParallelCommandGroup(
+            new InstantCommand(() -> Robot.getElevator().setDesiredState(ElevatorStates.LV1)),
+            new InstantCommand(() -> Robot.getManipulator().setLateratorState(LateratorStates.IN))
+          )
+        );
+
+        operator.rightBumper().onTrue(
+          new InstantCommand(() -> Robot.getManipulator().setManipState(ManipulatorStates.IN))
+        );
+
+        operator.rightTrigger().onTrue(
+          new InstantCommand(() -> Robot.getManipulator().setManipState(ManipulatorStates.OUT))
+        );
+
+        operator.povUp().onTrue(
+          new InstantCommand(() -> Robot.getManipulator().setLateratorState(LateratorStates.IN))
+        );
+
+        operator.povDown().onTrue(
+          new InstantCommand(() -> Robot.getManipulator().setLateratorState(LateratorStates.OUT))
+        );
 
     }
 
