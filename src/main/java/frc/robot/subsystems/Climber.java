@@ -16,7 +16,7 @@ import frc.robot.Constants;
 /**
 * The Climber subsystem controls the motors and sensors associated with the robot's climber mechanism.
 * 
-* @author firearcher2012, Evan13019, shaquilleinoatmeal
+* @author ASH-will-WIN, firearcher2012, Evan13019, shaquilleinoatmeal, sanjayshank
 */
 public class Climber extends SubsystemBase{
     private TalonFX armMotorLeft, armMotorRight, alignMotor, tongueMotor;
@@ -114,7 +114,7 @@ public class Climber extends SubsystemBase{
         run(null);
 
         if (getArmLimit() == true) {
-            resetArmEncoder();
+            resetArmEncoders();
         }
 
         if (getAlignmentLimit() == true) {
@@ -132,6 +132,7 @@ public class Climber extends SubsystemBase{
     *
     * @return a boolean value representing the state of the arm limit switch;
     *         true if the limit switch is activated, false otherwise.
+    * @author ASH-will-WIN, firearcher2012, Evan13019, shaquilleinoatmeal, sanjayshank
     */
     public boolean getArmLimit() {
         return armLimit.get();
@@ -241,62 +242,132 @@ public class Climber extends SubsystemBase{
         //Change values above
     }
 
-    public boolean ArmExtended() {
+    /**
+     * Returns whether the climber arm is extended or not
+     * 
+     * @return whether the dlimber arm is extended
+     * @author ASH-will-WIN
+     */
+    public boolean isArmExtended() {
         if (armMotorLeft.getPosition().getValueAsDouble() >= Constants.Climber.MAX_ARM_POSITION) {
             return true;
         }
         return false;
     }
 
-    public boolean TongueExtended() {
+    /**
+     * Returns whether the tounge is extended or not
+     * 
+     * @return whether the tounge is extended or not
+     * 
+     */
+    public boolean isTongueExtended() {
         if (tongueMotor.getPosition().getValueAsDouble() >= Constants.Climber.MAX_Tongue_POSITION) {
             return true;
         }
         return false;
     }
 
-    public boolean AlignExtended() {
+
+
+    /**
+     * Returns whether the alignment arm is extended or not
+     * 
+     * @return whether the alignment arm is extended
+     * @author ASH-will-WIN, firearcher2012, Evan13019, shaquilleinoatmeal, sanjayshank
+     */
+    public boolean isAlignExtended() {
         if (alignMotor.getPosition().getValueAsDouble() >= Constants.Climber.MAX_Align_POSITION) {
             return true;
         }
         return false;
     }
 
-    public void resetArmEncoder(){
+    /**
+     * Resets the climber arm encoder position to zero
+     * 
+     * @author ASH-will-WIN
+     */
+    public void resetArmEncoders(){
         armMotorLeft.setPosition(0);
         armMotorRight.setPosition(0);
     }
 
+    /**
+     * Resets the alignment arm encoder position to zero
+     * 
+     * @author ASH-will-WIN
+     */
     public void resetAlignEncoder(){
         alignMotor.setPosition(0);
     }
 
+    /**
+     * Resets the tounge encoder position to zero
+     * 
+     * @author ASH-will-WIN
+     */
     public void resetTongueEncoder(){
         tongueMotor.setPosition(0);
     }
 
-    
+    /**
+     * Sets the arm to a specified raw power
+     * @param power power to set the arm motor raw power to
+     * 
+     * @author ASH-will-WIN
+     */
     public void setArmRawPower(double power){
         armMotorRight.set(power);
         armMotorLeft.set(power);
     }
 
+    /**
+     * Sets the tounge to a specified raw power
+     * @param power power to set the tounge motor raw power to
+     * 
+     * @author ASH-will-WIN
+     */
     public void setTongueRawPower(double power){
         tongueMotor.set(power);
     }
 
+    /**
+     * Sets the alignment arm motor to a specified raw power
+     * @param power power to set the alignment arm motor raw power to 
+     * 
+     * @author ASH-will-WIN
+     */
     public void setAlignRawPower(double power){
         alignMotor.set(power);
     }
 
+    /**
+     * Returns the current tounge motor position
+     * @return current tounge motor position
+     * 
+     * @author ASH-will-WIN
+     */
     public double getCurrentTonguePosition() {
         return tongueCurrentPosition;
     }
 
+    /**
+     * Returns the current alignment motor position
+     * @return current alignment motor position
+     * 
+     * @author ASH-will-WIN
+     */
     public double getCurrentAlignPosition() {
         return alignCurrentPosition;
     }
 
+    /**
+     * Returns the current arm motor position
+     * @return current arm motor position
+     * 
+     * @author ASH-will-WIN
+     */
     public double getCurrentArmPosition() {
         return armCurrentPosition;
     }
