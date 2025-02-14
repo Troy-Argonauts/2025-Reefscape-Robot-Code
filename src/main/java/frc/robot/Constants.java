@@ -17,16 +17,13 @@ public final class Constants {
   
         int LEFT_MOTOR_ID = 1;
         int RIGHT_MOTOR_ID = 2;
-        int ALIGN_MOTOR_ID = 3;
         int TONGUE_MOTOR_ID = 4;
 
         int ARM_LIMIT_SWITCH = 0;
         int TONGUE_LIMIT_SWITCH = 0;
-        int ALIGN_LIMIT_SWITCH = 0;
 
         public static final double MAX_ARM_POSITION = 0.0;
         public static final double MAX_Tongue_POSITION = 0.0;
-        public static final double MAX_Align_POSITION = 0.0;
 
     }
 }
