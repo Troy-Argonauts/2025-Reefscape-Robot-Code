@@ -322,4 +322,12 @@ public class Manipulator extends SubsystemBase {
             topMotor.setControl(velocityVoltage.withVelocity(manipTargetRPM / 60));
         }
     }
+
+    /**
+     * Returns whether a coral has entered the funnel
+     * @return whether coral has entered funnels
+     */
+    public boolean hasCoralEntered() {
+        return getFunnelBeamBreakA()||getFunnelBeamBreakB();
+    }
 }
