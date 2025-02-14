@@ -19,7 +19,7 @@ import frc.robot.Constants;
 * @author ASH-will-WIN, firearcher2012, Evan13019, shaquilleinoatmeal, sanjayshank
 */
 public class Climber extends SubsystemBase{
-    private TalonFX armMotorLeft, armMotorRight, alignMotor, tongueMotor;
+    private TalonFX leftArmMotor, rightArmMotor, alignMotor, tongueMotor;
 
     private DigitalInput armLimit, tongueLimit, alignLimit;
 
@@ -44,8 +44,8 @@ public class Climber extends SubsystemBase{
     * @author firearcher2012, Evan13019, shaquilleinoatmeal
     */
     public Climber() {
-        armMotorLeft = new TalonFX(Constants.Climber.LEFT_MOTOR_ID);
-        armMotorRight = new TalonFX(Constants.Climber.RIGHT_MOTOR_ID);
+        leftArmMotor = new TalonFX(Constants.Climber.LEFT_MOTOR_ID);
+        rightArmMotor = new TalonFX(Constants.Climber.RIGHT_MOTOR_ID);
         alignMotor = new TalonFX(Constants.Climber.ALIGN_MOTOR_ID);
         tongueMotor = new TalonFX(Constants.Climber.TONGUE_MOTOR_ID);
 
@@ -53,8 +53,8 @@ public class Climber extends SubsystemBase{
         tongueLimit = new DigitalInput(Constants.Climber.TONGUE_LIMIT_SWITCH);
         alignLimit = new DigitalInput(Constants.Climber.ALIGN_LIMIT_SWITCH);
         
-        armMotorLeft.setNeutralMode(NeutralModeValue.Brake);
-        armMotorRight.setNeutralMode(NeutralModeValue.Brake);
+        leftArmMotor.setNeutralMode(NeutralModeValue.Brake);
+        rightArmMotor.setNeutralMode(NeutralModeValue.Brake);
         alignMotor.setNeutralMode(NeutralModeValue.Brake);
         tongueMotor.setNeutralMode(NeutralModeValue.Brake);
 
@@ -68,8 +68,8 @@ public class Climber extends SubsystemBase{
         alignMotorConfig.CurrentLimits.SupplyCurrentLimit = 30;
         tongueMotorConfig.CurrentLimits.SupplyCurrentLimit = 40;
 
-        armMotorLeft.getConfigurator().apply(leftMotorConfig);
-        armMotorRight.getConfigurator().apply(rightMotorConfig);
+        leftArmMotor.getConfigurator().apply(leftMotorConfig);
+        rightArmMotor.getConfigurator().apply(rightMotorConfig);
         alignMotor.getConfigurator().apply(alignMotorConfig);
         tongueMotor.getConfigurator().apply(tongueMotorConfig);
 
@@ -85,7 +85,7 @@ public class Climber extends SubsystemBase{
         climberAlignOutputCurrentLog = new DoubleLogEntry(log, "Climber Align Output Current");
         climberTongueOutputCurrentLog = new DoubleLogEntry(log, "Climber Toungue Output Current");
 
-        armMotorRight.setControl(new Follower(Constants.Climber.LEFT_MOTOR_ID, true));
+        rightArmMotor.setControl(new Follower(Constants.Climber.LEFT_MOTOR_ID, true));
     }
 
     /**
@@ -93,26 +93,28 @@ public class Climber extends SubsystemBase{
     */
     @Override
     public void periodic() {
-        leftArmMotorPosition.append(armMotorLeft.getPosition().getValueAsDouble());
-        rightArmMotorPosition.append(armMotorRight.getPosition().getValueAsDouble());
+        leftArmMotorPosition.append(leftArmMotor.getPosition().getValueAsDouble());
+        rightArmMotorPosition.append(rightArmMotor.getPosition().getValueAsDouble());
         alignmentMotorPosition.append(alignMotor.getPosition().getValueAsDouble());
         tongueMotorPosition.append(tongueMotor.getPosition().getValueAsDouble());
 
-        climberLeftOutputCurrentLog.append(armMotorLeft.getSupplyCurrent().getValueAsDouble());
-        climberRightOutputCurrentLog.append(armMotorRight.getSupplyCurrent().getValueAsDouble());
+        climberLeftOutputCurrentLog.append(leftArmMotor.getSupplyCurrent().getValueAsDouble());
+        climberRightOutputCurrentLog.append(rightArmMotor.getSupplyCurrent().getValueAsDouble());
         climberAlignOutputCurrentLog.append(alignMotor.getSupplyCurrent().getValueAsDouble());
         climberTongueOutputCurrentLog.append(tongueMotor.getSupplyCurrent().getValueAsDouble());
 
         SmartDashboard.putBoolean("Arm Limit Switch", getArmLimit());
         SmartDashboard.putBoolean("Tongue Limit Switch", getTongueLimit());
         SmartDashboard.putBoolean("Alignment Limit Switch", getAlignmentLimit());
-        SmartDashboard.putNumber("Arm 1 Encoder Position", armMotorLeft.getPosition().getValueAsDouble());
-        SmartDashboard.putNumber("Arm 2 Encoder Position", armMotorRight.getPosition().getValueAsDouble());
+        SmartDashboard.putNumber("Arm 1 Encoder Position", leftArmMotor.getPosition().getValueAsDouble());
+        SmartDashboard.putNumber("Arm 2 Encoder Position", rightArmMotor.getPosition().getValueAsDouble());
         SmartDashboard.putNumber("Alignment Encoder Position", alignMotor.getPosition().getValueAsDouble());
         SmartDashboard.putNumber("Tongue Encoder Position", tongueMotor.getPosition().getValueAsDouble());
 
-        run(null);
-
+        
+        tongueCurrentPosition = tongueMotor.getPosition().getValueAsDouble();
+        alignCurrentPosition = alignMotor.getPosition().getValueAsDouble();
+        armCurrentPosition = leftArmMotor.getPosition().getValueAsDouble();
         if (getArmLimit() == true) {
             resetArmEncoders();
         }
@@ -248,8 +250,8 @@ public class Climber extends SubsystemBase{
      * @return whether the dlimber arm is extended
      * @author ASH-will-WIN
      */
-    public boolean isArmExtended() {
-        if (armMotorLeft.getPosition().getValueAsDouble() >= Constants.Climber.MAX_ARM_POSITION) {
+    public boolean ArmExtended() {
+        if (armCurrentPosition >= Constants.Climber.MAX_ARM_POSITION) {
             return true;
         }
         return false;
@@ -261,14 +263,12 @@ public class Climber extends SubsystemBase{
      * @return whether the tounge is extended or not
      * 
      */
-    public boolean isTongueExtended() {
-        if (tongueMotor.getPosition().getValueAsDouble() >= Constants.Climber.MAX_Tongue_POSITION) {
+    public boolean TongueExtended() {
+        if (tongueCurrentPosition >= Constants.Climber.MAX_Tongue_POSITION) {
             return true;
         }
         return false;
     }
-
-
 
     /**
      * Returns whether the alignment arm is extended or not
@@ -276,21 +276,20 @@ public class Climber extends SubsystemBase{
      * @return whether the alignment arm is extended
      * @author ASH-will-WIN, firearcher2012, Evan13019, shaquilleinoatmeal, sanjayshank
      */
-    public boolean isAlignExtended() {
-        if (alignMotor.getPosition().getValueAsDouble() >= Constants.Climber.MAX_Align_POSITION) {
+    public boolean AlignExtended() {
+        if (alignCurrentPosition >= Constants.Climber.MAX_Align_POSITION) {
             return true;
         }
         return false;
     }
-
     /**
      * Resets the climber arm encoder position to zero
      * 
      * @author ASH-will-WIN
      */
     public void resetArmEncoders(){
-        armMotorLeft.setPosition(0);
-        armMotorRight.setPosition(0);
+        leftArmMotor.setPosition(0);
+        rightArmMotor.setPosition(0);
     }
 
     /**
@@ -318,8 +317,8 @@ public class Climber extends SubsystemBase{
      * @author ASH-will-WIN
      */
     public void setArmRawPower(double power){
-        armMotorRight.set(power);
-        armMotorLeft.set(power);
+        leftArmMotor.set(power);
+        rightArmMotor.set(power);
     }
 
     /**
