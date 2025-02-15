@@ -28,7 +28,7 @@ public class Elevator extends SubsystemBase {
 
     private DoubleLogEntry elevatorLeftOutputCurrentLog;
     private DoubleLogEntry elevatorRightOutputCurrentLog;
-    private DoubleLogEntry elevatorMasterOutputCurrentLog;
+    private DoubleLogEntry elevatorEncoderLog;
     
 
     TalonFXConfiguration config = new TalonFXConfiguration();
@@ -69,7 +69,7 @@ public class Elevator extends SubsystemBase {
 
         elevatorLeftOutputCurrentLog = new DoubleLogEntry(log, "Elevator Left Output Current");
         elevatorRightOutputCurrentLog = new DoubleLogEntry(log, "Elevator Right Output Current");
-        elevatorMasterOutputCurrentLog = new DoubleLogEntry(log, "Elevator Right Output Current");
+        elevatorEncoderLog = new DoubleLogEntry(log, "Elevator Encoder Value");
     }
 
    
@@ -88,7 +88,7 @@ public class Elevator extends SubsystemBase {
         
         elevatorLeftOutputCurrentLog.append(leftMotor.getSupplyCurrent().getValueAsDouble());
         elevatorRightOutputCurrentLog.append(rightMotor.getSupplyCurrent().getValueAsDouble());
-        elevatorMasterOutputCurrentLog.append(leftMotor.getSupplyCurrent().getValueAsDouble());
+        elevatorEncoderLog.append(leftMotor.getPosition().getValueAsDouble());
 
         leftMotor.setControl(positionVoltage.withPosition(target));
 
