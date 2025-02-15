@@ -147,8 +147,8 @@ public final class Constants {
         public static final double TURNING_MIN_OUTPUT = -1;
         public static final double TURNING_MAX_OUTPUT = 1;
 
-        public static final int DRIVING_MOTOR_CURRENT_LIMIT = 40; // amps
-        public static final int TURNING_MOTOR_CURRENT_LIMIT = 40; // amps
+        public static final int DRIVING_MOTOR_CURRENT_LIMIT = 50; // amps
+        public static final int TURNING_MOTOR_CURRENT_LIMIT = 20; // amps
     }
 
     public interface Elevator {
