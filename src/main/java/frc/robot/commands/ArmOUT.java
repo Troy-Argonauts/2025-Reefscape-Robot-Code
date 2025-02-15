@@ -12,7 +12,7 @@ public class ArmOUT extends SequentialCommandGroup {
         super(
                 new InstantCommand(() -> Robot.getClimber().setArmState(Climber.ArmStates.OUT), Robot.getClimber()),
 
-                new WaitUntilCommand(() -> Robot.getClimber().getArmLimit()),
+                new WaitUntilCommand(() -> Robot.getClimber().armExtended()),
 
                 new InstantCommand(() -> Robot.getClimber().setArmState(Climber.ArmStates.OFF), Robot.getClimber())
             );

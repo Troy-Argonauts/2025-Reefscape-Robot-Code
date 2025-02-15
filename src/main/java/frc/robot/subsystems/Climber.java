@@ -192,7 +192,7 @@ public class Climber extends SubsystemBase{
      * @return whether the dlimber arm is extended
      * @author ASH-will-WIN
      */
-    public boolean ArmExtended() {
+    public boolean armExtended() {
         if (armCurrentPosition >= Constants.Climber.MAX_ARM_POSITION) {
             return true;
         }
@@ -205,7 +205,7 @@ public class Climber extends SubsystemBase{
      * @return whether the tounge is extended or not
      * 
      */
-    public boolean TongueExtended() {
+    public boolean tongueExtended() {
         if (tongueCurrentPosition >= Constants.Climber.MAX_Tongue_POSITION) {
             return true;
         }
