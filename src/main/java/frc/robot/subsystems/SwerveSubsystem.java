@@ -3,13 +3,16 @@ package frc.robot.subsystems;
 import static frc.robot.Constants.Swerve.*;
 
 import frc.robot.Constants;
+import frc.robot.Constants.PathPlanner;
 import frc.robot.Constants.Swerve;
 
 import com.ctre.phoenix6.hardware.Pigeon2;
+import com.pathplanner.lib.config.RobotConfig;
 
 import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
@@ -69,6 +72,8 @@ public class SwerveSubsystem extends SubsystemBase {
     private SlewRateLimiter rotLimiter = new SlewRateLimiter(Swerve.ROTATIONAL_SLEW_RATE);
     private double prevTime = WPIUtilJNI.now() * 1e-6;
 
+    private SwerveDriveKinematics kinematics = new SwerveDriveKinematics();
+
 
     // Odometry class for tracking robot pose
     SwerveDriveOdometry odometry = new SwerveDriveOdometry(
@@ -82,7 +87,8 @@ public class SwerveSubsystem extends SubsystemBase {
     });
 
     /** Creates a new SwerveSubsystem. */
-    public SwerveSubsystem() {}
+    public SwerveSubsystem() {
+    }
 
     public static double stepTowards(double _current, double _target, double _stepsize) {
         if (Math.abs(_current - _target) <= _stepsize) { 
@@ -454,10 +460,11 @@ public class SwerveSubsystem extends SubsystemBase {
     }
 
     public ChassisSpeeds getChassisSpeeds(){
-        ChassisSpeeds speeds = SwerveDriveKinematics.toChassisSpeeds(
+        ChassisSpeeds speeds = kinematics.toChassisSpeeds(
             frontLeftModule.getState(), 
             frontRightModule.getState(),
             backLeftModule.getState(),
             backRightModule.getState());
+        return speeds;
     }
  }
