@@ -8,6 +8,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.RunCommand;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.subsystems.Climber.ArmStates;
 import frc.robot.subsystems.Elevator.ElevatorStates;
@@ -58,6 +59,22 @@ public class RobotContainer {
         // new InstantCommand(() -> Robot.getDrivetrain().setToZero())
         // );
 
+        /*driver.rightBumper().onTrue(
+          new SequentialCommandGroup(
+            new InstantCommand(() -> Robot.getClimber().setDesiredState(ArmStates.OUT))
+            new InstantCommand(() -> Robot,getClimber().setDesiredState(AlignStates.OUT))
+            new InstantCommand(() -> Robot.getClimber().setDesiredState(TongueStates.OUT))
+          )
+        ); */
+
+        /*driver.rightTrigger().whileTrue(
+          new SequentialCommandGroup(
+            new InstantCommand(() -> Robot.getClimber().setDesiredState(ArmStates.IN))
+            new InstantCommand(() -> Robot,getClimber().setDesiredState(AlignStates.IN))
+            new InstantCommand(() -> Robot.getClimber().setDesiredState(TongueStates.IN))
+          )
+        ); */
+
         driver.x().whileTrue(
                 new InstantCommand(() -> Robot.getDrivetrain().setXState(true))).whileFalse(
                         new InstantCommand(() -> Robot.getDrivetrain().setXState(false)));
@@ -99,6 +116,12 @@ public class RobotContainer {
 
         operator.povDown().onTrue(
           new InstantCommand(() -> Robot.getManipulator().setLateratorState(LateratorStates.OUT))
+        );
+        
+        Robot.getElevator().setDefaultCommand(
+          new RunCommand(() -> {
+            Robot.getElevator().adjustSetpoint(operator.getLeftY());
+          }, Robot.getElevator())
         );
 
     }
