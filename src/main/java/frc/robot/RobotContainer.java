@@ -4,10 +4,18 @@
 
 package frc.robot;
 
+import com.pathplanner.lib.auto.NamedCommands;
+
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import frc.robot.commands.LateratorIN;
+import frc.robot.commands.LateratorOUT;
+import frc.robot.commands.autonomous.RemoveAlgae;
+import frc.robot.subsystems.Elevator;
+import frc.robot.subsystems.Manipulator;
+import frc.robot.subsystems.SwerveSubsystem;
 
 /**
  * This class is where the bulk of the robot should be declared. Since
@@ -23,8 +31,16 @@ public class RobotContainer {
     public static final CommandXboxController operator = new CommandXboxController(Constants.Controllers.OPERATOR);
 
     public RobotContainer() {
+        // Register Commands for path planner
+        registerNamedCommands();
         // Configure the button bindings
         configureBindings();
+    }
+
+    private void registerNamedCommands() {
+        //Setting the Commands with names and subsystem commands
+        NamedCommands.registerCommand("removeAlgae", new RemoveAlgae());
+        NamedCommands.registerCommand("scoreLV4", new LateratorOUT());
     }
 
     /**

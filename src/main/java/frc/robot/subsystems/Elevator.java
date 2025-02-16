@@ -142,6 +142,8 @@ public class Elevator extends SubsystemBase {
         LV1(0),
         LV2(0),
         LV3(0),
+        ALGAE_LOW(0),  
+        ALGAE_HIGH(0),                                                                           
         LV4(0);
         //change the numbers above
         
