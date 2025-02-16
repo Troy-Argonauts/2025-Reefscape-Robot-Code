@@ -8,12 +8,10 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.RunCommand;
-import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
-import frc.robot.subsystems.Climber.ArmStates;
+import frc.robot.commands.LateratorIN;
+import frc.robot.commands.LateratorOUT;
 import frc.robot.subsystems.Elevator.ElevatorStates;
-import frc.robot.subsystems.Manipulator.LateratorStates;
-import frc.robot.subsystems.Manipulator.ManipulatorStates;
 
 /**
  * This class is where the bulk of the robot should be declared. Since
@@ -39,41 +37,21 @@ public class RobotContainer {
     private void configureBindings() {
         Robot.getDrivetrain().setDefaultCommand(
                 new RunCommand(
-                        () -> {
-                            double xSpeed = (Math.abs(driver.getLeftX()) > Constants.Controllers.DEADBAND)
-                                    ? driver.getLeftX()
-                                    : 0;
-                            double ySpeed = (Math.abs(driver.getLeftY()) > Constants.Controllers.DEADBAND)
-                                    ? driver.getLeftY()
-                                    : 0;
-                            double rotSpeed = (Math.abs(driver.getRightX()) > Constants.Controllers.DEADBAND)
-                                    ? driver.getRightX()
-                                    : 0;
+                  () -> {
+                    double xSpeed = (Math.abs(driver.getLeftX()) > Constants.Controllers.DEADBAND)
+                        ? driver.getLeftX()
+                        : 0;
+                    double ySpeed = (Math.abs(driver.getLeftY()) > Constants.Controllers.DEADBAND)
+                        ? driver.getLeftY()
+                        : 0;
+                    double rotSpeed = (Math.abs(driver.getRightX()) > Constants.Controllers.DEADBAND)
+                        ? driver.getRightX()
+                        : 0;
 
-                            Robot.getDrivetrain().drive(ySpeed, xSpeed, rotSpeed, true, true);
-                        }, Robot.getDrivetrain()
+                    Robot.getDrivetrain().drive(ySpeed, xSpeed, rotSpeed, true, true);
+                  }, Robot.getDrivetrain()
 
                 ));
-
-        // driver.a().onTrue(
-        // new InstantCommand(() -> Robot.getDrivetrain().setToZero())
-        // );
-
-        /*driver.rightBumper().onTrue(
-          new SequentialCommandGroup(
-            new InstantCommand(() -> Robot.getClimber().setDesiredState(ArmStates.OUT))
-            new InstantCommand(() -> Robot,getClimber().setDesiredState(AlignStates.OUT))
-            new InstantCommand(() -> Robot.getClimber().setDesiredState(TongueStates.OUT))
-          )
-        ); */
-
-        /*driver.rightTrigger().whileTrue(
-          new SequentialCommandGroup(
-            new InstantCommand(() -> Robot.getClimber().setDesiredState(ArmStates.IN))
-            new InstantCommand(() -> Robot,getClimber().setDesiredState(AlignStates.IN))
-            new InstantCommand(() -> Robot.getClimber().setDesiredState(TongueStates.IN))
-          )
-        ); */
 
         driver.x().whileTrue(
                 new InstantCommand(() -> Robot.getDrivetrain().setXState(true))).whileFalse(
@@ -98,24 +76,24 @@ public class RobotContainer {
         operator.leftBumper().onTrue(
           new ParallelCommandGroup(
             new InstantCommand(() -> Robot.getElevator().setDesiredState(ElevatorStates.LV1)),
-            new InstantCommand(() -> Robot.getManipulator().setLateratorState(LateratorStates.IN))
+            new LateratorIN() //in
           )
         );
 
         operator.rightBumper().onTrue(
-          new InstantCommand(() -> Robot.getManipulator().setManipState(ManipulatorStates.IN))
+          new LateratorIN() //in
         );
 
         operator.rightTrigger().onTrue(
-          new InstantCommand(() -> Robot.getManipulator().setManipState(ManipulatorStates.OUT))
+          new LateratorOUT() //out
         );
 
         operator.povUp().onTrue(
-          new InstantCommand(() -> Robot.getManipulator().setLateratorState(LateratorStates.IN))
+          new LateratorIN() //in
         );
 
         operator.povDown().onTrue(
-          new InstantCommand(() -> Robot.getManipulator().setLateratorState(LateratorStates.OUT))
+          new LateratorOUT() //out
         );
         
         Robot.getElevator().setDefaultCommand(
@@ -125,6 +103,7 @@ public class RobotContainer {
         );
 
     }
+
 
     public static CommandXboxController getDriver() {
         return driver;
