@@ -14,8 +14,8 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.commands.LateratorIN;
 import frc.robot.commands.LateratorOUT;
 import frc.robot.commands.autonomous.RemoveAlgae;
-import frc.robot.subsystems.Elevator;
-import frc.robot.subsystems.Manipulator;
+import frc.robot.subsystems.Elevator.*;
+import frc.robot.subsystems.Manipulator.*;
 import frc.robot.subsystems.SwerveSubsystem;
 
 /**

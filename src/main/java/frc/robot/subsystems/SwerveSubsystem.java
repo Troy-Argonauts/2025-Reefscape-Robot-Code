@@ -4,6 +4,7 @@ import static frc.robot.Constants.Swerve.*;
 
 import frc.robot.Constants;
 import frc.robot.Constants.Swerve;
+import frc.robot.Constants.PathPlanner;
 
 import com.ctre.phoenix6.hardware.Pigeon2;
 import com.pathplanner.lib.auto.AutoBuilder;
@@ -105,13 +106,13 @@ public class SwerveSubsystem extends SubsystemBase {
         moduleConfig = new ModuleConfig(
             Constants.Swerve.WHEEL_DIAMETER_METERS / 2, 
             Constants.Swerve.MAX_SPEED_METERS_PER_SECOND * 0.85, 
-            Constants.Swerve.WHEEL_COF,
+            Constants.PathPlanner.WHEEL_COF,
             DCMotor.getKrakenX60(1), 
             Constants.SwerveModule.DRIVING_MOTOR_CURRENT_LIMIT, 1);
 
         robotConfig = new RobotConfig(
-            Constants.Swerve.ROBOT_MASS, 
-            Constants.Swerve.MOMENT_OF_INERTIA, 
+            Constants.PathPlanner.ROBOT_MASS, 
+            Constants.PathPlanner.MOMENT_OF_INERTIA, 
             moduleConfig, 
            moduleOffsets);
 

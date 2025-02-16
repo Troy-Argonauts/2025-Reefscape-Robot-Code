@@ -185,9 +185,9 @@ public final class Constants {
     }
 
     public interface PathPlanner {
-        double MOMENT_OF_INTERIA = 0;
+        double MOMENT_OF_INERTIA = 0;
         double ROBOT_MASS = 0;
-        double COEFF_FRICTION = 1.1;
+        double WHEEL_COF = 1.1;
     }
 } // Evan is not cool. Ved is cool.
 // I agree
