@@ -8,6 +8,8 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import edu.wpi.first.wpilibj2.command.button.Trigger;
+import frc.robot.commands.PassiveIntake;
 
 /**
  * This class is where the bulk of the robot should be declared. Since
@@ -22,7 +24,10 @@ public class RobotContainer {
     public static final CommandXboxController driver = new CommandXboxController(Constants.Controllers.DRIVER);
     public static final CommandXboxController operator = new CommandXboxController(Constants.Controllers.OPERATOR);
 
+    public Trigger intakeTrigger;
+
     public RobotContainer() {
+        intakeTrigger = new Trigger(Robot.getManipulator() :: hasCoralEntered);
         // Configure the button bindings
         configureBindings();
     }
@@ -31,6 +36,10 @@ public class RobotContainer {
      * Use this method to define your controller->command mappings.
      */
     private void configureBindings() {
+        intakeTrigger.onTrue(
+           new PassiveIntake()
+        );
+
         Robot.getDrivetrain().setDefaultCommand(
                 new RunCommand(
                         () -> {
@@ -56,6 +65,8 @@ public class RobotContainer {
         driver.x().whileTrue(
                 new InstantCommand(() -> Robot.getDrivetrain().setXState(true))).whileFalse(
                         new InstantCommand(() -> Robot.getDrivetrain().setXState(false)));
+
+        
 
     }
 
