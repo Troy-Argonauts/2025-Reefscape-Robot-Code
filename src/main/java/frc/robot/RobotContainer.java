@@ -12,6 +12,7 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.commands.LateratorIN;
 import frc.robot.commands.LateratorOUT;
 import frc.robot.subsystems.Elevator.ElevatorStates;
+import frc.robot.subsystems.Manipulator.ManipulatorStates;
 
 /**
  * This class is where the bulk of the robot should be declared. Since
@@ -81,11 +82,11 @@ public class RobotContainer {
         );
 
         operator.rightBumper().onTrue(
-          new LateratorIN() //in
+          new InstantCommand(() -> Robot.getManipulator().setManipState(ManipulatorStates.IN))
         );
 
         operator.rightTrigger().onTrue(
-          new LateratorOUT() //out
+          new InstantCommand(() -> Robot.getManipulator().setManipState(ManipulatorStates.OUT))
         );
 
         operator.povUp().onTrue(
