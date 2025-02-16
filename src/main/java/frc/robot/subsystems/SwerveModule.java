@@ -63,6 +63,7 @@ public class SwerveModule extends SubsystemBase{
         turnConfigs.ClosedLoopGeneral.ContinuousWrap = true;
         turnConfigs.Feedback.FeedbackRemoteSensorID = turnEncoder.getDeviceID();
         turnConfigs.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.RemoteCANcoder;
+        turnConfigs.CurrentLimits.SupplyCurrentLimit = TURNING_MOTOR_CURRENT_LIMIT;
         turnMotor.getConfigurator().apply(turnConfigs);
 
         driveConfig.kP = DRIVE_P;
@@ -71,13 +72,15 @@ public class SwerveModule extends SubsystemBase{
         driveConfig.kS = DRIVE_S;
         driveConfig.kV = DRIVE_V;
 
+        TalonFXConfiguration driveConfigs = new TalonFXConfiguration();
+
         if (driveInverted){
-            TalonFXConfiguration driveConfigs = new TalonFXConfiguration();
             driveConfigs.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
+            driveConfigs.CurrentLimits.SupplyCurrentLimit = DRIVING_MOTOR_CURRENT_LIMIT;
             driveMotor.getConfigurator().apply(driveConfigs);
         } else {
-            TalonFXConfiguration driveConfigs = new TalonFXConfiguration();
             driveConfigs.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
+            driveConfigs.CurrentLimits.SupplyCurrentLimit = DRIVING_MOTOR_CURRENT_LIMIT;
             driveMotor.getConfigurator().apply(driveConfigs);
         }
 
@@ -88,6 +91,8 @@ public class SwerveModule extends SubsystemBase{
 
         driveMotor.getConfigurator().apply(driveConfig);
         turnMotor.getConfigurator().apply(turnConfig);
+        driveMotor.getConfigurator().apply(driveConfigs);
+        turnMotor.getConfigurator().apply(turnConfigs);
 
         //RESET ENCODERS
         resetDriveEncoder();

@@ -26,8 +26,10 @@ public class Elevator extends SubsystemBase {
 
     private double encoderValue, target, oldtarget = 0;
 
-    private DoubleLogEntry ElevatorLeftOutputCurrentLog;
-    private DoubleLogEntry ElevatorRightOutputCurrentLog;
+    private DoubleLogEntry elevatorLeftOutputCurrentLog;
+    private DoubleLogEntry elevatorRightOutputCurrentLog;
+    private DoubleLogEntry elevatorEncoderLog;
+    
 
     TalonFXConfiguration config = new TalonFXConfiguration();
 
@@ -65,8 +67,9 @@ public class Elevator extends SubsystemBase {
 
         DataLog log = DataLogManager.getLog();
 
-        ElevatorLeftOutputCurrentLog = new DoubleLogEntry(log, "ElevatorLeftOutputCurrent");
-        ElevatorRightOutputCurrentLog = new DoubleLogEntry(log, "ElevatorRightOutputCurrent");
+        elevatorLeftOutputCurrentLog = new DoubleLogEntry(log, "Elevator Left Output Current");
+        elevatorRightOutputCurrentLog = new DoubleLogEntry(log, "Elevator Right Output Current");
+        elevatorEncoderLog = new DoubleLogEntry(log, "Elevator Encoder Value");
     }
 
    
@@ -83,13 +86,14 @@ public class Elevator extends SubsystemBase {
         SmartDashboard.putNumber("Right Motor Current", rightMotor.getSupplyCurrent().getValueAsDouble());
         SmartDashboard.putNumber("oldTarget", oldtarget);
         
-        ElevatorLeftOutputCurrentLog.append(leftMotor.getSupplyCurrent().getValueAsDouble());
-        ElevatorRightOutputCurrentLog.append(rightMotor.getSupplyCurrent().getValueAsDouble());
+        elevatorLeftOutputCurrentLog.append(leftMotor.getSupplyCurrent().getValueAsDouble());
+        elevatorRightOutputCurrentLog.append(rightMotor.getSupplyCurrent().getValueAsDouble());
+        elevatorEncoderLog.append(leftMotor.getPosition().getValueAsDouble());
 
         leftMotor.setControl(positionVoltage.withPosition(target));
 
         if (getBottomLimit() == true) {
-            resetEncoder();
+            resetEncoders();
         }
     }
 
@@ -196,7 +200,7 @@ public class Elevator extends SubsystemBase {
     /**
      * Resets encoders
      */
-    public void resetEncoder() {
+    public void resetEncoders() {
         leftMotor.setPosition(0);
         rightMotor.setPosition(0);
     }
