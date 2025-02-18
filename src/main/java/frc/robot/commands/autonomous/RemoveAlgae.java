@@ -16,14 +16,16 @@ public class RemoveAlgae extends SequentialCommandGroup {
     public RemoveAlgae(){
         super(  
                 new InstantCommand(() -> Robot.getElevator().setDesiredState(ElevatorStates.ALGAE_HIGH), Robot.getElevator()),
-
-                new WaitUntilCommand(() -> Robot.getElevator().isPIDFinished()),
                 
                 new LateratorOUT(),
 
+                new WaitUntilCommand(() -> Robot.getElevator().isPIDFinished()),
+
                 new InstantCommand(() -> Robot.getManipulator().setManipState(ManipulatorStates.OUT), Robot.getManipulator()),
 
-                new WaitUntilCommand(() -> Robot.getManipulator().isTopPidFinished()),
+                new WaitUntilCommand(1),
+
+                new InstantCommand(() -> Robot.getManipulator().setManipState(ManipulatorStates.OFF), Robot.getManipulator()),
 
                 new LateratorIN(),
 
