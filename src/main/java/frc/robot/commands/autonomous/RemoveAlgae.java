@@ -27,9 +27,9 @@ public class RemoveAlgae extends SequentialCommandGroup {
 
                 new InstantCommand(() -> Robot.getManipulator().setManipState(ManipulatorStates.OFF), Robot.getManipulator()),
 
-                new LateratorIN(),
+                new InstantCommand(() -> Robot.getElevator().setDesiredState(ElevatorStates.HOME), Robot.getElevator()),
 
-                new InstantCommand(() -> Robot.getElevator().setDesiredState(ElevatorStates.HOME), Robot.getElevator())
+                new LateratorIN()
 
             );
     }
