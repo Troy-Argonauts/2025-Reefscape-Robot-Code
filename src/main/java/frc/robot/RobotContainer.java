@@ -6,10 +6,15 @@ package frc.robot;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.commands.PassiveIntake;
+import frc.robot.commands.LateratorIN;
+import frc.robot.commands.LateratorOUT;
+import frc.robot.subsystems.Elevator.ElevatorStates;
+import frc.robot.subsystems.Manipulator.ManipulatorStates;
 
 /**
  * This class is where the bulk of the robot should be declared. Since
@@ -42,33 +47,73 @@ public class RobotContainer {
 
         Robot.getDrivetrain().setDefaultCommand(
                 new RunCommand(
-                        () -> {
-                            double xSpeed = (Math.abs(driver.getLeftX()) > Constants.Controllers.DEADBAND)
-                                    ? driver.getLeftX()
-                                    : 0;
-                            double ySpeed = (Math.abs(driver.getLeftY()) > Constants.Controllers.DEADBAND)
-                                    ? driver.getLeftY()
-                                    : 0;
-                            double rotSpeed = (Math.abs(driver.getRightX()) > Constants.Controllers.DEADBAND)
-                                    ? driver.getRightX()
-                                    : 0;
+                  () -> {
+                    double xSpeed = (Math.abs(driver.getLeftX()) > Constants.Controllers.DEADBAND)
+                        ? driver.getLeftX()
+                        : 0;
+                    double ySpeed = (Math.abs(driver.getLeftY()) > Constants.Controllers.DEADBAND)
+                        ? driver.getLeftY()
+                        : 0;
+                    double rotSpeed = (Math.abs(driver.getRightX()) > Constants.Controllers.DEADBAND)
+                        ? driver.getRightX()
+                        : 0;
 
-                            Robot.getDrivetrain().drive(ySpeed, xSpeed, rotSpeed, true, true);
-                        }, Robot.getDrivetrain()
+                    Robot.getDrivetrain().drive(ySpeed, xSpeed, rotSpeed, true, true);
+                  }, Robot.getDrivetrain()
 
                 ));
-
-        // driver.a().onTrue(
-        // new InstantCommand(() -> Robot.getDrivetrain().setToZero())
-        // );
 
         driver.x().whileTrue(
                 new InstantCommand(() -> Robot.getDrivetrain().setXState(true))).whileFalse(
                         new InstantCommand(() -> Robot.getDrivetrain().setXState(false)));
 
+        operator.y().onTrue(
+          new InstantCommand(() -> Robot.getElevator().setDesiredState(ElevatorStates.LV4))
+        );
+
+        operator.x().onTrue(
+          new InstantCommand(() -> Robot.getElevator().setDesiredState(ElevatorStates.LV3))
+        );
+
+        operator.b().onTrue(
+          new InstantCommand(() -> Robot.getElevator().setDesiredState(ElevatorStates.LV2))
+        );
+
+        operator.a().onTrue(
+          new InstantCommand(() -> Robot.getElevator().setDesiredState(ElevatorStates.LV1))
+        );
+
+        operator.leftBumper().onTrue(
+          new ParallelCommandGroup(
+            new InstantCommand(() -> Robot.getElevator().setDesiredState(ElevatorStates.LV1)),
+            new LateratorIN() //in
+          )
+        );
+
+        operator.rightBumper().onTrue(
+          new InstantCommand(() -> Robot.getManipulator().setManipState(ManipulatorStates.IN))
+        );
+
+        operator.rightTrigger().onTrue(
+          new InstantCommand(() -> Robot.getManipulator().setManipState(ManipulatorStates.OUT))
+        );
+
+        operator.povUp().onTrue(
+          new LateratorIN() //in
+        );
+
+        operator.povDown().onTrue(
+          new LateratorOUT() //out
+        );
         
+        Robot.getElevator().setDefaultCommand(
+          new RunCommand(() -> {
+            Robot.getElevator().adjustSetpoint(operator.getLeftY());
+          }, Robot.getElevator())
+        );
 
     }
+
 
     public static CommandXboxController getDriver() {
         return driver;
