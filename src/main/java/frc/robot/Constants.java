@@ -183,5 +183,11 @@ public final class Constants {
 
         public static final double MAX_LATERATOR_POSITION = 0.0;
     }
+
+    public interface PathPlanner {
+        double MOMENT_OF_INERTIA = 0;
+        double ROBOT_MASS = 0;
+        double WHEEL_COF = 1.1;
+    }
 } // Evan is not cool. Ved is cool.
 // I agree
