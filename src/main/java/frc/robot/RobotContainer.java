@@ -16,7 +16,6 @@ import frc.robot.commands.LateratorOUT;
 import frc.robot.commands.autonomous.RemoveAlgae;
 import frc.robot.subsystems.Elevator.*;
 import frc.robot.subsystems.Manipulator.*;
-import frc.robot.subsystems.SwerveSubsystem;
 
 /**
  * This class is where the bulk of the robot should be declared. Since

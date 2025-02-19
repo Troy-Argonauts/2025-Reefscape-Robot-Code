@@ -4,7 +4,6 @@ import static frc.robot.Constants.Swerve.*;
 
 import frc.robot.Constants;
 import frc.robot.Constants.Swerve;
-import frc.robot.Constants.PathPlanner;
 
 import com.ctre.phoenix6.hardware.Pigeon2;
 import com.pathplanner.lib.auto.AutoBuilder;

@@ -4,9 +4,7 @@ import edu.wpi.first.wpilibj2.command.*;
 import frc.robot.Robot;
 import frc.robot.commands.LateratorIN;
 import frc.robot.commands.LateratorOUT;
-import frc.robot.subsystems.Manipulator;
 import frc.robot.subsystems.Elevator.ElevatorStates;
-import frc.robot.subsystems.Manipulator.LateratorStates;
 import frc.robot.subsystems.Manipulator.ManipulatorStates;
 
 /**
