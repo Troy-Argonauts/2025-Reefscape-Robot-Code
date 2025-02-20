@@ -271,4 +271,14 @@ public class Climber extends SubsystemBase{
     public double getCurrentArmPosition() {
         return armCurrentPosition;
     }
+
+    /**
+     * Sets arm motor power to the negative of power
+     * @param power Input of trigger/joystick, controls power of motors
+     */
+    public void climberRetract(double power) {
+        if (armExtended() == false) {
+            setArmRawPower(-Math.abs(power));
+        }
+    }
 }
