@@ -280,6 +280,6 @@ public class Climber extends SubsystemBase{
         if (getArmLimit() == false) {
             setArmRawPower(-Math.abs(power));
         }
-        setArmRawPower(0);
+        else setArmRawPower(0);
     }
 }
