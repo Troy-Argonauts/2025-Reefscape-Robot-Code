@@ -45,7 +45,6 @@ public class Elevator extends SubsystemBase {
 
         leftMotor = new TalonFX(Constants.Elevator.LEFT_MOTOR_ID);
         rightMotor = new TalonFX(Constants.Elevator.RIGHT_MOTOR_ID);
-        topLimit = new DigitalInput(Constants.Elevator.TOP_LIMIT_SWITCH_SLOT);
         bottomLimit = new DigitalInput(Constants.Elevator.BOTTOM_LIMIT_SWITCH_SLOT);
 
         leftMotor.setNeutralMode(NeutralModeValue.Brake);
