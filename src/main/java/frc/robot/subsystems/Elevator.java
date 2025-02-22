@@ -22,7 +22,7 @@ import frc.robot.Constants;
  */
 public class Elevator extends SubsystemBase {
     private TalonFX leftMotor, rightMotor;
-    private DigitalInput topLimit, bottomLimit;
+    private DigitalInput bottomLimit;
 
     private double encoderValue, target, oldtarget = 0;
 
@@ -45,7 +45,6 @@ public class Elevator extends SubsystemBase {
 
         leftMotor = new TalonFX(Constants.Elevator.LEFT_MOTOR_ID);
         rightMotor = new TalonFX(Constants.Elevator.RIGHT_MOTOR_ID);
-        topLimit = new DigitalInput(Constants.Elevator.TOP_LIMIT_SWITCH_SLOT);
         bottomLimit = new DigitalInput(Constants.Elevator.BOTTOM_LIMIT_SWITCH_SLOT);
 
         leftMotor.setNeutralMode(NeutralModeValue.Brake);
@@ -177,17 +176,7 @@ public class Elevator extends SubsystemBase {
             target = newTarget;
         } else if (newTarget > target && getBottomLimit()) { // If elevator is moving down (new encoder value is less than current encoder value) and bottomLimitSwitch is not pressed
             target = newTarget;
-        } else if (newTarget < target && getTopLimit()) {
-            target = newTarget;
         }
-    }
-
-    /**
-     * Returns whether the top limit switch is pressed
-     * @return whether it is pressed
-     */
-    public boolean getTopLimit() {
-        return topLimit.get();
     }
 
     /**
