@@ -102,10 +102,6 @@ public class Climber extends SubsystemBase{
         if (getArmLimit() == true) {
             resetArmEncoders();
         }
-
-        if (getTongueLimit() == true) {
-            resetTongueEncoder();
-        }
         
     }
 
@@ -234,16 +230,6 @@ public class Climber extends SubsystemBase{
      */
     public void setTongueRawPower(double power){
         tongueMotor.set(power);
-    }
-
-    /**
-     * Returns the current tounge motor position
-     * @return current tounge motor position
-     * 
-     * @author ASH-will-WIN
-     */
-    public double getCurrentTonguePosition() {
-        return tongueCurrentPosition;
     }
 
     /**
