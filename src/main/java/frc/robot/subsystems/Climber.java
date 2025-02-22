@@ -279,7 +279,8 @@ public class Climber extends SubsystemBase{
     public void climberRetract(double power) {
         if (getArmLimit() == false) {
             setArmRawPower(-Math.abs(power));
+        } else {
+            setArmRawPower(0);
         }
-        else setArmRawPower(0);
     }
 }
