@@ -277,8 +277,9 @@ public class Climber extends SubsystemBase{
      * @param power Input of trigger/joystick, controls power of motors
      */
     public void climberRetract(double power) {
-        if (armExtended() == false) {
+        if (getArmLimit() == false) {
             setArmRawPower(-Math.abs(power));
         }
+        setArmRawPower(0);
     }
 }
