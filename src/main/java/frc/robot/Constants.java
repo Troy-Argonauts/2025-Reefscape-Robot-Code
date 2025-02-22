@@ -154,7 +154,6 @@ public final class Constants {
     public interface Elevator {
         int LEFT_MOTOR_ID = 1;
         int RIGHT_MOTOR_ID = 2;
-        int TOP_LIMIT_SWITCH_SLOT = 0;
         int BOTTOM_LIMIT_SWITCH_SLOT = 0;
 
         double P = 0;
