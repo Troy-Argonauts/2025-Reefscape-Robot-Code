@@ -154,7 +154,7 @@ public final class Constants {
     public interface Elevator {
         int LEFT_MOTOR_ID = 1;
         int RIGHT_MOTOR_ID = 2;
-        int TOP_LIMIT_SWITCH_SLOT = 0;
+        int TOP_LIMIT_SWITCH_SLOT = 1;
         int BOTTOM_LIMIT_SWITCH_SLOT = 1;
 
         double P = 0;
@@ -170,11 +170,11 @@ public final class Constants {
         public static final double D = 0;
         public static final double V = 0;
 
-        public static final int TOP_MOTOR_CAN_ID = 0;
-        public static final int BOTTOM_MOTOR_CAN_ID = 0;
+        public static final int TOP_MOTOR_CAN_ID = 4;
+        public static final int BOTTOM_MOTOR_CAN_ID = 5;
 
-        public static final int LATERATOR_MOTOR_CAN_ID = 0;
-        public static final int LATERATOR_LIMIT_SWITCH = 0;
+        public static final int LATERATOR_MOTOR_CAN_ID = 3;
+        public static final int LATERATOR_LIMIT_SWITCH = 2;
 
         public static final int FUNNEL_BEAM_BREAK_A = 0;
         public static final int FUNNEL_BEAM_BREAK_B = 0;
