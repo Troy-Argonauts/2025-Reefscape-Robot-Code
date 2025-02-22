@@ -12,7 +12,7 @@ public class ClimberTongueOUT extends SequentialCommandGroup {
         super(
                 new InstantCommand(() -> Robot.getClimber().setTongueState(Climber.TongueStates.OUT), Robot.getClimber()),
 
-                new WaitUntilCommand(() -> Robot.getClimber().tongueExtended()),
+                new WaitUntilCommand(() -> Robot.getClimber().getTongueLimit()),
 
                 new InstantCommand(() -> Robot.getClimber().setTongueState(Climber.TongueStates.OFF), Robot.getClimber())
             );

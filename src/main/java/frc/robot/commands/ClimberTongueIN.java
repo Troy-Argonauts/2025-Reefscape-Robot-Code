@@ -7,6 +7,7 @@ import frc.robot.subsystems.Climber;
 /**
  * Sets tongue state to IN until the limit switch is hit, when the limit switch is hit it sets tongue state to OFF
  */
+/*
 public class ClimberTongueIN extends SequentialCommandGroup {
     public ClimberTongueIN(){
         super(
@@ -18,3 +19,4 @@ public class ClimberTongueIN extends SequentialCommandGroup {
             );
     }
 }
+*/
