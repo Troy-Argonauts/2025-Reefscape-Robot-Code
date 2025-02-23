@@ -38,8 +38,7 @@ public class Manipulator extends SubsystemBase {
     
     private DigitalInput lateratorLimit;
 
-    private DigitalInput funnelBeamBreakA;
-    private DigitalInput funnelBeamBreakB;
+    private DigitalInput funnelBeamBreak;
     private DigitalInput manipulatorA;
     private DigitalInput manipulatorB;
 
@@ -63,8 +62,7 @@ public class Manipulator extends SubsystemBase {
 
         lateratorLimit = new DigitalInput(Constants.Manipulator.LATERATOR_LIMIT_SWITCH);
 
-        funnelBeamBreakA = new DigitalInput(Constants.Manipulator.FUNNEL_BEAM_BREAK_A);
-        funnelBeamBreakB = new DigitalInput(Constants.Manipulator.FUNNEL_BEAM_BREAK_B);
+        funnelBeamBreak = new DigitalInput(Constants.Manipulator.FUNNEL_BEAM_BREAK);
         manipulatorA = new DigitalInput(Constants.Manipulator.MANIPULATOR_BEAM_BREAK_A);
         manipulatorB = new DigitalInput(Constants.Manipulator.MANIPULATOR_BEAM_BREAK_B);
 
@@ -193,20 +191,13 @@ public class Manipulator extends SubsystemBase {
         return lateratorLimit.get();
     }
 
-    /**
-     * Checks if the funnel beam break A is detected.
-     * @return True if the funnel beam break A is detected, false otherwise.
-     */
-    public boolean getFunnelBeamBreakA() {
-        return funnelBeamBreakA.get();
-    }
-
      /**
-     * Checks if the funnel beam break B is detected.
-     * @return True if the funnel beam break B is detected, false otherwise.
+     * Checks if the funnel beam break
+     *  is detected.
+     * @return True if the funnel beam break is detected, false otherwise.
      */
-    public boolean getFunnelBeamBreakB() {
-        return funnelBeamBreakB.get();
+    public boolean getFunnelBeamBreak() {
+        return funnelBeamBreak.get();
     }
 
     /**
@@ -328,6 +319,6 @@ public class Manipulator extends SubsystemBase {
      * @return whether coral has entered funnels
      */
     public boolean hasCoralEntered() {
-        return getFunnelBeamBreakA()||getFunnelBeamBreakB();
+        return getFunnelBeamBreak();
     }
 }
