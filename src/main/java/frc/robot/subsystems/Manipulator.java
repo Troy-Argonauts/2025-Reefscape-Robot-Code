@@ -192,8 +192,9 @@ public class Manipulator extends SubsystemBase {
     }
 
      /**
-     * Checks if the funnel beam break B is detected.
-     * @return True if the funnel beam break B is detected, false otherwise.
+     * Checks if the funnel beam break
+     *  is detected.
+     * @return True if the funnel beam break is detected, false otherwise.
      */
     public boolean getFunnelBeamBreak() {
         return funnelBeamBreak.get();
