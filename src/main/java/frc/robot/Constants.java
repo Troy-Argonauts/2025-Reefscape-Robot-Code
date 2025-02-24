@@ -4,6 +4,7 @@
 
 package frc.robot;
 
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.util.Units;
@@ -104,6 +105,12 @@ public final class Constants {
         public static final boolean GYRO_REVERSED = false;
 
         public static final String CANBUS_NAME = "Swerve CAN Bus";
+
+        Translation2d[] moduleOffsets = {
+            new Translation2d(0, Rotation2d.fromRadians(FRONT_LEFT_CHASSIS_ANGULAR_OFFSET)),
+            new Translation2d(0, Rotation2d.fromRadians(FRONT_RIGHT_CHASSIS_ANGULAR_OFFSET)),
+            new Translation2d(0, Rotation2d.fromRadians(BACK_LEFT_CHASSIS_ANGULAR_OFFSET)),
+            new Translation2d(0, Rotation2d.fromRadians(BACK_RIGHT_CHASSIS_ANGULAR_OFFSET)),};  // robot configs 2d translations
     }
 
     public static final class SwerveModule {
