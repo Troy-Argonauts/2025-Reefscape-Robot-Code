@@ -7,19 +7,31 @@
         {
           "type": "path",
           "data": {
-            "pathName": "P1_to_R1.1"
+            "pathName": "P3_R3.2"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Place Level 4"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "R1.1 to F1"
+            "pathName": "R3.2_F2"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "F1_to_R1.1"
+            "pathName": "F2_R3.1"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Place Level 4"
           }
         }
       ]
