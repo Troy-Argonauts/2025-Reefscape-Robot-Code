@@ -15,7 +15,6 @@ import com.pathplanner.lib.controllers.PPHolonomicDriveController;
 import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
@@ -81,13 +80,6 @@ public class SwerveSubsystem extends SubsystemBase {
 
     private ModuleConfig moduleConfig;
     private RobotConfig robotConfig;
-
-    private Translation2d[] moduleOffsets = {
-        new Translation2d(null, null),
-        new Translation2d(null, null), 
-        new Translation2d(null, null),
-        new Translation2d(null, null)}; // robot configs 2d translations
-
 
     // Odometry class for tracking robot pose
     SwerveDriveOdometry odometry = new SwerveDriveOdometry(
