@@ -28,7 +28,6 @@ public class Manipulator extends SubsystemBase {
     private DoubleLogEntry lateratorMotorSupplyCurrentLog;
 
     private double currentManipRPM;
-    private double manipTargetRPM;
 
     private double lateratorCurrentPosition; 
 
@@ -46,7 +45,6 @@ public class Manipulator extends SubsystemBase {
 
     private final CoastOut coastRequest = new CoastOut();
 
-    private VelocityVoltage velocityVoltage = new VelocityVoltage(0).withSlot(0);
 
     private TalonFXConfiguration config = new TalonFXConfiguration();
 
@@ -74,10 +72,6 @@ public class Manipulator extends SubsystemBase {
         TalonFXConfiguration bottomConfiguration = new TalonFXConfiguration();
         TalonFXConfiguration lateratorConfiguration = new TalonFXConfiguration();
         
-        slot0Config.kP = Constants.Manipulator.P;
-        slot0Config.kI = Constants.Manipulator.I;
-        slot0Config.kD = Constants.Manipulator.D;
-        slot0Config.kV = Constants.Manipulator.V;
 
 
         bottomMotor.setControl(new Follower(Constants.Manipulator.TOP_MOTOR_CAN_ID, false));
@@ -113,7 +107,6 @@ public class Manipulator extends SubsystemBase {
         lateratorMotorSupplyCurrentLog.append(lateratorMotor.getSupplyCurrent().getValueAsDouble()); 
 
         SmartDashboard.putNumber("Current Roller Velocity", currentManipRPM);
-        SmartDashboard.putNumber("Desired Roller Velocity", manipTargetRPM);
 
         run();
 
@@ -175,13 +168,7 @@ public class Manipulator extends SubsystemBase {
         return false;
     }
 
-    /**
-     * Checks if the top PID loop has finished.
-     * @return True if the top PID loop has finished, false otherwise.
-     */
-    public boolean isTopPidFinished() {
-        return (Math.abs(topMotor.getVelocity().getValueAsDouble()) <= 50);
-    }
+
 
     /**
      * Checks if the limit switch is active.
@@ -254,13 +241,6 @@ public class Manipulator extends SubsystemBase {
         return (bottomMotor.getVelocity().getValueAsDouble() * 60);
     } 
 
-    /**
-     * Gets the desired velocity of the manipulator.
-     * @return The desired velocity of the manipulator in RPM.
-     */
-    public double getManipTarget() {
-        return manipTargetRPM;
-    }
 
     /**
      * Gets the current position of the laterator.
@@ -279,20 +259,13 @@ public class Manipulator extends SubsystemBase {
     }
 
 
-    /**
-     * Sets the manipulator motors desired target, expects RPM
-     * @param target the target to set for the manipulator motor, needs RPM
-     */
-    public void setManipDesiredTarget(double target) {
-        manipTargetRPM = target;
-    }
+ 
 
     /**
      * Sets the manipulator motors state (Expecting manipulater state)
      * @param state the state to set for the manipulator motor
      */
     public void setManipState(ManipulatorStates state) {
-        manipTargetRPM = state.manipulatorVelocity;
         manipulatorState = state;
     }
 
@@ -307,11 +280,7 @@ public class Manipulator extends SubsystemBase {
      * Runs the PID control on each Manipulator motor, and sets the motors' control mode to CoastOut when Manipulator state is off.
      */
     public void run() {
-        if (manipulatorState == ManipulatorStates.OFF) {
-            topMotor.setControl(coastRequest);
-        } else {
-            topMotor.setControl(velocityVoltage.withVelocity(manipTargetRPM / 60));
-        }
+        topMotor.set(manipulatorState.manipulatorVelocity);
     }
 
     /**
