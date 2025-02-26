@@ -197,10 +197,7 @@ public class Manipulator extends SubsystemBase {
      * @return true if manipualtor beam break is true, false if manipulator beam break are false
      */
     public boolean isCoralReady() {
-        if (manipulatorBeamBreak.get()) {
-            return true;
-        }
-        return false;
+        return manipulatorBeamBreak.get();
     }
 
     // Evan is cool***!!!
