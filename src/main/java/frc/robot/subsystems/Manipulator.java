@@ -39,8 +39,7 @@ public class Manipulator extends SubsystemBase {
     private DigitalInput lateratorLimit;
 
     private DigitalInput funnelBeamBreak;
-    private DigitalInput manipulatorA;
-    private DigitalInput manipulatorB;
+    private DigitalInput manipulatorBeamBreak;
 
     private ManipulatorStates manipulatorState = ManipulatorStates.OFF;
 
@@ -63,8 +62,8 @@ public class Manipulator extends SubsystemBase {
         lateratorLimit = new DigitalInput(Constants.Manipulator.LATERATOR_LIMIT_SWITCH);
 
         funnelBeamBreak = new DigitalInput(Constants.Manipulator.FUNNEL_BEAM_BREAK);
-        manipulatorA = new DigitalInput(Constants.Manipulator.MANIPULATOR_BEAM_BREAK_A);
-        manipulatorB = new DigitalInput(Constants.Manipulator.MANIPULATOR_BEAM_BREAK_B);
+        manipulatorBeamBreak = new DigitalInput(Constants.Manipulator.MANIPULATOR_BEAM_BREAK);
+
 
         topMotor.setNeutralMode(NeutralModeValue.Coast);
         bottomMotor.setNeutralMode(NeutralModeValue.Coast);
@@ -121,6 +120,7 @@ public class Manipulator extends SubsystemBase {
             resetLateratorEncoder();
         }
     }
+    
     /**
      * States of the Manipulator (IN, OUT, OFF)
      */
@@ -138,6 +138,7 @@ public class Manipulator extends SubsystemBase {
         }
 
     }
+
     /**
      * States of the Laterator (IN, OUT, OFF)
      */
@@ -191,43 +192,13 @@ public class Manipulator extends SubsystemBase {
         return lateratorLimit.get();
     }
 
-     /**
-     * Checks if the funnel beam break
-     *  is detected.
-     * @return True if the funnel beam break is detected, false otherwise.
-     */
-    public boolean getFunnelBeamBreak() {
-        return funnelBeamBreak.get();
-    }
-
     /**
-     * Checks if the manipulator A beam break is detected.
-     * @return True if the manipulator A beam break is detected, false otherwise.
-     */
-    public boolean getManipBeamBreakA() {
-        return manipulatorA.get();
-    }
-
-    /**
-     * Checks if the manipulator B beam break is detected.
-     * @return True if the manipulator B beam break is detected, false otherwise.
-     */
-    public boolean getManipBeamBreakB() {
-        return manipulatorB.get();
-    }
-
-
-    /**
-     * Returns true if beam break A or B is being triggered, this will happen when a coral is ready to score in the manipulator.
-     * @return true if either beam break A or B is true, false if both beam breaks are false
+     * Returns true if manipulator beam break is being triggered, this will happen when a coral is ready to score in the manipulator.
+     * @return true if manipualtor beam break is true, false if manipulator beam break are false
      */
     public boolean isCoralReady() {
-        if (getManipBeamBreakA() == true || getManipBeamBreakB() == true) {
-            return true;
-        }
-        return false;
+        return manipulatorBeamBreak.get();
     }
-
 
     // Evan is cool***!!!
     /**
@@ -316,9 +287,9 @@ public class Manipulator extends SubsystemBase {
 
     /**
      * Returns whether a coral has entered the funnel
-     * @return whether coral has entered funnels
+     * @return whether coral has entered funnel
      */
     public boolean hasCoralEntered() {
-        return getFunnelBeamBreak();
+        return funnelBeamBreak.get();
     }
 }
