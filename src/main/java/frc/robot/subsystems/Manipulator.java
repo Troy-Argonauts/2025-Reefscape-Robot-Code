@@ -98,7 +98,7 @@ public class Manipulator extends SubsystemBase {
      */
     @Override
     public void periodic() {
-        currentManipRPM = (topMotor.getVelocity().getValueAsDouble() + bottomMotor.getVelocity().getValueAsDouble()) / (2 * 60);
+        currentManipRPM = getAverageRPM();
 
         currentManipRPMLog.append(currentManipRPM);
         topMotorSupplyCurrentLog.append(topMotor.getSupplyCurrent().getValueAsDouble());
@@ -107,7 +107,6 @@ public class Manipulator extends SubsystemBase {
 
         SmartDashboard.putNumber("Current Roller Velocity", currentManipRPM);
 
-        run();
 
         if (getLateratorLimit() == true) {
             resetLateratorEncoder();
@@ -117,18 +116,11 @@ public class Manipulator extends SubsystemBase {
      * States of the Manipulator (IN, OUT, OFF)
      */
     public enum ManipulatorStates {
-        IN(-0.3),
+        IN,
 
-        OUT(0.3),
+        OUT,
 
-        OFF(0);
-
-        final double manipulatorVelocity;
-
-        ManipulatorStates(double manipulatorVelocity) {
-            this.manipulatorVelocity = manipulatorVelocity;
-        }
-
+        OFF;
     }
     /**
      * States of the Laterator (IN, OUT, OFF)
@@ -265,7 +257,22 @@ public class Manipulator extends SubsystemBase {
      * @param state the state to set for the manipulator motor
      */
     public void setManipState(ManipulatorStates state) {
-        manipulatorState = state;
+        switch (state) {
+            case IN: 
+                setManipulatorRawPower(-0.3); 
+            case OUT: 
+                setManipulatorRawPower(0.3);
+            case OFF:
+                setManipulatorRawPower(0);
+        }
+    }
+
+    /**
+     * Sets manipulator motors to provided raw power
+     * @param speed the raw power to set the motor to
+     */
+    public void setManipulatorRawPower(double speed){
+        topMotor.set(speed);
     }
 
     /**
@@ -275,12 +282,7 @@ public class Manipulator extends SubsystemBase {
         lateratorMotor.setPosition(0);
     }
 
-    /**
-     * Runs the PID control on each Manipulator motor, and sets the motors' control mode to CoastOut when Manipulator state is off.
-     */
-    public void run() {
-        topMotor.set(manipulatorState.manipulatorVelocity);
-    }
+
 
     /**
      * Returns whether a coral has entered the funnel
