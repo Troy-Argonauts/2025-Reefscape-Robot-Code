@@ -48,7 +48,6 @@ public class Manipulator extends SubsystemBase {
 
     private TalonFXConfiguration config = new TalonFXConfiguration();
 
-    private Slot0Configs slot0Config = config.Slot0;
 
     /**
      * Constructor for the Manipulator class. Initializes motors, sensors, and configurations.
@@ -118,9 +117,9 @@ public class Manipulator extends SubsystemBase {
      * States of the Manipulator (IN, OUT, OFF)
      */
     public enum ManipulatorStates {
-        IN(-800),
+        IN(-0.3),
 
-        OUT(800),
+        OUT(0.3),
 
         OFF(0);
 
