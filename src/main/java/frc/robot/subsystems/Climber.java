@@ -102,10 +102,6 @@ public class Climber extends SubsystemBase{
         if (getArmLimit() == true) {
             resetArmEncoders();
         }
-
-        if (getTongueLimit() == true) {
-            resetTongueEncoder();
-        }
         
     }
 
@@ -134,8 +130,6 @@ public class Climber extends SubsystemBase{
     * States for the Tongue motor.
     */
     public enum TongueStates{
-        IN,
-
         OUT,
 
         OFF;
@@ -159,10 +153,8 @@ public class Climber extends SubsystemBase{
     */
     public void setTongueState(TongueStates state) {
         switch (state){
-            case IN:
-                setTongueRawPower(-0.3);
             case OFF:
-                setTongueRawPower(0.3);
+                setTongueRawPower(0.1);
             case OUT:
                 setTongueRawPower(0);
         }
@@ -199,18 +191,6 @@ public class Climber extends SubsystemBase{
         return false;
     }
 
-    /**
-     * Returns whether the tounge is extended or not
-     * 
-     * @return whether the tounge is extended or not
-     * 
-     */
-    public boolean tongueExtended() {
-        if (tongueCurrentPosition >= Constants.Climber.MAX_Tongue_POSITION) {
-            return true;
-        }
-        return false;
-    }
 
     /**
      * Resets the climber arm encoder position to zero
@@ -253,16 +233,6 @@ public class Climber extends SubsystemBase{
     }
 
     /**
-     * Returns the current tounge motor position
-     * @return current tounge motor position
-     * 
-     * @author ASH-will-WIN
-     */
-    public double getCurrentTonguePosition() {
-        return tongueCurrentPosition;
-    }
-
-    /**
      * Returns the current arm motor position
      * @return current arm motor position
      * 
@@ -270,5 +240,17 @@ public class Climber extends SubsystemBase{
      */
     public double getCurrentArmPosition() {
         return armCurrentPosition;
+    }
+
+        /**
+     * Sets arm motor power to the negative of power
+     * @param power Input of trigger/joystick, controls power of motors
+     */
+    public void climberRetract(double power) {
+        if (getArmLimit() == false) {
+            setArmRawPower(-Math.abs(power));
+        } else {
+            setArmRawPower(0);
+        }
     }
 }

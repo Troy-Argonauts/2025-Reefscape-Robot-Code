@@ -7,12 +7,12 @@ import frc.robot.subsystems.Climber;
 /**
  * Sets tongue state to OUT until the limit switch is hit, when the limit switch is hit it sets tongue state to OFF
  */
-public class TongueOUT extends SequentialCommandGroup {
-    public TongueOUT(){
+public class ClimberTongueOUT extends SequentialCommandGroup {
+    public ClimberTongueOUT(){
         super(
                 new InstantCommand(() -> Robot.getClimber().setTongueState(Climber.TongueStates.OUT), Robot.getClimber()),
 
-                new WaitUntilCommand(() -> Robot.getClimber().tongueExtended()),
+                new WaitUntilCommand(() -> Robot.getClimber().getTongueLimit()),
 
                 new InstantCommand(() -> Robot.getClimber().setTongueState(Climber.TongueStates.OFF), Robot.getClimber())
             );

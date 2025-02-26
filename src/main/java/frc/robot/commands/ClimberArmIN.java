@@ -7,8 +7,8 @@ import frc.robot.subsystems.Climber;
 /**
  * Sets arm state to IN until the limit switch is hit, when the limit switch is hit it sets arm state to OFF
  */
-public class ArmIN extends SequentialCommandGroup {
-    public ArmIN(){
+public class ClimberArmIN extends SequentialCommandGroup {
+    public ClimberArmIN(){
         super(
                 new InstantCommand(() -> Robot.getClimber().setArmState(Climber.ArmStates.IN), Robot.getClimber()),
 
