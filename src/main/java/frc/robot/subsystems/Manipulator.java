@@ -19,12 +19,10 @@ import frc.robot.Constants;
  * @author VedNakum, firearcher2012, ASH-will-WIN, Evan13019, shaquilleinoatmeal.
  */
 public class Manipulator extends SubsystemBase {
-    private DoubleLogEntry currentManipRPMLog;
     private DoubleLogEntry topMotorSupplyCurrentLog;
     private DoubleLogEntry bottomMotorSupplyCurrentLog;
     private DoubleLogEntry lateratorMotorSupplyCurrentLog;
 
-    private double currentManipRPM;
 
     private double lateratorCurrentPosition; 
 
@@ -91,9 +89,7 @@ public class Manipulator extends SubsystemBase {
      */
     @Override
     public void periodic() {
-        currentManipRPM = getAverageRPM();
 
-        currentManipRPMLog.append(currentManipRPM);
         topMotorSupplyCurrentLog.append(topMotor.getSupplyCurrent().getValueAsDouble());
         bottomMotorSupplyCurrentLog.append(bottomMotor.getSupplyCurrent().getValueAsDouble());   
         lateratorMotorSupplyCurrentLog.append(lateratorMotor.getSupplyCurrent().getValueAsDouble()); 
@@ -198,31 +194,6 @@ public class Manipulator extends SubsystemBase {
         }
         return false;
     }
-
-    /**
-     * Gets the current average velocity of the manipulator.
-     * @return The current average velocity of the manipulator in RPM.
-     */
-    public double getAverageRPM() {
-        return (topMotor.getVelocity().getValueAsDouble() + bottomMotor.getVelocity().getValueAsDouble()) / (2 * 60);
-    } 
-
-    /**
-     * Gets the top motor's current RPM
-     * @return Top motor's current RPM
-     */
-    public double getTopRPM() {
-        return (topMotor.getVelocity().getValueAsDouble() * 60);
-    }
-
-    /**
-     * Gets bottom motor's current RPM
-     * @return Bottom motor's current RPM
-     */
-    public double getBottomRPM() {
-        return (bottomMotor.getVelocity().getValueAsDouble() * 60);
-    } 
-
 
     /**
      * Gets the current position of the laterator.
