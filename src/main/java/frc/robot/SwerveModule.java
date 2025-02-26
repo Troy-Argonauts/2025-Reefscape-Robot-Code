@@ -8,6 +8,7 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.util.Units;
+import frc.robot.Constants.Swerve;
 
 /**
  * The Constants class provides a convenient place for teams to hold robot-wide
@@ -27,7 +28,7 @@ public final class Constants {
         public static final int OPERATOR = 1;
         public static final double DEADBAND = 0.08;
     }
-
+    
     // THIS NEEDS TO BE UPDATED FOR CTRE
     public interface Swerve {
         // PID Constants for drivetrain
@@ -105,12 +106,12 @@ public final class Constants {
         public static final boolean GYRO_REVERSED = false;
 
         public static final String CANBUS_NAME = "Swerve CAN Bus";
-
         Translation2d[] moduleOffsets = {
             new Translation2d(0, Rotation2d.fromRadians(FRONT_LEFT_CHASSIS_ANGULAR_OFFSET)),
             new Translation2d(0, Rotation2d.fromRadians(FRONT_RIGHT_CHASSIS_ANGULAR_OFFSET)),
             new Translation2d(0, Rotation2d.fromRadians(BACK_LEFT_CHASSIS_ANGULAR_OFFSET)),
             new Translation2d(0, Rotation2d.fromRadians(BACK_RIGHT_CHASSIS_ANGULAR_OFFSET)),};  // robot configs 2d translations
+    }
     }
 
     public static final class SwerveModule {
@@ -161,6 +162,7 @@ public final class Constants {
     public interface Elevator {
         int LEFT_MOTOR_ID = 1;
         int RIGHT_MOTOR_ID = 2;
+        int TOP_LIMIT_SWITCH_SLOT = 0;
         int BOTTOM_LIMIT_SWITCH_SLOT = 0;
 
         double P = 0;
@@ -171,10 +173,10 @@ public final class Constants {
     }
 
     public interface Manipulator {
-        public static final double P = 0;
-        public static final double I = 0.;
-        public static final double D = 0;
-        public static final double V = 0;
+        public static final double LateratorP = 0;
+        public static final double LateratorI = 0.;
+        public static final double LateratorD = 0;
+        public static final double LateratorV = 0;
 
         public static final int TOP_MOTOR_CAN_ID = 4;
         public static final int BOTTOM_MOTOR_CAN_ID = 5;
@@ -182,11 +184,13 @@ public final class Constants {
         public static final int LATERATOR_MOTOR_CAN_ID = 3;
         public static final int LATERATOR_LIMIT_SWITCH = 1;
 
-        public static final int FUNNEL_BEAM_BREAK = 2;
+        public static final int FUNNEL_BEAM_BREAK_A = 2;
+        public static final int FUNNEL_BEAM_BREAK_B = 3;
         public static final int MANIPULATOR_BEAM_BREAK_A = 4;
         public static final int MANIPULATOR_BEAM_BREAK_B = 5;
 
         public static final double MAX_LATERATOR_POSITION = 0.0;
+        public static final double MIN_LATERATOR_POSITION = 0.0;
     }
 
     public interface PathPlanner {

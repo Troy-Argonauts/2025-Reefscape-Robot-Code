@@ -4,9 +4,11 @@ import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.CoastOut;
 import com.ctre.phoenix6.controls.Follower;
+import com.ctre.phoenix6.controls.PositionVoltage;
 import com.ctre.phoenix6.controls.VelocityVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.NeutralModeValue;
+import com.pathplanner.lib.config.PIDConstants;
 
 import edu.wpi.first.util.datalog.DataLog;
 import edu.wpi.first.util.datalog.DoubleLogEntry;
@@ -31,6 +33,7 @@ public class Manipulator extends SubsystemBase {
     private double manipTargetRPM;
 
     private double lateratorCurrentPosition; 
+    private double lateratorTarget;
 
     private TalonFX topMotor;
     private TalonFX bottomMotor;
@@ -46,7 +49,7 @@ public class Manipulator extends SubsystemBase {
 
     private final CoastOut coastRequest = new CoastOut();
 
-    private VelocityVoltage velocityVoltage = new VelocityVoltage(0).withSlot(0);
+    private PositionVoltage positionVoltage = new PositionVoltage(0).withSlot(0);
 
     private TalonFXConfiguration config = new TalonFXConfiguration();
 
@@ -62,7 +65,7 @@ public class Manipulator extends SubsystemBase {
 
         lateratorLimit = new DigitalInput(Constants.Manipulator.LATERATOR_LIMIT_SWITCH);
 
-        funnelBeamBreak = new DigitalInput(Constants.Manipulator.FUNNEL_BEAM_BREAK);
+        //funnelBeamBreak = new DigitalInput(Constants.Manipulator.FUNNEL_BEAM_BREAK);
         manipulatorA = new DigitalInput(Constants.Manipulator.MANIPULATOR_BEAM_BREAK_A);
         manipulatorB = new DigitalInput(Constants.Manipulator.MANIPULATOR_BEAM_BREAK_B);
 
@@ -74,10 +77,10 @@ public class Manipulator extends SubsystemBase {
         TalonFXConfiguration bottomConfiguration = new TalonFXConfiguration();
         TalonFXConfiguration lateratorConfiguration = new TalonFXConfiguration();
         
-        slot0Config.kP = Constants.Manipulator.P;
-        slot0Config.kI = Constants.Manipulator.I;
-        slot0Config.kD = Constants.Manipulator.D;
-        slot0Config.kV = Constants.Manipulator.V;
+        slot0Config.kP = Constants.Manipulator.LateratorP;
+        slot0Config.kI = Constants.Manipulator.LateratorI;
+        slot0Config.kD = Constants.Manipulator.LateratorD;
+        slot0Config.kV = Constants.Manipulator.LateratorV;
 
 
         bottomMotor.setControl(new Follower(Constants.Manipulator.TOP_MOTOR_CAN_ID, false));
@@ -117,6 +120,8 @@ public class Manipulator extends SubsystemBase {
 
         run();
 
+        lateratorMotor.setControl(positionVoltage.withPosition(lateratorTarget));
+
         if (getLateratorLimit() == true) {
             resetLateratorEncoder();
         }
@@ -144,9 +149,7 @@ public class Manipulator extends SubsystemBase {
     public enum LateratorStates {
         IN,
 
-        OUT,
-
-        OFF;
+        OUT;
     }
 
     /**
@@ -156,11 +159,9 @@ public class Manipulator extends SubsystemBase {
     public void setLateratorState(LateratorStates state) {
         switch (state) {
             case IN: 
-                setLateratorRawPower(-0.3);
+                lateratorTarget = Constants.Manipulator.MIN_LATERATOR_POSITION;
             case OUT: 
-                setLateratorRawPower(0.3);
-            case OFF:
-                setLateratorRawPower(0);
+                lateratorTarget = Constants.Manipulator.MAX_LATERATOR_POSITION;
         }
     }
 
