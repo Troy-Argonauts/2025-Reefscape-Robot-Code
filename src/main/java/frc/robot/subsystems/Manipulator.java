@@ -65,7 +65,7 @@ public class Manipulator extends SubsystemBase {
 
         lateratorLimit = new DigitalInput(Constants.Manipulator.LATERATOR_LIMIT_SWITCH);
 
-        //funnelBeamBreak = new DigitalInput(Constants.Manipulator.FUNNEL_BEAM_BREAK);
+        funnelBeamBreak = new DigitalInput(Constants.Manipulator.FUNNEL_BEAM_BREAK);
         manipulatorA = new DigitalInput(Constants.Manipulator.MANIPULATOR_BEAM_BREAK_A);
         manipulatorB = new DigitalInput(Constants.Manipulator.MANIPULATOR_BEAM_BREAK_B);
 
