@@ -1,10 +1,7 @@
 package frc.robot.subsystems;
 
-import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
-import com.ctre.phoenix6.controls.CoastOut;
 import com.ctre.phoenix6.controls.Follower;
-import com.ctre.phoenix6.controls.VelocityVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 
@@ -41,12 +38,9 @@ public class Manipulator extends SubsystemBase {
     private DigitalInput manipulatorA;
     private DigitalInput manipulatorB;
 
-    private ManipulatorStates manipulatorState = ManipulatorStates.OFF;
-
-    private final CoastOut coastRequest = new CoastOut();
 
 
-    private TalonFXConfiguration config = new TalonFXConfiguration();
+
 
 
     /**
@@ -71,8 +65,6 @@ public class Manipulator extends SubsystemBase {
         TalonFXConfiguration bottomConfiguration = new TalonFXConfiguration();
         TalonFXConfiguration lateratorConfiguration = new TalonFXConfiguration();
         
-
-
         bottomMotor.setControl(new Follower(Constants.Manipulator.TOP_MOTOR_CAN_ID, false));
 
         topConfiguration.CurrentLimits.SupplyCurrentLimit = 30;
@@ -91,6 +83,7 @@ public class Manipulator extends SubsystemBase {
         lateratorMotorSupplyCurrentLog = new DoubleLogEntry(log, "Laterator Motor Supply Current");
 
     }
+
 
      /**
      * This method is called periodically by the scheduler. Logs current values and updates 
@@ -112,6 +105,7 @@ public class Manipulator extends SubsystemBase {
             resetLateratorEncoder();
         }
     }
+
     /**
      * States of the Manipulator (IN, OUT, OFF)
      */
@@ -122,6 +116,7 @@ public class Manipulator extends SubsystemBase {
 
         OFF;
     }
+
     /**
      * States of the Laterator (IN, OUT, OFF)
      */
@@ -158,8 +153,6 @@ public class Manipulator extends SubsystemBase {
         }
         return false;
     }
-
-
 
     /**
      * Checks if the limit switch is active.
@@ -206,8 +199,6 @@ public class Manipulator extends SubsystemBase {
         return false;
     }
 
-
-    // Evan is cool***!!!
     /**
      * Gets the current average velocity of the manipulator.
      * @return The current average velocity of the manipulator in RPM.
@@ -248,10 +239,7 @@ public class Manipulator extends SubsystemBase {
     public void setLateratorRawPower(double power) {
         lateratorMotor.set(power);
     }
-
-
  
-
     /**
      * Sets the manipulator motors state (Expecting manipulater state)
      * @param state the state to set for the manipulator motor
@@ -281,8 +269,6 @@ public class Manipulator extends SubsystemBase {
     public void resetLateratorEncoder() {
         lateratorMotor.setPosition(0);
     }
-
-
 
     /**
      * Returns whether a coral has entered the funnel
