@@ -1,0 +1,31 @@
+{
+  "version": "2025.0",
+  "command": {
+    "type": "sequential",
+    "data": {
+      "commands": [
+        {
+          "type": "path",
+          "data": {
+            "pathName": "P3_R3.2"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Place Level 4"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "R3.2_F2"
+          }
+        }
+      ]
+    }
+  },
+  "resetOdom": true,
+  "folder": null,
+  "choreoAuto": false
+}
