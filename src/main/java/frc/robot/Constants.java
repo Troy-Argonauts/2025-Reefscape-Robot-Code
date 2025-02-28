@@ -8,7 +8,7 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.util.Units;
-import frc.robot.Constants.Swerve;
+
 
 /**
  * The Constants class provides a convenient place for teams to hold robot-wide
@@ -112,9 +112,8 @@ public final class Constants {
             new Translation2d(0, Rotation2d.fromRadians(BACK_LEFT_CHASSIS_ANGULAR_OFFSET)),
             new Translation2d(0, Rotation2d.fromRadians(BACK_RIGHT_CHASSIS_ANGULAR_OFFSET)),};  // robot configs 2d translations
     }
-    }
 
-    public static final class SwerveModule {
+    public interface SwerveModule {
         // The MAXSwerve module can be configured with one of three pinion gears: 12T,
         // 13T, or 14T.
         // This changes the drive speed of the module (a pinion gear with more teeth
