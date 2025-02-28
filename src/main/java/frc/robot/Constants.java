@@ -171,10 +171,6 @@ public final class Constants {
     }
 
     public interface Manipulator {
-        public static final double P = 0;
-        public static final double I = 0.;
-        public static final double D = 0;
-        public static final double V = 0;
 
         public static final int TOP_MOTOR_CAN_ID = 4;
         public static final int BOTTOM_MOTOR_CAN_ID = 5;

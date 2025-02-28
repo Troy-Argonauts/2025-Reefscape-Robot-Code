@@ -1,10 +1,7 @@
 package frc.robot.subsystems;
 
-import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
-import com.ctre.phoenix6.controls.CoastOut;
 import com.ctre.phoenix6.controls.Follower;
-import com.ctre.phoenix6.controls.VelocityVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 
@@ -12,7 +9,6 @@ import edu.wpi.first.util.datalog.DataLog;
 import edu.wpi.first.util.datalog.DoubleLogEntry;
 import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj.DigitalInput;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 
@@ -22,13 +18,10 @@ import frc.robot.Constants;
  * @author VedNakum, firearcher2012, ASH-will-WIN, Evan13019, shaquilleinoatmeal.
  */
 public class Manipulator extends SubsystemBase {
-    private DoubleLogEntry currentManipRPMLog;
     private DoubleLogEntry topMotorSupplyCurrentLog;
     private DoubleLogEntry bottomMotorSupplyCurrentLog;
     private DoubleLogEntry lateratorMotorSupplyCurrentLog;
 
-    private double currentManipRPM;
-    private double manipTargetRPM;
 
     private double lateratorCurrentPosition; 
 
@@ -41,15 +34,10 @@ public class Manipulator extends SubsystemBase {
     private DigitalInput funnelBeamBreak;
     private DigitalInput manipulatorBeamBreak;
 
-    private ManipulatorStates manipulatorState = ManipulatorStates.OFF;
 
-    private final CoastOut coastRequest = new CoastOut();
 
-    private VelocityVoltage velocityVoltage = new VelocityVoltage(0).withSlot(0);
 
-    private TalonFXConfiguration config = new TalonFXConfiguration();
 
-    private Slot0Configs slot0Config = config.Slot0;
 
     /**
      * Constructor for the Manipulator class. Initializes motors, sensors, and configurations.
@@ -73,12 +61,6 @@ public class Manipulator extends SubsystemBase {
         TalonFXConfiguration bottomConfiguration = new TalonFXConfiguration();
         TalonFXConfiguration lateratorConfiguration = new TalonFXConfiguration();
         
-        slot0Config.kP = Constants.Manipulator.P;
-        slot0Config.kI = Constants.Manipulator.I;
-        slot0Config.kD = Constants.Manipulator.D;
-        slot0Config.kV = Constants.Manipulator.V;
-
-
         bottomMotor.setControl(new Follower(Constants.Manipulator.TOP_MOTOR_CAN_ID, false));
 
         topConfiguration.CurrentLimits.SupplyCurrentLimit = 30;
@@ -91,12 +73,12 @@ public class Manipulator extends SubsystemBase {
 
         DataLog log = DataLogManager.getLog();
 
-        currentManipRPMLog = new DoubleLogEntry((log), "Current Manipulator RPM");
         topMotorSupplyCurrentLog = new DoubleLogEntry((log), "Top Manipulator Motor Supply Current");
         bottomMotorSupplyCurrentLog = new DoubleLogEntry(log, "Bottom Manipulator Motor Supply Current");
         lateratorMotorSupplyCurrentLog = new DoubleLogEntry(log, "Laterator Motor Supply Current");
 
     }
+
 
      /**
      * This method is called periodically by the scheduler. Logs current values and updates 
@@ -104,39 +86,25 @@ public class Manipulator extends SubsystemBase {
      */
     @Override
     public void periodic() {
-        currentManipRPM = (topMotor.getVelocity().getValueAsDouble() + bottomMotor.getVelocity().getValueAsDouble()) / (2 * 60);
 
-        currentManipRPMLog.append(currentManipRPM);
         topMotorSupplyCurrentLog.append(topMotor.getSupplyCurrent().getValueAsDouble());
         bottomMotorSupplyCurrentLog.append(bottomMotor.getSupplyCurrent().getValueAsDouble());   
         lateratorMotorSupplyCurrentLog.append(lateratorMotor.getSupplyCurrent().getValueAsDouble()); 
-
-        SmartDashboard.putNumber("Current Roller Velocity", currentManipRPM);
-        SmartDashboard.putNumber("Desired Roller Velocity", manipTargetRPM);
-
-        run();
 
         if (getLateratorLimit() == true) {
             resetLateratorEncoder();
         }
     }
-    
+
     /**
      * States of the Manipulator (IN, OUT, OFF)
      */
     public enum ManipulatorStates {
-        IN(-800),
+        IN,
 
-        OUT(800),
+        OUT,
 
-        OFF(0);
-
-        final double manipulatorVelocity;
-
-        ManipulatorStates(double manipulatorVelocity) {
-            this.manipulatorVelocity = manipulatorVelocity;
-        }
-
+        OFF;
     }
 
     /**
@@ -177,14 +145,6 @@ public class Manipulator extends SubsystemBase {
     }
 
     /**
-     * Checks if the top PID loop has finished.
-     * @return True if the top PID loop has finished, false otherwise.
-     */
-    public boolean isTopPidFinished() {
-        return (Math.abs(topMotor.getVelocity().getValueAsDouble()) <= 50);
-    }
-
-    /**
      * Checks if the limit switch is active.
      * @return True if the limit switch is active, false otherwise.
      */
@@ -198,39 +158,6 @@ public class Manipulator extends SubsystemBase {
      */
     public boolean isCoralReady() {
         return manipulatorBeamBreak.get();
-    }
-
-    // Evan is cool***!!!
-    /**
-     * Gets the current average velocity of the manipulator.
-     * @return The current average velocity of the manipulator in RPM.
-     */
-    public double getAverageRPM() {
-        return (topMotor.getVelocity().getValueAsDouble() + bottomMotor.getVelocity().getValueAsDouble()) / (2 * 60);
-    } 
-
-    /**
-     * Gets the top motor's current RPM
-     * @return Top motor's current RPM
-     */
-    public double getTopRPM() {
-        return (topMotor.getVelocity().getValueAsDouble() * 60);
-    }
-
-    /**
-     * Gets bottom motor's current RPM
-     * @return Bottom motor's current RPM
-     */
-    public double getBottomRPM() {
-        return (bottomMotor.getVelocity().getValueAsDouble() * 60);
-    } 
-
-    /**
-     * Gets the desired velocity of the manipulator.
-     * @return The desired velocity of the manipulator in RPM.
-     */
-    public double getManipTarget() {
-        return manipTargetRPM;
     }
 
     /**
@@ -248,23 +175,28 @@ public class Manipulator extends SubsystemBase {
     public void setLateratorRawPower(double power) {
         lateratorMotor.set(power);
     }
-
-
-    /**
-     * Sets the manipulator motors desired target, expects RPM
-     * @param target the target to set for the manipulator motor, needs RPM
-     */
-    public void setManipDesiredTarget(double target) {
-        manipTargetRPM = target;
-    }
-
+ 
     /**
      * Sets the manipulator motors state (Expecting manipulater state)
      * @param state the state to set for the manipulator motor
      */
     public void setManipState(ManipulatorStates state) {
-        manipTargetRPM = state.manipulatorVelocity;
-        manipulatorState = state;
+        switch (state) {
+            case IN: 
+                setManipulatorRawPower(-0.3); 
+            case OUT: 
+                setManipulatorRawPower(0.3);
+            case OFF:
+                setManipulatorRawPower(0);
+        }
+    }
+
+    /**
+     * Sets manipulator motors to provided raw power
+     * @param speed the raw power to set the motor to
+     */
+    public void setManipulatorRawPower(double speed){
+        topMotor.set(speed);
     }
 
     /**
@@ -272,17 +204,6 @@ public class Manipulator extends SubsystemBase {
      */
     public void resetLateratorEncoder() {
         lateratorMotor.setPosition(0);
-    }
-
-    /**
-     * Runs the PID control on each Manipulator motor, and sets the motors' control mode to CoastOut when Manipulator state is off.
-     */
-    public void run() {
-        if (manipulatorState == ManipulatorStates.OFF) {
-            topMotor.setControl(coastRequest);
-        } else {
-            topMotor.setControl(velocityVoltage.withVelocity(manipTargetRPM / 60));
-        }
     }
 
     /**
