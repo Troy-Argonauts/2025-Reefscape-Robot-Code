@@ -15,6 +15,7 @@ import frc.robot.subsystems.Elevator.ElevatorStates;
 import frc.robot.subsystems.Manipulator.LateratorStates;
 import frc.robot.subsystems.Manipulator.ManipulatorStates;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
+import frc.robot.commands.Home;
 import frc.robot.commands.PassiveIntake;
 import frc.robot.commands.autonomous.RemoveAlgae;
 import frc.robot.commands.autonomous.ScoreLV4;
@@ -46,6 +47,7 @@ public class RobotContainer {
         //Setting the Commands with names and subsystem commands
         NamedCommands.registerCommand("removeAlgae", new RemoveAlgae());
         NamedCommands.registerCommand("scoreLV4", new ScoreLV4());
+        NamedCommands.registerCommand("home", new Home());
     }
 
     /**
@@ -96,8 +98,7 @@ public class RobotContainer {
 
         operator.leftBumper().onTrue(
           new ParallelCommandGroup(
-            new InstantCommand(() -> Robot.getElevator().setDesiredState(ElevatorStates.LV1)),
-            new InstantCommand(() -> Robot.getManipulator().setLateratorState(LateratorStates.IN)) //in
+            new Home()
           )
         );
 
