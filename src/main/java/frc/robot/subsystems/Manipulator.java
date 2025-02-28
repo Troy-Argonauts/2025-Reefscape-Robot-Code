@@ -1,9 +1,12 @@
 package frc.robot.subsystems;
 
+import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.Follower;
+import com.ctre.phoenix6.controls.PositionVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.NeutralModeValue;
+
 
 import edu.wpi.first.util.datalog.DataLog;
 import edu.wpi.first.util.datalog.DoubleLogEntry;
@@ -24,6 +27,7 @@ public class Manipulator extends SubsystemBase {
 
 
     private double lateratorCurrentPosition; 
+    private double lateratorTarget;
 
     private TalonFX topMotor;
     private TalonFX bottomMotor;
@@ -34,10 +38,11 @@ public class Manipulator extends SubsystemBase {
     private DigitalInput funnelBeamBreak;
     private DigitalInput manipulatorBeamBreak;
 
+    private PositionVoltage positionVoltage = new PositionVoltage(0).withSlot(0);
+    
+    private TalonFXConfiguration config = new TalonFXConfiguration();
 
-
-
-
+    private Slot0Configs slot0Config = config.Slot0;
 
     /**
      * Constructor for the Manipulator class. Initializes motors, sensors, and configurations.
@@ -61,6 +66,12 @@ public class Manipulator extends SubsystemBase {
         TalonFXConfiguration bottomConfiguration = new TalonFXConfiguration();
         TalonFXConfiguration lateratorConfiguration = new TalonFXConfiguration();
         
+        slot0Config.kP = Constants.Manipulator.LateratorP;
+        slot0Config.kI = Constants.Manipulator.LateratorI;
+        slot0Config.kD = Constants.Manipulator.LateratorD;
+        slot0Config.kV = Constants.Manipulator.LateratorV;
+
+
         bottomMotor.setControl(new Follower(Constants.Manipulator.TOP_MOTOR_CAN_ID, false));
 
         topConfiguration.CurrentLimits.SupplyCurrentLimit = 30;
@@ -79,7 +90,6 @@ public class Manipulator extends SubsystemBase {
 
     }
 
-
      /**
      * This method is called periodically by the scheduler. Logs current values and updates 
      * SmartDashboard with current and target RPMs.
@@ -90,6 +100,8 @@ public class Manipulator extends SubsystemBase {
         topMotorSupplyCurrentLog.append(topMotor.getSupplyCurrent().getValueAsDouble());
         bottomMotorSupplyCurrentLog.append(bottomMotor.getSupplyCurrent().getValueAsDouble());   
         lateratorMotorSupplyCurrentLog.append(lateratorMotor.getSupplyCurrent().getValueAsDouble()); 
+
+        lateratorMotor.setControl(positionVoltage.withPosition(lateratorTarget));
 
         if (getLateratorLimit() == true) {
             resetLateratorEncoder();
@@ -113,9 +125,7 @@ public class Manipulator extends SubsystemBase {
     public enum LateratorStates {
         IN,
 
-        OUT,
-
-        OFF;
+        OUT;
     }
 
     /**
@@ -125,11 +135,9 @@ public class Manipulator extends SubsystemBase {
     public void setLateratorState(LateratorStates state) {
         switch (state) {
             case IN: 
-                setLateratorRawPower(-0.3);
+                lateratorTarget = Constants.Manipulator.MIN_LATERATOR_POSITION;
             case OUT: 
-                setLateratorRawPower(0.3);
-            case OFF:
-                setLateratorRawPower(0);
+                lateratorTarget = Constants.Manipulator.MAX_LATERATOR_POSITION;
         }
     }
 

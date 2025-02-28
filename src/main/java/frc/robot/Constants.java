@@ -9,6 +9,7 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.util.Units;
 
+
 /**
  * The Constants class provides a convenient place for teams to hold robot-wide
  * numerical or boolean
@@ -27,7 +28,7 @@ public final class Constants {
         public static final int OPERATOR = 1;
         public static final double DEADBAND = 0.08;
     }
-
+    
     // THIS NEEDS TO BE UPDATED FOR CTRE
     public interface Swerve {
         // PID Constants for drivetrain
@@ -105,7 +106,6 @@ public final class Constants {
         public static final boolean GYRO_REVERSED = false;
 
         public static final String CANBUS_NAME = "Swerve CAN Bus";
-
         Translation2d[] moduleOffsets = {
             new Translation2d(0, Rotation2d.fromRadians(FRONT_LEFT_CHASSIS_ANGULAR_OFFSET)),
             new Translation2d(0, Rotation2d.fromRadians(FRONT_RIGHT_CHASSIS_ANGULAR_OFFSET)),
@@ -113,7 +113,7 @@ public final class Constants {
             new Translation2d(0, Rotation2d.fromRadians(BACK_RIGHT_CHASSIS_ANGULAR_OFFSET)),};  // robot configs 2d translations
     }
 
-    public static final class SwerveModule {
+    public interface SwerveModule {
         // The MAXSwerve module can be configured with one of three pinion gears: 12T,
         // 13T, or 14T.
         // This changes the drive speed of the module (a pinion gear with more teeth
@@ -171,6 +171,10 @@ public final class Constants {
     }
 
     public interface Manipulator {
+        public static final double LateratorP = 0;
+        public static final double LateratorI = 0.;
+        public static final double LateratorD = 0;
+        public static final double LateratorV = 0;
 
         public static final int TOP_MOTOR_CAN_ID = 4;
         public static final int BOTTOM_MOTOR_CAN_ID = 5;
@@ -182,6 +186,7 @@ public final class Constants {
         public static final int MANIPULATOR_BEAM_BREAK = 4;
 
         public static final double MAX_LATERATOR_POSITION = 0.0;
+        public static final double MIN_LATERATOR_POSITION = 0.0;
     }
 
     public interface PathPlanner {

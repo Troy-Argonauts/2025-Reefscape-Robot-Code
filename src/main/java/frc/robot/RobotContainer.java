@@ -14,13 +14,14 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
-import frc.robot.commands.LateratorIN;
-import frc.robot.commands.LateratorOUT;
 import frc.robot.subsystems.Elevator.ElevatorStates;
+import frc.robot.subsystems.Manipulator.LateratorStates;
 import frc.robot.subsystems.Manipulator.ManipulatorStates;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
+import frc.robot.commands.Home;
 import frc.robot.commands.PassiveIntake;
 import frc.robot.commands.autonomous.RemoveAlgae;
+import frc.robot.commands.autonomous.ScoreLV4;
 
 /**
  * This class is where the bulk of the robot should be declared. Since
@@ -52,7 +53,8 @@ public class RobotContainer {
     private void registerNamedCommands() {
         //Setting the Commands with names and subsystem commands
         NamedCommands.registerCommand("removeAlgae", new RemoveAlgae());
-        NamedCommands.registerCommand("scoreLV4", new LateratorOUT());
+        NamedCommands.registerCommand("scoreLV4", new ScoreLV4());
+        NamedCommands.registerCommand("home", new Home());
     }
 
     /**
@@ -103,8 +105,7 @@ public class RobotContainer {
 
         operator.leftBumper().onTrue(
           new ParallelCommandGroup(
-            new InstantCommand(() -> Robot.getElevator().setDesiredState(ElevatorStates.LV1)),
-            new LateratorIN() //in
+            new Home()
           )
         );
 
@@ -117,11 +118,11 @@ public class RobotContainer {
         );
 
         operator.povUp().onTrue(
-          new LateratorIN() //in
+          new InstantCommand(() -> Robot.getManipulator().setLateratorState(LateratorStates.IN)) //in
         );
 
         operator.povDown().onTrue(
-          new LateratorOUT() //out
+          new InstantCommand(() -> Robot.getManipulator().setLateratorState(LateratorStates.OUT)) //out
         );
         
         Robot.getElevator().setDefaultCommand(
