@@ -5,10 +5,9 @@ import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.CoastOut;
 import com.ctre.phoenix6.controls.Follower;
 import com.ctre.phoenix6.controls.PositionVoltage;
-import com.ctre.phoenix6.controls.VelocityVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.NeutralModeValue;
-import com.pathplanner.lib.config.PIDConstants;
+
 
 import edu.wpi.first.util.datalog.DataLog;
 import edu.wpi.first.util.datalog.DoubleLogEntry;
@@ -117,8 +116,6 @@ public class Manipulator extends SubsystemBase {
 
         SmartDashboard.putNumber("Current Roller Velocity", currentManipRPM);
         SmartDashboard.putNumber("Desired Roller Velocity", manipTargetRPM);
-
-        run();
 
         lateratorMotor.setControl(positionVoltage.withPosition(lateratorTarget));
 
@@ -302,17 +299,6 @@ public class Manipulator extends SubsystemBase {
      */
     public void resetLateratorEncoder() {
         lateratorMotor.setPosition(0);
-    }
-
-    /**
-     * Runs the PID control on each Manipulator motor, and sets the motors' control mode to CoastOut when Manipulator state is off.
-     */
-    public void run() {
-        if (manipulatorState == ManipulatorStates.OFF) {
-            topMotor.setControl(coastRequest);
-        } else {
-            topMotor.setControl(velocityVoltage.withVelocity(manipTargetRPM / 60));
-        }
     }
 
     /**
