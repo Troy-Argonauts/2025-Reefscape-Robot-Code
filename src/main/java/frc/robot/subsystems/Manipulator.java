@@ -163,14 +163,11 @@ public class Manipulator extends SubsystemBase {
     }
 
     /**
-     * Checks if laterator encoder has reached the max laterator position
+     * Checks if PID has completed
      * @return True if encoder hits max laterator position, false if not
      */
-    public boolean lateratorExtended() {
-        if (lateratorMotor.getPosition().getValueAsDouble() >= Constants.Manipulator.MAX_LATERATOR_POSITION) {
-            return true;
-        }
-        return false;
+    public boolean isLateratorPIDFinished() {
+        return (Math.abs(lateratorMotor.getVelocity().getValueAsDouble()) <= 0.01);
     }
 
     /**
