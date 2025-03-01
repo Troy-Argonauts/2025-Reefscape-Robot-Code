@@ -101,7 +101,7 @@ public final class Constants {
         public static final int BACK_LEFT_CAN_ENCODER = 12;
         public static final int BACK_RIGHT_CAN_ENCODER = 9;
 
-        public static final int PIGEON_CAN_ID = 13;
+        public static final int PIGEON_CAN_ID = 0;
 
         public static final boolean GYRO_REVERSED = false;
 
