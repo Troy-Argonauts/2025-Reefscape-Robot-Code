@@ -161,7 +161,7 @@ public final class Constants {
     public interface Elevator {
         int LEFT_MOTOR_ID = 1;
         int RIGHT_MOTOR_ID = 2;
-        int BOTTOM_LIMIT_SWITCH_SLOT = 0;
+        int BOTTOM_LIMIT_SWITCH_SLOT = 1;
 
         double P = 0;
         double I = 0;
@@ -183,7 +183,7 @@ public final class Constants {
         public static final int LATERATOR_LIMIT_SWITCH = 1;
 
         public static final int FUNNEL_BEAM_BREAK = 2;
-        public static final int MANIPULATOR_BEAM_BREAK = 4;
+        public static final int MANIPULATOR_BEAM_BREAK = 3;
 
         public static final double MAX_LATERATOR_POSITION = 0.0;
         public static final double MIN_LATERATOR_POSITION = 0.0;
