@@ -32,7 +32,7 @@ public final class Constants {
     // THIS NEEDS TO BE UPDATED FOR CTRE
     public interface Swerve {
         // PID Constants for drivetrain
-        public static final double DRIVE_P = 0.39;
+        public static final double DRIVE_P = 0.38;
         public static final double DRIVE_I = 0.0001;
         public static final double DRIVE_D = 0.00058;
         public static final double DRIVE_S = 0.0;
@@ -75,10 +75,10 @@ public final class Constants {
                 new Translation2d(-WHEEL_BASE / 2, -TRACK_WIDTH / 2));
 
         // Angular offsets of the modules relative to the chassis in radians
-        public static final double FRONT_LEFT_CHASSIS_ANGULAR_OFFSET = -0.2626953125; // -0.25341796875 + Math.PI/4;
-        public static final double FRONT_RIGHT_CHASSIS_ANGULAR_OFFSET = 0.044189453125; // 0.051513671875;
-        public static final double BACK_LEFT_CHASSIS_ANGULAR_OFFSET = -0.059326171875; // -0.056884765625;
-        public static final double BACK_RIGHT_CHASSIS_ANGULAR_OFFSET = 0.09423828125; // 0.095947265625;
+        public static final double FRONT_LEFT_CHASSIS_ANGULAR_OFFSET = -0.0166015625; // -0.25341796875 + Math.PI/4;
+        public static final double FRONT_RIGHT_CHASSIS_ANGULAR_OFFSET = 0.171875; // 0.051513671875;
+        public static final double BACK_LEFT_CHASSIS_ANGULAR_OFFSET = 0.2138671875; // -0.056884765625;
+        public static final double BACK_RIGHT_CHASSIS_ANGULAR_OFFSET = 0.0927734375; // 0.095947265625;
 
         // SPARK MAX CAN IDs
         public static final int FRONT_LEFT_DRIVING_CAN_ID = 6;

@@ -64,8 +64,6 @@ public class Elevator extends SubsystemBase {
         leftMotor.getConfigurator().apply(leftMotorConfigs);
         rightMotor.getConfigurator().apply(rightMotorConfigs);
 
-        System.out.println("Made it to Configs");
-
 
         rightMotor.setControl(new Follower(Constants.Elevator.LEFT_MOTOR_ID, true));
 
@@ -84,11 +82,12 @@ public class Elevator extends SubsystemBase {
     public void periodic() {
         encoderValue = leftMotor.getPosition().getValueAsDouble();
 
-        SmartDashboard.putNumber("target", target);
-        SmartDashboard.putNumber("Encoder Value", encoderValue);
-        SmartDashboard.putNumber("Left Motor Current", leftMotor.getSupplyCurrent().getValueAsDouble());
-        SmartDashboard.putNumber("Right Motor Current", rightMotor.getSupplyCurrent().getValueAsDouble());
-        SmartDashboard.putNumber("oldTarget", oldtarget);
+        // SmartDashboard.putNumber("target", target);
+        // SmartDashboard.putNumber("Elevator Encoder Value", encoderValue);
+        // // SmartDashboard.putNumber("Elevator Left Motor Current", leftMotor.getSupplyCurrent().getValueAsDouble());
+        // // SmartDashboard.putNumber("Elevator Right Motor Current", rightMotor.getSupplyCurrent().getValueAsDouble());
+        // SmartDashboard.putNumber("Elevator oldTarget", oldtarget);
+        // SmartDashboard.putBoolean("Elevator Limit", getBottomLimit());
         
         elevatorLeftOutputCurrentLog.append(leftMotor.getSupplyCurrent().getValueAsDouble());
         elevatorRightOutputCurrentLog.append(rightMotor.getSupplyCurrent().getValueAsDouble());
@@ -96,9 +95,9 @@ public class Elevator extends SubsystemBase {
 
         // leftMotor.setControl(positionVoltage.withPosition(target));
 
-        if (getBottomLimit() == true) {
-            resetEncoders();
-        }
+        // if (getBottomLimit() == true) {
+        //     resetEncoders();
+        // }
     }
 
     /**
@@ -188,7 +187,7 @@ public class Elevator extends SubsystemBase {
      * Returns whether the bottom limit switch is pressed
      */
     public boolean getBottomLimit() {
-        return bottomLimit.get();
+        return !bottomLimit.get();
     }
 
     /**

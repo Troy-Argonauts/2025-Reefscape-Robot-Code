@@ -224,11 +224,6 @@ public class SwerveSubsystem extends SubsystemBase {
         SmartDashboard.putNumber("FR Desired State Velocity", frontRightModule.desiredState.speedMetersPerSecond);
         SmartDashboard.putNumber("BL Desired State Velocity", backLeftModule.desiredState.speedMetersPerSecond);
         SmartDashboard.putNumber("BR Desired State Velocity", backRightModule.desiredState.speedMetersPerSecond);
-
-        // SmartDashboard.putNumber("FL Desired State Speed", frontLeftModule.desiredState.speedMetersPerSecond);
-        // SmartDashboard.putNumber("FR Desired State Speed", frontRightModule.desiredState.speedMetersPerSecond);
-        // SmartDashboard.putNumber("BL Desired State Speed", backLeftModule.desiredState.speedMetersPerSecond);
-        // SmartDashboard.putNumber("BR Desired State Speed", backRightModule.desiredState.speedMetersPerSecond);
     }
 
 
@@ -352,10 +347,10 @@ public class SwerveSubsystem extends SubsystemBase {
    * Sets the wheels into an X formation to prevent movement.
    */
     public void setToZero() {
-        frontLeftModule.setDesiredState(new SwerveModuleState(0, Rotation2d.fromDegrees(0)));
-        frontRightModule.setDesiredState(new SwerveModuleState(0, Rotation2d.fromDegrees(0)));
-        backLeftModule.setDesiredState(new SwerveModuleState(0, Rotation2d.fromDegrees(0)));
-        backRightModule.setDesiredState(new SwerveModuleState(0, Rotation2d.fromDegrees(0)));
+        frontLeftModule.setDesiredState(new SwerveModuleState(2, Rotation2d.fromDegrees(0)));
+        frontRightModule.setDesiredState(new SwerveModuleState(2, Rotation2d.fromDegrees(0)));
+        backLeftModule.setDesiredState(new SwerveModuleState(2, Rotation2d.fromDegrees(0)));
+        backRightModule.setDesiredState(new SwerveModuleState(2, Rotation2d.fromDegrees(0)));
     }
 
 
