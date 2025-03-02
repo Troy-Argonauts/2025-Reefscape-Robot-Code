@@ -159,19 +159,19 @@ public class SwerveModule extends SubsystemBase{
         this.desiredState = desiredState;
     }
 
-    /**
-    * Configures feedback for the turn encoder.
-    */
-    public void configureFeedback() {
-        CANcoderConfiguration encoderConfigs = new CANcoderConfiguration();
-        encoderConfigs.MagnetSensor.MagnetOffset = chassisAngularOffset; // make sure this is in rotations
+    // /**
+    // * Configures feedback for the turn encoder.
+    // */
+    // public void configureFeedback() {
+    //     CANcoderConfiguration encoderConfigs = new CANcoderConfiguration();
+    //     encoderConfigs.MagnetSensor.MagnetOffset = chassisAngularOffset; // make sure this is in rotations
 
-        TalonFXConfiguration turnConfigs = new TalonFXConfiguration();
-        turnConfigs.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
-        turnConfigs.ClosedLoopGeneral.ContinuousWrap = true;
-        turnConfigs.Feedback.FeedbackRemoteSensorID = turnEncoder.getDeviceID();
-        turnConfigs.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.RemoteCANcoder;
-    }
+    //     TalonFXConfiguration turnConfigs = new TalonFXConfiguration();
+    //     turnConfigs.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
+    //     turnConfigs.ClosedLoopGeneral.ContinuousWrap = true;
+    //     turnConfigs.Feedback.FeedbackRemoteSensorID = turnEncoder.getDeviceID();
+    //     turnConfigs.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.RemoteCANcoder;
+    // }
 
 
     /** Zeroes the driveMotor encoder on the SwerveModule */

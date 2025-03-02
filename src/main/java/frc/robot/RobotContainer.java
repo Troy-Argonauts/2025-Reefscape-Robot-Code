@@ -65,28 +65,26 @@ public class RobotContainer {
         //    new PassiveIntake()
         // );
 
-        Robot.getDrivetrain().setDefaultCommand(
-                new RunCommand(
-                  () -> {
-                    double xSpeed = (Math.abs(driver.getLeftX()) > Constants.Controllers.DEADBAND)
-                        ? driver.getLeftX()
-                        : 0;
-                    double ySpeed = (Math.abs(driver.getLeftY()) > Constants.Controllers.DEADBAND)
-                        ? driver.getLeftY()
-                        : 0;
-                    double rotSpeed = (Math.abs(driver.getRightX()) > Constants.Controllers.DEADBAND)
-                        ? driver.getRightX()
-                        : 0;
+        // Robot.getDrivetrain().setDefaultCommand(
+        //         new RunCommand(
+        //           () -> {
+        //             double xSpeed = (Math.abs(driver.getLeftX()) > Constants.Controllers.DEADBAND)
+        //                 ? driver.getLeftX()
+        //                 : 0;
+        //             double ySpeed = (Math.abs(driver.getLeftY()) > Constants.Controllers.DEADBAND)
+        //                 ? driver.getLeftY()
+        //                 : 0;
+        //             double rotSpeed = (Math.abs(driver.getRightX()) > Constants.Controllers.DEADBAND)
+        //                 ? driver.getRightX()
+        //                 : 0;
 
-                    Robot.getDrivetrain().drive(ySpeed, xSpeed, rotSpeed, true, true);
-                  }, Robot.getDrivetrain()
+        //             Robot.getDrivetrain().drive(ySpeed, xSpeed, rotSpeed, true, true);
+        //           }, Robot.getDrivetrain()
 
-                ));
+        //         ));
 
-        // driver.x().whileTrue(
-        //         new InstantCommand(() -> Robot.getDrivetrain().setXState(true))).whileFalse(
-        //                 new InstantCommand(() -> Robot.getDrivetrain().setXState(false)));
-
+        driver.x().whileTrue(
+                new InstantCommand(() -> Robot.getDrivetrain().setToZero()));
         // operator.y().onTrue(
         //   new InstantCommand(() -> Robot.getElevator().setDesiredState(ElevatorStates.LV4))
         // );
