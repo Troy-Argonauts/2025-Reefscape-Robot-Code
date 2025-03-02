@@ -47,11 +47,13 @@ public class Elevator extends SubsystemBase {
         rightMotor = new TalonFX(Constants.Elevator.RIGHT_MOTOR_ID);
         bottomLimit = new DigitalInput(Constants.Elevator.BOTTOM_LIMIT_SWITCH_SLOT);
 
-        leftMotor.setNeutralMode(NeutralModeValue.Brake);
-        rightMotor.setNeutralMode(NeutralModeValue.Brake);
+        // leftMotor.setNeutralMode(NeutralModeValue.Brake);
+        // rightMotor.setNeutralMode(NeutralModeValue.Brake);
 
         leftMotorConfigs.CurrentLimits.SupplyCurrentLimit = 40;
         rightMotorConfigs.CurrentLimits.SupplyCurrentLimit = 40;
+        leftMotorConfigs.MotorOutput.NeutralMode = NeutralModeValue.Brake;
+        rightMotorConfigs.MotorOutput.NeutralMode = NeutralModeValue.Brake;
 
         slot0Configs.kP = Constants.Elevator.P;
         slot0Configs.kI = Constants.Elevator.I;
@@ -61,6 +63,9 @@ public class Elevator extends SubsystemBase {
 
         leftMotor.getConfigurator().apply(leftMotorConfigs);
         rightMotor.getConfigurator().apply(rightMotorConfigs);
+
+        System.out.println("Made it to Configs");
+
 
         rightMotor.setControl(new Follower(Constants.Elevator.LEFT_MOTOR_ID, true));
 
@@ -89,7 +94,7 @@ public class Elevator extends SubsystemBase {
         elevatorRightOutputCurrentLog.append(rightMotor.getSupplyCurrent().getValueAsDouble());
         elevatorEncoderLog.append(leftMotor.getPosition().getValueAsDouble());
 
-        leftMotor.setControl(positionVoltage.withPosition(target));
+        // leftMotor.setControl(positionVoltage.withPosition(target));
 
         if (getBottomLimit() == true) {
             resetEncoders();

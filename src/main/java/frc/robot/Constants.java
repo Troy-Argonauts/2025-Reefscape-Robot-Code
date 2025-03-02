@@ -107,10 +107,10 @@ public final class Constants {
 
         public static final String CANBUS_NAME = "Swerve CAN Bus";
         Translation2d[] moduleOffsets = {
-            new Translation2d(0, Rotation2d.fromRadians(FRONT_LEFT_CHASSIS_ANGULAR_OFFSET)),
-            new Translation2d(0, Rotation2d.fromRadians(FRONT_RIGHT_CHASSIS_ANGULAR_OFFSET)),
-            new Translation2d(0, Rotation2d.fromRadians(BACK_LEFT_CHASSIS_ANGULAR_OFFSET)),
-            new Translation2d(0, Rotation2d.fromRadians(BACK_RIGHT_CHASSIS_ANGULAR_OFFSET)),};  // robot configs 2d translations
+            new Translation2d(WHEEL_BASE / 2, TRACK_WIDTH / 2),
+            new Translation2d(WHEEL_BASE / 2, -TRACK_WIDTH / 2),
+            new Translation2d(-WHEEL_BASE / 2, TRACK_WIDTH / 2),
+            new Translation2d(-WHEEL_BASE / 2, -TRACK_WIDTH / 2),};  // robot configs 2d translations
     }
 
     public interface SwerveModule {

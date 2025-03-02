@@ -37,24 +37,22 @@ public class RobotContainer {
     public static final CommandXboxController operator = new CommandXboxController(Constants.Controllers.OPERATOR);
 
     public Trigger intakeTrigger;
-    private final SendableChooser<Command> autoChooser;
+    // private final SendableChooser<Command> autoChooser;
 
     public RobotContainer() {
         intakeTrigger = new Trigger(Robot.getManipulator() :: hasCoralEntered);
         // Register Commands for path planner
         registerNamedCommands();
-        // Configure the button bindings
+        // Configure the button binding
         configureBindings();
 
-        autoChooser = AutoBuilder.buildAutoChooser();
-        SmartDashboard.putData("Auto Chooser", autoChooser);
     }
 
     private void registerNamedCommands() {
         //Setting the Commands with names and subsystem commands
-        NamedCommands.registerCommand("removeAlgae", new RemoveAlgae());
-        NamedCommands.registerCommand("scoreLV4", new ScoreLV4());
-        NamedCommands.registerCommand("home", new Home());
+        // NamedCommands.registerCommand("removeAlgae", new RemoveAlgae());
+        // NamedCommands.registerCommand("scoreLV4", new ScoreLV4());
+        // NamedCommands.registerCommand("home", new Home());
     }
 
     /**
@@ -83,8 +81,8 @@ public class RobotContainer {
 
         //         ));
 
-        driver.x().whileTrue(
-                new InstantCommand(() -> Robot.getDrivetrain().setToZero()));
+        // driver.x().whileTrue(
+        //         new InstantCommand(() -> Robot.getDrivetrain().setToZero()));
         // operator.y().onTrue(
         //   new InstantCommand(() -> Robot.getElevator().setDesiredState(ElevatorStates.LV4))
         // );
@@ -129,16 +127,29 @@ public class RobotContainer {
         //   }, Robot.getElevator())
         // );
 
+        Robot.getElevator().setDefaultCommand(
+            new RunCommand(() -> { 
+                // double speed = (Math.abs(operator.getLeftY()) > Constants.Controllers.DEADBAND)
+                //             ? operator.getLeftY()
+                //             : 0;
+                Robot.getElevator().setRawPower(operator.getLeftY()*0.3);
+            }, Robot.getElevator()
+        ));
+
     }
 
+    // @Override
+    // public void periodic() {
+
+    // }
 
     public static CommandXboxController getDriver() {
         return driver;
     }
 
-    public static CommandXboxController getOperator() {
-        return operator;
-    }
+    // public static CommandXboxController getOperator() {
+    //     return operator;
+    // }
 
     /**
      * Use this to pass the autonomous command to the main {@link Robot} class.
@@ -146,6 +157,7 @@ public class RobotContainer {
      * @return the command to run in autonomous
      */
     public Command getAutonomousCommand() {
-      return autoChooser.getSelected();
+      //return autoChooser.getSelected();
+      return null;
     }
 }
