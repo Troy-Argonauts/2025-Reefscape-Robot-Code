@@ -4,6 +4,10 @@ import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Robot;
 import frc.robot.subsystems.Manipulator.ManipulatorStates;
 
+
+/**
+ * Sets intake mode to passive and sets the manipulator state to OUT.
+ */
 public class PassiveIntake extends Command {
     public PassiveIntake() {}
 

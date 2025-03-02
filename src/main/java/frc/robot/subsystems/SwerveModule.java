@@ -196,7 +196,8 @@ public class SwerveModule extends SubsystemBase{
     }
 
     /** Returns the angle of the drive motor 
-     * 360 accounts for the turnEncoder output from 0 to 1 to conver it to degrees
+     * 360 accounts for the turnEncoder output from 0 to 1 to convert it to degrees
+     * @return returns turn encoder angle in degrees
     */
     public double getAngle(){
         return turnEncoder.getPosition().getValueAsDouble() * 360;
