@@ -76,8 +76,6 @@ public class SwerveSubsystem extends SubsystemBase {
     private SlewRateLimiter rotLimiter = new SlewRateLimiter(Swerve.ROTATIONAL_SLEW_RATE);
     private double prevTime = WPIUtilJNI.now() * 1e-6;
 
-    private SwerveDriveKinematics kinematics = new SwerveDriveKinematics();
-
     private ModuleConfig moduleConfig;
     private RobotConfig robotConfig;
 
@@ -481,7 +479,7 @@ public class SwerveSubsystem extends SubsystemBase {
      * @return ChassisSpeed object.
      */
     public ChassisSpeeds getChassisSpeeds(){
-        ChassisSpeeds speeds = kinematics.toChassisSpeeds(
+        ChassisSpeeds speeds = Constants.Swerve.DRIVE_KINEMATICS.toChassisSpeeds(
             frontLeftModule.getState(), 
             frontRightModule.getState(),
             backLeftModule.getState(),

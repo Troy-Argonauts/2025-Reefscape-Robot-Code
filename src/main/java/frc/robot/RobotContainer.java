@@ -61,9 +61,9 @@ public class RobotContainer {
      * Use this method to define your controller->command mappings.
      */
     private void configureBindings() {
-        intakeTrigger.onTrue(
-           new PassiveIntake()
-        );
+        // intakeTrigger.onTrue(
+        //    new PassiveIntake()
+        // );
 
         Robot.getDrivetrain().setDefaultCommand(
                 new RunCommand(
@@ -83,53 +83,53 @@ public class RobotContainer {
 
                 ));
 
-        driver.x().whileTrue(
-                new InstantCommand(() -> Robot.getDrivetrain().setXState(true))).whileFalse(
-                        new InstantCommand(() -> Robot.getDrivetrain().setXState(false)));
+        // driver.x().whileTrue(
+        //         new InstantCommand(() -> Robot.getDrivetrain().setXState(true))).whileFalse(
+        //                 new InstantCommand(() -> Robot.getDrivetrain().setXState(false)));
 
-        operator.y().onTrue(
-          new InstantCommand(() -> Robot.getElevator().setDesiredState(ElevatorStates.LV4))
-        );
+        // operator.y().onTrue(
+        //   new InstantCommand(() -> Robot.getElevator().setDesiredState(ElevatorStates.LV4))
+        // );
 
-        operator.x().onTrue(
-          new InstantCommand(() -> Robot.getElevator().setDesiredState(ElevatorStates.LV3))
-        );
+        // operator.x().onTrue(
+        //   new InstantCommand(() -> Robot.getElevator().setDesiredState(ElevatorStates.LV3))
+        // );
 
-        operator.b().onTrue(
-          new InstantCommand(() -> Robot.getElevator().setDesiredState(ElevatorStates.LV2))
-        );
+        // operator.b().onTrue(
+        //   new InstantCommand(() -> Robot.getElevator().setDesiredState(ElevatorStates.LV2))
+        // );
 
-        operator.a().onTrue(
-          new InstantCommand(() -> Robot.getElevator().setDesiredState(ElevatorStates.LV1))
-        );
+        // operator.a().onTrue(
+        //   new InstantCommand(() -> Robot.getElevator().setDesiredState(ElevatorStates.LV1))
+        // );
 
-        operator.leftBumper().onTrue(
-          new ParallelCommandGroup(
-            new Home()
-          )
-        );
+        // operator.leftBumper().onTrue(
+        //   new ParallelCommandGroup(
+        //     new Home()
+        //   )
+        // );
 
-        operator.rightBumper().onTrue(
-          new InstantCommand(() -> Robot.getManipulator().setManipState(ManipulatorStates.IN))
-        );
+        // operator.rightBumper().onTrue(
+        //   new InstantCommand(() -> Robot.getManipulator().setManipState(ManipulatorStates.IN))
+        // );
 
-        operator.rightTrigger().onTrue(
-          new InstantCommand(() -> Robot.getManipulator().setManipState(ManipulatorStates.OUT))
-        );
+        // operator.rightTrigger().onTrue(
+        //   new InstantCommand(() -> Robot.getManipulator().setManipState(ManipulatorStates.OUT))
+        // );
 
-        operator.povUp().onTrue(
-          new InstantCommand(() -> Robot.getManipulator().setLateratorState(LateratorStates.IN)) //in
-        );
+        // operator.povUp().onTrue(
+        //   new InstantCommand(() -> Robot.getManipulator().setLateratorState(LateratorStates.IN)) //in
+        // );
 
-        operator.povDown().onTrue(
-          new InstantCommand(() -> Robot.getManipulator().setLateratorState(LateratorStates.OUT)) //out
-        );
+        // operator.povDown().onTrue(
+        //   new InstantCommand(() -> Robot.getManipulator().setLateratorState(LateratorStates.OUT)) //out
+        // );
         
-        Robot.getElevator().setDefaultCommand(
-          new RunCommand(() -> {
-            Robot.getElevator().adjustSetpoint(operator.getLeftY());
-          }, Robot.getElevator())
-        );
+        // Robot.getElevator().setDefaultCommand(
+        //   new RunCommand(() -> {
+        //     Robot.getElevator().adjustSetpoint(operator.getLeftY());
+        //   }, Robot.getElevator())
+        // );
 
     }
 

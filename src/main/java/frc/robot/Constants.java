@@ -180,7 +180,7 @@ public final class Constants {
         public static final int BOTTOM_MOTOR_CAN_ID = 5;
 
         public static final int LATERATOR_MOTOR_CAN_ID = 3;
-        public static final int LATERATOR_LIMIT_SWITCH = 1;
+        public static final int LATERATOR_LIMIT_SWITCH = 5;
 
         public static final int FUNNEL_BEAM_BREAK = 2;
         public static final int MANIPULATOR_BEAM_BREAK = 3;

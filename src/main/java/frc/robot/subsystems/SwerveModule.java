@@ -89,10 +89,7 @@ public class SwerveModule extends SubsystemBase{
         turnConfig.kD = TURN_D;
         turnConfig.kS = TURN_S;
 
-        driveMotor.getConfigurator().apply(driveConfig);
         turnMotor.getConfigurator().apply(turnConfig);
-        driveMotor.getConfigurator().apply(driveConfigs);
-        turnMotor.getConfigurator().apply(turnConfigs);
 
         //RESET ENCODERS
         resetDriveEncoder();
