@@ -16,7 +16,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 
 /**
- * Class representing Elevator Subsystem
+ * Class representing the Elevator Subsystem
  * 
  * @author firearcher2012, VedNakum, Evan13019, Kunal Bareth
  */
@@ -97,8 +97,8 @@ public class Elevator extends SubsystemBase {
     }
 
     /**
-     * Sets raw power for left, right is follower 
-     * @param power desired power from -1 to 1
+     * Sets raw power for left elevator motor. Right elevator motor is follower
+     * @param power desired raw power from -1 to 1
      */
     public void setRawPower(double power) {
         leftMotor.set(power);
@@ -111,7 +111,7 @@ public class Elevator extends SubsystemBase {
     public boolean isPIDFinished() {
         return (Math.abs(target - leftMotor.getPosition().getValueAsDouble()) < 0.01);
     }
-    //change the value above
+
 
     /**
      * Gets motor position
@@ -137,6 +137,7 @@ public class Elevator extends SubsystemBase {
         this.target = target;
     }
 
+    
     /**
      * Sets enumerators for encoder positions of various Elevator States
      */
@@ -181,6 +182,7 @@ public class Elevator extends SubsystemBase {
 
     /**
      * Returns whether the bottom limit switch is pressed
+     * @return bottom limit switch state
      */
     public boolean getBottomLimit() {
         return bottomLimit.get();

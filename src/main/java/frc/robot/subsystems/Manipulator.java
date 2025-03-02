@@ -23,7 +23,6 @@ public class Manipulator extends SubsystemBase {
     private DoubleLogEntry bottomMotorSupplyCurrentLog;
     private DoubleLogEntry lateratorMotorSupplyCurrentLog;
 
-
     private double lateratorCurrentPosition; 
 
     private TalonFX topMotor;
@@ -75,7 +74,6 @@ public class Manipulator extends SubsystemBase {
 
         DataLog log = DataLogManager.getLog();
 
-        currentManipRPMLog = new DoubleLogEntry((log), "Current Manipulator RPM");
         topMotorSupplyCurrentLog = new DoubleLogEntry((log), "Top Manipulator Motor Supply Current");
         bottomMotorSupplyCurrentLog = new DoubleLogEntry(log, "Bottom Manipulator Motor Supply Current");
         lateratorMotorSupplyCurrentLog = new DoubleLogEntry(log, "Laterator Motor Supply Current");
@@ -93,8 +91,6 @@ public class Manipulator extends SubsystemBase {
         topMotorSupplyCurrentLog.append(topMotor.getSupplyCurrent().getValueAsDouble());
         bottomMotorSupplyCurrentLog.append(bottomMotor.getSupplyCurrent().getValueAsDouble());   
         lateratorMotorSupplyCurrentLog.append(lateratorMotor.getSupplyCurrent().getValueAsDouble()); 
-
-        SmartDashboard.putNumber("Current Roller Velocity", currentManipRPM);
 
 
         if (getLateratorLimit() == true) {
