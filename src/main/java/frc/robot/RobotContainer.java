@@ -43,9 +43,10 @@ public class RobotContainer {
 
     public Trigger elevatorTrigger;
 
+
     public RobotContainer() {
         intakeTrigger = new Trigger(Robot.getManipulator() :: hasCoralEntered);
-        elevatorTrigger = new Trigger(Robot.getElevator() :: getBottomLimit);
+        elevatorTrigger = new Trigger(() -> Robot.getElevator().getBottomLimit());
         // Register Commands for path planner
         registerNamedCommands();
         // Configure the button binding
@@ -67,27 +68,33 @@ public class RobotContainer {
         // intakeTrigger.onTrue(
         //    new PassiveIntake()
         // );
-        // elevatorTrigger.whileTrue(
-        //     new InstantCommand(() -> System.out.println("Triggered"))
+        elevatorTrigger.whileFalse(
+            new InstantCommand(() -> System.out.println("Triggered"))
+        );
+
+        // Robot.getDrivetrain().setDefaultCommand(
+        //         new RunCommand(
+        //           () -> {
+        //             double xSpeed = (Math.abs(driver.getLeftX()) > Constants.Controllers.DEADBAND)
+        //                 ? driver.getLeftX()
+        //                 : 0;
+        //             double ySpeed = (Math.abs(driver.getLeftY()) > Constants.Controllers.DEADBAND)
+        //                 ? driver.getLeftY()
+        //                 : 0;
+        //             double rotSpeed = (Math.abs(driver.getRightX()) > Constants.Controllers.DEADBAND)
+        //                 ? driver.getRightX()
+        //                 : 0;
+
+        //             Robot.getDrivetrain().drive(ySpeed, xSpeed, rotSpeed, true, true);
+        //           }, Robot.getDrivetrain()
+
+        //         ));
+
+        // driver.x().whileTrue(
+        //     new InstantCommand(() -> Robot.getDrivetrain().slowState(true))
+        // ).whileFalse(
+        //     new InstantCommand(() -> Robot.getDrivetrain().slowState(false))
         // );
-
-        Robot.getDrivetrain().setDefaultCommand(
-                new RunCommand(
-                  () -> {
-                    double xSpeed = (Math.abs(driver.getLeftX()) > Constants.Controllers.DEADBAND)
-                        ? driver.getLeftX()
-                        : 0;
-                    double ySpeed = (Math.abs(driver.getLeftY()) > Constants.Controllers.DEADBAND)
-                        ? driver.getLeftY()
-                        : 0;
-                    double rotSpeed = (Math.abs(driver.getRightX()) > Constants.Controllers.DEADBAND)
-                        ? driver.getRightX()
-                        : 0;
-
-                    Robot.getDrivetrain().drive(ySpeed, xSpeed, rotSpeed, true, true);
-                  }, Robot.getDrivetrain()
-
-                ));
 
         // driver.x().whileTrue(
         //         new InstantCommand(() -> Robot.getDrivetrain().setToZero()));
@@ -135,14 +142,14 @@ public class RobotContainer {
         //   }, Robot.getElevator())
         // );
 
-        // Robot.getElevator().setDefaultCommand(
-        //     new RunCommand(() -> { 
-        //         double speed = (Math.abs(operator.getLeftY()) > Constants.Controllers.DEADBAND)
-        //                     ? operator.getLeftY()
-        //                     : 0;
-        //         Robot.getElevator().setRawPower(speed*0.4);
-        //     }, Robot.getElevator()
-        // ));
+        Robot.getElevator().setDefaultCommand(
+            new RunCommand(() -> { 
+                double speed = (Math.abs(operator.getLeftY()) > Constants.Controllers.DEADBAND)
+                            ? operator.getLeftY()
+                            : 0;
+                Robot.getElevator().setRawPower(speed*0.3);
+            }, Robot.getElevator()
+        ));
 
     }
 

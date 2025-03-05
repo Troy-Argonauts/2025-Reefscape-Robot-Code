@@ -29,6 +29,8 @@ public class Elevator extends SubsystemBase {
     private DoubleLogEntry elevatorLeftOutputCurrentLog;
     private DoubleLogEntry elevatorRightOutputCurrentLog;
     private DoubleLogEntry elevatorEncoderLog;
+
+    boolean limitTriggered = false;
     
 
     TalonFXConfiguration config = new TalonFXConfiguration();
@@ -54,6 +56,8 @@ public class Elevator extends SubsystemBase {
         rightMotorConfigs.CurrentLimits.SupplyCurrentLimit = 40;
         leftMotorConfigs.MotorOutput.NeutralMode = NeutralModeValue.Brake;
         rightMotorConfigs.MotorOutput.NeutralMode = NeutralModeValue.Brake;
+        leftMotorConfigs.HardwareLimitSwitch.ForwardLimitAutosetPositionValue = 0;
+        rightMotorConfigs.HardwareLimitSwitch.ForwardLimitAutosetPositionValue = 0;
 
         slot0Configs.kP = Constants.Elevator.P;
         slot0Configs.kI = Constants.Elevator.I;
@@ -83,7 +87,7 @@ public class Elevator extends SubsystemBase {
         encoderValue = leftMotor.getPosition().getValueAsDouble();
 
         // SmartDashboard.putNumber("target", target);
-        // SmartDashboard.putNumber("Elevator Encoder Value", encoderValue);
+        SmartDashboard.putNumber("Elevator Encoder Value", encoderValue);
         // // SmartDashboard.putNumber("Elevator Left Motor Current", leftMotor.getSupplyCurrent().getValueAsDouble());
         // // SmartDashboard.putNumber("Elevator Right Motor Current", rightMotor.getSupplyCurrent().getValueAsDouble());
         // SmartDashboard.putNumber("Elevator oldTarget", oldtarget);
@@ -93,11 +97,23 @@ public class Elevator extends SubsystemBase {
         elevatorRightOutputCurrentLog.append(rightMotor.getSupplyCurrent().getValueAsDouble());
         elevatorEncoderLog.append(leftMotor.getPosition().getValueAsDouble());
 
+        // positionVoltage.LimitForwardMotion = getBottomLimit();
         // leftMotor.setControl(positionVoltage.withPosition(target));
 
         // if (getBottomLimit() == true) {
         //     resetEncoders();
         // }
+
+        SmartDashboard.putBoolean("Limit Triggered", limitTriggered);
+        SmartDashboard.putBoolean("Limit Switch Value", getBottomLimit() == true);
+        if (getBottomLimit() == true) {
+            if (!limitTriggered) {
+                resetEncoders();
+                limitTriggered = true;
+            } 
+        } else {
+            limitTriggered = false;
+        }
     }
 
     /**

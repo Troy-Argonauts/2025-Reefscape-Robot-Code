@@ -63,6 +63,8 @@ public class SwerveSubsystem extends SubsystemBase {
 
     public boolean xState = false;
 
+    public boolean slow = false;
+
     // The gyro sensor
     public final Pigeon2 gyro = new Pigeon2(PIGEON_CAN_ID, CANBUS_NAME);
 
@@ -266,6 +268,17 @@ public class SwerveSubsystem extends SubsystemBase {
         
         double xSpeedCommanded;
         double ySpeedCommanded;
+        double xSpeedCorrected;
+        double ySpeedCorrected;
+        // double rotCorrected;
+
+        if(slow){
+            xSpeedCorrected = xSpeed *0.2;
+            ySpeedCorrected = ySpeed *0.2;
+        } else {
+            xSpeedCorrected = xSpeed;
+            ySpeedCorrected = ySpeed;
+        }
 
         if (xState){
             frontLeftModule.setDesiredState(new SwerveModuleState(0, Rotation2d.fromDegrees(45)));
@@ -275,7 +288,7 @@ public class SwerveSubsystem extends SubsystemBase {
         } else {
             if (rateLimit) {
                 // Convert XY to polar for rate limiting
-                double inputTranslationDir = Math.atan2(ySpeed, xSpeed);
+                double inputTranslationDir = Math.atan2(ySpeedCorrected, xSpeedCorrected);
                 double inputTranslationMag = Math.sqrt(Math.pow(xSpeed, 2) + Math.pow(ySpeed, 2));
 
                 // Calculate the direction slew rate based on an estimate of the lateral acceleration
@@ -311,8 +324,8 @@ public class SwerveSubsystem extends SubsystemBase {
 
 
             } else {
-                xSpeedCommanded = xSpeed;
-                ySpeedCommanded = ySpeed;
+                xSpeedCommanded = xSpeedCorrected;
+                ySpeedCommanded = ySpeedCorrected;
                 currentRotation = rot;
             }
         
@@ -480,5 +493,9 @@ public class SwerveSubsystem extends SubsystemBase {
             backLeftModule.getState(),
             backRightModule.getState());
         return speeds;
+    }
+
+    public void slowState(boolean state){
+        slow = state;
     }
 }

@@ -101,7 +101,7 @@ public class Manipulator extends SubsystemBase {
         bottomMotorSupplyCurrentLog.append(bottomMotor.getSupplyCurrent().getValueAsDouble());   
         lateratorMotorSupplyCurrentLog.append(lateratorMotor.getSupplyCurrent().getValueAsDouble()); 
 
-        lateratorMotor.setControl(positionVoltage.withPosition(lateratorTarget));
+        // lateratorMotor.setControl(positionVoltage.withPosition(lateratorTarget));
 
         // if (getLateratorLimit() == true) {
         //     resetLateratorEncoder();
