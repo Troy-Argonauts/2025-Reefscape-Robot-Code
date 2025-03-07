@@ -24,7 +24,8 @@ public class Elevator extends SubsystemBase {
     private TalonFX leftMotor, rightMotor;
     private DigitalInput bottomLimit;
 
-    private double encoderValue, target, oldtarget = 0;
+    private double encoderValue, target;
+    private double oldTarget = 0;
 
     private DoubleLogEntry elevatorLeftOutputCurrentLog;
     private DoubleLogEntry elevatorRightOutputCurrentLog;
@@ -32,7 +33,6 @@ public class Elevator extends SubsystemBase {
 
     boolean limitTriggered = false;
     
-
     TalonFXConfiguration config = new TalonFXConfiguration();
 
     PositionVoltage positionVoltage = new PositionVoltage(0).withSlot(0);
@@ -49,15 +49,12 @@ public class Elevator extends SubsystemBase {
         rightMotor = new TalonFX(Constants.Elevator.RIGHT_MOTOR_ID);
         bottomLimit = new DigitalInput(Constants.Elevator.BOTTOM_LIMIT_SWITCH_SLOT);
 
-        // leftMotor.setNeutralMode(NeutralModeValue.Brake);
-        // rightMotor.setNeutralMode(NeutralModeValue.Brake);
-
         leftMotorConfigs.CurrentLimits.SupplyCurrentLimit = 40;
         rightMotorConfigs.CurrentLimits.SupplyCurrentLimit = 40;
         leftMotorConfigs.MotorOutput.NeutralMode = NeutralModeValue.Brake;
         rightMotorConfigs.MotorOutput.NeutralMode = NeutralModeValue.Brake;
-        leftMotorConfigs.HardwareLimitSwitch.ForwardLimitAutosetPositionValue = 0;
-        rightMotorConfigs.HardwareLimitSwitch.ForwardLimitAutosetPositionValue = 0;
+        // leftMotorConfigs.HardwareLimitSwitch.ForwardLimitAutosetPositionValue = 0;
+        // rightMotorConfigs.HardwareLimitSwitch.ForwardLimitAutosetPositionValue = 0;
 
         slot0Configs.kP = Constants.Elevator.P;
         slot0Configs.kI = Constants.Elevator.I;
@@ -88,23 +85,25 @@ public class Elevator extends SubsystemBase {
 
         // SmartDashboard.putNumber("target", target);
         SmartDashboard.putNumber("Elevator Encoder Value", encoderValue);
-        // // SmartDashboard.putNumber("Elevator Left Motor Current", leftMotor.getSupplyCurrent().getValueAsDouble());
-        // // SmartDashboard.putNumber("Elevator Right Motor Current", rightMotor.getSupplyCurrent().getValueAsDouble());
+        // SmartDashboard.putNumber("Elevator Left Motor Current", leftMotor.getSupplyCurrent().getValueAsDouble());
+        // SmartDashboard.putNumber("Elevator Right Motor Current", rightMotor.getSupplyCurrent().getValueAsDouble());
         // SmartDashboard.putNumber("Elevator oldTarget", oldtarget);
         // SmartDashboard.putBoolean("Elevator Limit", getBottomLimit());
+        SmartDashboard.putBoolean("Limit Triggered", limitTriggered);
+
         
         elevatorLeftOutputCurrentLog.append(leftMotor.getSupplyCurrent().getValueAsDouble());
         elevatorRightOutputCurrentLog.append(rightMotor.getSupplyCurrent().getValueAsDouble());
         elevatorEncoderLog.append(leftMotor.getPosition().getValueAsDouble());
 
         // positionVoltage.LimitForwardMotion = getBottomLimit();
+
         // leftMotor.setControl(positionVoltage.withPosition(target));
 
         // if (getBottomLimit() == true) {
         //     resetEncoders();
         // }
 
-        SmartDashboard.putBoolean("Limit Triggered", limitTriggered);
         SmartDashboard.putBoolean("Limit Switch Value", getBottomLimit() == true);
         if (getBottomLimit() == true) {
             if (!limitTriggered) {
@@ -182,7 +181,7 @@ public class Elevator extends SubsystemBase {
      * @param state elevator state
      */
     public void setDesiredState(ElevatorStates state) {
-        oldtarget= target;
+        oldTarget = target;
         target = state.elevatorPosition;
     }
 
