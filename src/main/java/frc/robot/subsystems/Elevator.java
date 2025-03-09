@@ -62,11 +62,12 @@ public class Elevator extends SubsystemBase {
         slot0Configs.kV = Constants.Elevator.V;
         slot0Configs.kG = Constants.Elevator.G;
 
+
         leftMotor.getConfigurator().apply(leftMotorConfigs);
         rightMotor.getConfigurator().apply(rightMotorConfigs);
 
-
         rightMotor.setControl(new Follower(Constants.Elevator.LEFT_MOTOR_ID, true));
+        leftMotor.getConfigurator().apply(slot0Configs);
 
         DataLog log = DataLogManager.getLog();
 
@@ -83,12 +84,12 @@ public class Elevator extends SubsystemBase {
     public void periodic() {
         encoderValue = leftMotor.getPosition().getValueAsDouble();
 
-        // SmartDashboard.putNumber("target", target);
+        SmartDashboard.putNumber("target", target);
         SmartDashboard.putNumber("Elevator Encoder Value", encoderValue);
         // SmartDashboard.putNumber("Elevator Left Motor Current", leftMotor.getSupplyCurrent().getValueAsDouble());
         // SmartDashboard.putNumber("Elevator Right Motor Current", rightMotor.getSupplyCurrent().getValueAsDouble());
-        // SmartDashboard.putNumber("Elevator oldTarget", oldtarget);
-        // SmartDashboard.putBoolean("Elevator Limit", getBottomLimit());
+        SmartDashboard.putNumber("Elevator oldTarget", oldTarget);
+        SmartDashboard.putBoolean("Elevator Limit", getBottomLimit());
         SmartDashboard.putBoolean("Limit Triggered", limitTriggered);
 
         
@@ -96,18 +97,13 @@ public class Elevator extends SubsystemBase {
         elevatorRightOutputCurrentLog.append(rightMotor.getSupplyCurrent().getValueAsDouble());
         elevatorEncoderLog.append(leftMotor.getPosition().getValueAsDouble());
 
-        // positionVoltage.LimitForwardMotion = getBottomLimit();
-
         // leftMotor.setControl(positionVoltage.withPosition(target));
-
-        // if (getBottomLimit() == true) {
-        //     resetEncoders();
-        // }
 
         SmartDashboard.putBoolean("Limit Switch Value", getBottomLimit() == true);
         if (getBottomLimit() == true) {
             if (!limitTriggered) {
                 resetEncoders();
+                System.out.println("Reset Elevator Encoders");
                 limitTriggered = true;
             } 
         } else {
@@ -161,7 +157,7 @@ public class Elevator extends SubsystemBase {
      */
     public enum ElevatorStates{
         HOME(0),
-        LV1(0),
+        LV1(-3),
         LV2(0),
         LV3(0),
         ALGAE_LOW(0),  

@@ -12,6 +12,7 @@ import edu.wpi.first.util.datalog.DataLog;
 import edu.wpi.first.util.datalog.DoubleLogEntry;
 import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj.DigitalInput;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 
@@ -48,6 +49,10 @@ public class Manipulator extends SubsystemBase {
      * Constructor for the Manipulator class. Initializes motors, sensors, and configurations.
      */
     public Manipulator() {
+        TalonFXConfiguration topConfiguration = new TalonFXConfiguration();
+        TalonFXConfiguration bottomConfiguration = new TalonFXConfiguration();
+        TalonFXConfiguration lateratorConfiguration = new TalonFXConfiguration();
+
         topMotor = new TalonFX(Constants.Manipulator.TOP_MOTOR_CAN_ID);
         bottomMotor = new TalonFX(Constants.Manipulator.BOTTOM_MOTOR_CAN_ID);
         lateratorMotor = new TalonFX(Constants.Manipulator.LATERATOR_MOTOR_CAN_ID);
@@ -57,30 +62,25 @@ public class Manipulator extends SubsystemBase {
         funnelBeamBreak = new DigitalInput(Constants.Manipulator.FUNNEL_BEAM_BREAK);
         manipulatorBeamBreak = new DigitalInput(Constants.Manipulator.MANIPULATOR_BEAM_BREAK);
 
+        topConfiguration.CurrentLimits.SupplyCurrentLimit = 30;
+        bottomConfiguration.CurrentLimits.SupplyCurrentLimit = 30;
+        lateratorConfiguration.CurrentLimits.SupplyCurrentLimit = 20;
 
-        topMotor.setNeutralMode(NeutralModeValue.Coast);
-        bottomMotor.setNeutralMode(NeutralModeValue.Coast);
-        lateratorMotor.setNeutralMode(NeutralModeValue.Brake);
-
-        TalonFXConfiguration topConfiguration = new TalonFXConfiguration();
-        TalonFXConfiguration bottomConfiguration = new TalonFXConfiguration();
-        TalonFXConfiguration lateratorConfiguration = new TalonFXConfiguration();
+        topConfiguration.MotorOutput.NeutralMode = NeutralModeValue.Coast;
+        bottomConfiguration.MotorOutput.NeutralMode = NeutralModeValue.Coast;
+        lateratorConfiguration.MotorOutput.NeutralMode = NeutralModeValue.Brake;
         
         slot0Config.kP = Constants.Manipulator.LateratorP;
         slot0Config.kI = Constants.Manipulator.LateratorI;
         slot0Config.kD = Constants.Manipulator.LateratorD;
         slot0Config.kV = Constants.Manipulator.LateratorV;
 
-
-        bottomMotor.setControl(new Follower(Constants.Manipulator.TOP_MOTOR_CAN_ID, false));
-
-        topConfiguration.CurrentLimits.SupplyCurrentLimit = 30;
-        bottomConfiguration.CurrentLimits.SupplyCurrentLimit = 30;
-        lateratorConfiguration.CurrentLimits.SupplyCurrentLimit = 20;
-
         topMotor.getConfigurator().apply(topConfiguration);
         bottomMotor.getConfigurator().apply(bottomConfiguration);
         lateratorMotor.getConfigurator().apply(lateratorConfiguration);
+
+        bottomMotor.setControl(new Follower(Constants.Manipulator.TOP_MOTOR_CAN_ID, false));
+        lateratorMotor.getConfigurator().apply(slot0Config);
 
         DataLog log = DataLogManager.getLog();
 
@@ -100,6 +100,9 @@ public class Manipulator extends SubsystemBase {
         topMotorSupplyCurrentLog.append(topMotor.getSupplyCurrent().getValueAsDouble());
         bottomMotorSupplyCurrentLog.append(bottomMotor.getSupplyCurrent().getValueAsDouble());   
         lateratorMotorSupplyCurrentLog.append(lateratorMotor.getSupplyCurrent().getValueAsDouble()); 
+
+        SmartDashboard.putBoolean("Coral Ready", isCoralReady());
+        SmartDashboard.putNumber("Lat Supply Current", lateratorMotor.getSupplyCurrent().getValueAsDouble());
 
         // lateratorMotor.setControl(positionVoltage.withPosition(lateratorTarget));
 
@@ -167,7 +170,7 @@ public class Manipulator extends SubsystemBase {
      * @return true if manipualtor beam break is true, false if manipulator beam break are false
      */
     public boolean isCoralReady() {
-        return manipulatorBeamBreak.get();
+        return !manipulatorBeamBreak.get();
     }
 
     /**
@@ -193,11 +196,14 @@ public class Manipulator extends SubsystemBase {
     public void setManipState(ManipulatorStates state) {
         switch (state) {
             case IN: 
-                setManipulatorRawPower(-0.3); 
+                setManipulatorRawPower(-0.15); 
+                break;
             case OUT: 
-                setManipulatorRawPower(0.3);
+                setManipulatorRawPower(0.15);
+                break;
             case OFF:
                 setManipulatorRawPower(0);
+                break;
         }
     }
 

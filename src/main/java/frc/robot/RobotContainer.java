@@ -43,8 +43,8 @@ public class RobotContainer {
 
     public Trigger elevatorTrigger;
 
-    public InstantCommand manipualtorIN;
-    public InstantCommand manipulatorOFF;
+    public final ParallelCommandGroup manipulatorOUT;
+    public final ParallelCommandGroup manipulatorOFF;
 
 
     public RobotContainer() {
@@ -52,9 +52,15 @@ public class RobotContainer {
         elevatorTrigger = new Trigger(() -> Robot.getElevator().getBottomLimit());
         // Register Commands for path planner
         registerNamedCommands();
-        manipualtorIN = new InstantCommand(() -> Robot.getManipulator().setManipState(ManipulatorStates.IN), Robot.getManipulator());
-        manipulatorOFF = new InstantCommand(() -> Robot.getManipulator().setManipState(ManipulatorStates.OFF), Robot.getManipulator());
+        // manipulatorOUT = new InstantCommand(() -> Robot.getManipulator().setManipState(ManipulatorStates.OUT), Robot.getManipulator());
+        // manipulatorOFF = new InstantCommand(() -> Robot.getManipulator().setManipState(ManipulatorStates.OFF), Robot.getManipulator());
         // Configure the button binding
+        manipulatorOUT = new ParallelCommandGroup(
+            new InstantCommand(() -> Robot.getManipulator().setManipState(ManipulatorStates.OUT), Robot.getManipulator()),
+            new InstantCommand(() -> System.out.println("Manipulator OUT")));
+        manipulatorOFF = new ParallelCommandGroup(
+            new InstantCommand(() -> Robot.getManipulator().setManipState(ManipulatorStates.OFF), Robot.getManipulator()),
+            new InstantCommand(() -> System.out.println("Manipulator OFF")));
         configureBindings();
 
     }
@@ -74,29 +80,29 @@ public class RobotContainer {
         //    new PassiveIntake()
         // );
 
-        // Robot.getDrivetrain().setDefaultCommand(
-        //         new RunCommand(
-        //           () -> {
-        //             double xSpeed = (Math.abs(driver.getLeftX()) > Constants.Controllers.DEADBAND)
-        //                 ? driver.getLeftX()
-        //                 : 0;
-        //             double ySpeed = (Math.abs(driver.getLeftY()) > Constants.Controllers.DEADBAND)
-        //                 ? driver.getLeftY()
-        //                 : 0;
-        //             double rotSpeed = (Math.abs(driver.getRightX()) > Constants.Controllers.DEADBAND)
-        //                 ? driver.getRightX()
-        //                 : 0;
+        Robot.getDrivetrain().setDefaultCommand(
+                new RunCommand(
+                  () -> {
+                    double xSpeed = (Math.abs(driver.getLeftX()) > Constants.Controllers.DEADBAND)
+                        ? driver.getLeftX()
+                        : 0;
+                    double ySpeed = (Math.abs(driver.getLeftY()) > Constants.Controllers.DEADBAND)
+                        ? driver.getLeftY()
+                        : 0;
+                    double rotSpeed = (Math.abs(driver.getRightX()) > Constants.Controllers.DEADBAND)
+                        ? driver.getRightX()
+                        : 0;
 
-        //             Robot.getDrivetrain().drive(ySpeed, xSpeed, rotSpeed, true, true);
-        //           }, Robot.getDrivetrain()
+                    Robot.getDrivetrain().drive(ySpeed*0.7, xSpeed*0.7, rotSpeed, true, true);
+                  }, Robot.getDrivetrain()
 
-        //         ));
+                ));
 
-        // // driver.x().whileTrue(
-        //     new InstantCommand(() -> Robot.getDrivetrain().slowState(true), Robot.getDrivetrain)
-        // ).whileFalse(
-        //     new InstantCommand(() -> Robot.getDrivetrain().slowState(false), Robot.getDrivetrain())
-        // );
+        driver.rightBumper().whileTrue(
+            new InstantCommand(() -> Robot.getDrivetrain().slowState(true), Robot.getDrivetrain())
+        ).whileFalse(
+            new InstantCommand(() -> Robot.getDrivetrain().slowState(false), Robot.getDrivetrain())
+        );
 
         // driver.x().whileTrue(
         //         new InstantCommand(() -> Robot.getDrivetrain().setToZero()), Robot.getDrivetrain());
@@ -122,12 +128,17 @@ public class RobotContainer {
         //   )
         // );
 
-        operator.rightBumper().whileTrue(
-            new ConditionalCommand(manipualtorIN, manipulatorOFF , () -> Robot.getManipulator().isCoralReady())
-        ).whileFalse(manipulatorOFF);
+        // operator.leftBumper().whileTrue(
+        //     // manipulatorOUT.unless(() -> Robot.getManipulator().isCoralReady())
+        //     new ConditionalCommand(manipulatorOUT, manipulatorOFF, () -> !Robot.getManipulator().isCoralReady())
+        // ).whileFalse(
+        //     new InstantCommand(() -> Robot.getManipulator().setManipState(ManipulatorStates.OFF), Robot.getManipulator())
+        // );
 
-        // operator.rightBumper().onTrue(
+        // operator.rightBumper().whileTrue(
         //   new InstantCommand(() -> Robot.getManipulator().setManipState(ManipulatorStates.IN), Robot.getManipulator())
+        // ).whileFalse(
+        //     new InstantCommand(() -> Robot.getManipulator().setManipState(ManipulatorStates.OFF), Robot.getManipulator())
         // );
 
         // operator.rightTrigger().onTrue(
@@ -138,24 +149,29 @@ public class RobotContainer {
         //   new InstantCommand(() -> Robot.getManipulator().setLateratorState(LateratorStates.IN), Robot.getManipulator()) //in
         // );
 
-        // operator.povDown().onTrue(
-        //   new InstantCommand(() -> Robot.getManipulator().setLateratorState(LateratorStates.OUT), Robot.getManipulator()) //out
-        // );
-        
+        // Robot.getManipulator().setDefaultCommand(
+        //     new RunCommand(() -> { 
+        //                 double speed = (Math.abs(operator.getLeftY()) > Constants.Controllers.DEADBAND)
+        //                             ? operator.getLeftY()
+        //                             : 0;
+        //                 Robot.getManipulator().setLateratorRawPower(speed*0.7);
+        //             }, Robot.getManipulator()
+        // ));
+
         // Robot.getElevator().setDefaultCommand(
         //   new RunCommand(() -> {
         //     Robot.getElevator().adjustSetpoint(operator.getLeftY());
         //   }, Robot.getElevator())
         // );
 
-        Robot.getElevator().setDefaultCommand(
-            new RunCommand(() -> { 
-                double speed = (Math.abs(operator.getLeftY()) > Constants.Controllers.DEADBAND)
-                            ? operator.getLeftY()
-                            : 0;
-                Robot.getElevator().setRawPower(speed*0.3);
-            }, Robot.getElevator()
-        ));
+        // Robot.getElevator().setDefaultCommand(
+        //     new RunCommand(() -> { 
+        //         double speed = (Math.abs(operator.getLeftY()) > Constants.Controllers.DEADBAND)
+        //                     ? operator.getLeftY()
+        //                     : 0;
+        //         Robot.getElevator().setRawPower(speed*0.3);
+        //     }, Robot.getElevator()
+        // ));
 
     }
 
@@ -168,9 +184,9 @@ public class RobotContainer {
         return driver;
     }
 
-    // public static CommandXboxController getOperator() {
-    //     return operator;
-    // }
+    public static CommandXboxController getOperator() {
+        return operator;
+    }
 
     /**
      * Use this to pass the autonomous command to the main {@link Robot} class.

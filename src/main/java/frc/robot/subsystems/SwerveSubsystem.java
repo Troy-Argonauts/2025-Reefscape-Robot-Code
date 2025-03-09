@@ -270,14 +270,16 @@ public class SwerveSubsystem extends SubsystemBase {
         double ySpeedCommanded;
         double xSpeedCorrected;
         double ySpeedCorrected;
-        // double rotCorrected;
+        double rotCorrected;
 
         if(slow){
             xSpeedCorrected = xSpeed *0.2;
             ySpeedCorrected = ySpeed *0.2;
+            rotCorrected = rot *0.2;
         } else {
             xSpeedCorrected = xSpeed;
             ySpeedCorrected = ySpeed;
+            rotCorrected = rot;
         }
 
         if (xState){
@@ -289,7 +291,7 @@ public class SwerveSubsystem extends SubsystemBase {
             if (rateLimit) {
                 // Convert XY to polar for rate limiting
                 double inputTranslationDir = Math.atan2(ySpeedCorrected, xSpeedCorrected);
-                double inputTranslationMag = Math.sqrt(Math.pow(xSpeed, 2) + Math.pow(ySpeed, 2));
+                double inputTranslationMag = Math.sqrt(Math.pow(xSpeedCorrected, 2) + Math.pow(ySpeedCorrected, 2));
 
                 // Calculate the direction slew rate based on an estimate of the lateral acceleration
                 double directionSlewRate;
@@ -320,13 +322,13 @@ public class SwerveSubsystem extends SubsystemBase {
                 prevTime = currentTime;
                 xSpeedCommanded = currentTranslationMag * Math.cos(currentTranslationDir);
                 ySpeedCommanded = currentTranslationMag * Math.sin(currentTranslationDir);
-                currentRotation = rotLimiter.calculate(rot);
+                currentRotation = rotLimiter.calculate(rotCorrected);
 
 
             } else {
                 xSpeedCommanded = xSpeedCorrected;
                 ySpeedCommanded = ySpeedCorrected;
-                currentRotation = rot;
+                currentRotation = rotCorrected;
             }
         
 
