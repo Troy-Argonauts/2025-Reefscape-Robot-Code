@@ -18,7 +18,7 @@ public class RemoveAlgae extends SequentialCommandGroup {
 
             new WaitUntilCommand(() -> Robot.getElevator().isPIDFinished()),
 
-            new InstantCommand(() -> Robot.getManipulator().setManipState(ManipulatorStates.OUT), Robot.getManipulator()),
+            new InstantCommand(() -> Robot.getManipulator().setManipState(ManipulatorStates.SCORING), Robot.getManipulator()),
 
             new WaitUntilCommand(1),
 

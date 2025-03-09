@@ -119,7 +119,9 @@ public class Manipulator extends SubsystemBase {
     public enum ManipulatorStates {
         IN,
 
-        OUT,
+        INTAKE,
+
+        SCORING,
 
         OFF;
     }
@@ -196,14 +198,18 @@ public class Manipulator extends SubsystemBase {
     public void setManipState(ManipulatorStates state) {
         switch (state) {
             case IN: 
-                setManipulatorRawPower(-0.15); 
+                setManipulatorRawPower(-0.3); 
                 break;
-            case OUT: 
+            case INTAKE: 
+                setManipulatorRawPower(0.15);
+                break;
+            case SCORING:
                 setManipulatorRawPower(0.15);
                 break;
             case OFF:
                 setManipulatorRawPower(0);
                 break;
+            
         }
     }
 
