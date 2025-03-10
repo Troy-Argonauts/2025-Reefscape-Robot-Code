@@ -49,8 +49,6 @@ public class SwerveModule extends SubsystemBase{
     public SwerveModule(int driveMotorID, int turnMotorID, int turnEncoderID, String canbusName, double chassisAngularOffset, boolean driveInverted){
         driveMotor = new TalonFX(driveMotorID, canbusName);
         turnMotor = new TalonFX(turnMotorID, canbusName);
-        driveMotor.setNeutralMode(NeutralModeValue.Brake);
-        turnMotor.setNeutralMode(NeutralModeValue.Brake);
         driveValue = 0;
         turnEncoder = new CANcoder(turnEncoderID, canbusName);
 
@@ -64,6 +62,7 @@ public class SwerveModule extends SubsystemBase{
         turnConfigs.Feedback.FeedbackRemoteSensorID = turnEncoder.getDeviceID();
         turnConfigs.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.RemoteCANcoder;
         turnConfigs.CurrentLimits.SupplyCurrentLimit = TURNING_MOTOR_CURRENT_LIMIT;
+        turnConfigs.MotorOutput.NeutralMode = NeutralModeValue.Brake;
         turnMotor.getConfigurator().apply(turnConfigs);
 
         driveConfig.kP = DRIVE_P;
@@ -83,6 +82,7 @@ public class SwerveModule extends SubsystemBase{
             driveConfigs.CurrentLimits.SupplyCurrentLimit = DRIVING_MOTOR_CURRENT_LIMIT;
             driveMotor.getConfigurator().apply(driveConfigs);
         }
+        driveConfigs.MotorOutput.NeutralMode = NeutralModeValue.Brake;
 
         turnConfig.kP = TURN_P;
         turnConfig.kI = TURN_I;

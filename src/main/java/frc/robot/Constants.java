@@ -163,11 +163,14 @@ public final class Constants {
         int RIGHT_MOTOR_ID = 2;
         int BOTTOM_LIMIT_SWITCH_SLOT = 1;
 
-        double P = 1.3;
-        double I = 0;
-        double D = 0;
-        double V = 0;
-        double G = 0;
+        int MOTION_MAGIC_CRUISE_VELOCITY = 20;
+        int MOTION_MAGIC_ACCEL = 40;
+
+        double P = 2.75;
+        double I = 0.15;
+        double D = 0.05;
+        double V = 0.12;
+        double G = 0.46;
     }
 
     public interface Manipulator {

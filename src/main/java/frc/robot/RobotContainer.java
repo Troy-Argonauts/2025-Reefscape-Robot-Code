@@ -67,36 +67,37 @@ public class RobotContainer {
      * Use this method to define your controller->command mappings.
      */
     private void configureBindings() {
-        // intakeTrigger.onTrue(
-        //    new PassiveIntake()
-        // );
 
-        // Robot.getDrivetrain().setDefaultCommand(
-        //         new RunCommand(
-        //           () -> {
-        //             double xSpeed = (Math.abs(driver.getLeftX()) > Constants.Controllers.DEADBAND)
-        //                 ? driver.getLeftX()
-        //                 : 0;
-        //             double ySpeed = (Math.abs(driver.getLeftY()) > Constants.Controllers.DEADBAND)
-        //                 ? driver.getLeftY()
-        //                 : 0;
-        //             double rotSpeed = (Math.abs(driver.getRightX()) > Constants.Controllers.DEADBAND)
-        //                 ? driver.getRightX()
-        //                 : 0;
+        Robot.getDrivetrain().setDefaultCommand(
+                new RunCommand(
+                  () -> {
+                    double xSpeed = (Math.abs(driver.getLeftX()) > Constants.Controllers.DEADBAND)
+                        ? driver.getLeftX()
+                        : 0;
+                    double ySpeed = (Math.abs(driver.getLeftY()) > Constants.Controllers.DEADBAND)
+                        ? driver.getLeftY()
+                        : 0;
+                    double rotSpeed = (Math.abs(driver.getRightX()) > Constants.Controllers.DEADBAND)
+                        ? driver.getRightX()
+                        : 0;
 
-        //             Robot.getDrivetrain().drive(ySpeed*0.7, xSpeed*0.7, rotSpeed, true, true);
-        //           }, Robot.getDrivetrain()
+                    Robot.getDrivetrain().drive(ySpeed, xSpeed, rotSpeed, true, true);
+                  }, Robot.getDrivetrain()
 
-        //         ));
+                ));
 
-        // driver.rightBumper().whileTrue(
-        //     new InstantCommand(() -> Robot.getDrivetrain().slowState(true), Robot.getDrivetrain())
-        // ).whileFalse(
-        //     new InstantCommand(() -> Robot.getDrivetrain().slowState(false), Robot.getDrivetrain())
-        // );
+        driver.rightBumper().whileTrue(
+            new InstantCommand(() -> Robot.getDrivetrain().slowState(true), Robot.getDrivetrain())
+        ).whileFalse(
+            new InstantCommand(() -> Robot.getDrivetrain().slowState(false), Robot.getDrivetrain())
+        );
 
-        // driver.x().whileTrue(
-        //   new InstantCommand(() -> Robot.getDrivetrain().setToZero()), Robot.getDrivetrain());
+        driver.x().whileTrue(
+            new InstantCommand(() -> Robot.getDrivetrain().setXState(true), Robot.getDrivetrain())
+        ).whileFalse(
+            new InstantCommand(() -> Robot.getDrivetrain().setXState(false), Robot.getDrivetrain())
+        );
+
         // operator.y().onTrue(
         //   new InstantCommand(() -> Robot.getElevator().setDesiredState(ElevatorStates.LV4), Robot.getDrivetrain())
         // );
@@ -113,34 +114,24 @@ public class RobotContainer {
         //   new InstantCommand(() -> Robot.getElevator().setDesiredState(ElevatorStates.LV1), Robot.getElevator())
         // );
 
-        // operator.leftBumper().onTrue(
+        // operator.rightBumper().onTrue(
         //   new ParallelCommandGroup(
         //     new Home()
         //   )
         // );
 
-        operator.leftBumper().whileTrue(
-            // manipulatorOUT.unless(() -> Robot.getManipulator().isCoralReady())
-            // new ConditionalCommand(manipulatorOUT, manipulatorOFF, () -> !Robot.getManipulator().isCoralReady())
-            new Intake()
-        ).whileFalse(
-            new InstantCommand(() -> Robot.getManipulator().setManipState(ManipulatorStates.OFF), Robot.getManipulator())
-        );
-
-        // operator.rightBumper().whileTrue(
-        //   new InstantCommand(() -> Robot.getManipulator().setManipState(ManipulatorStates.IN), Robot.getManipulator())
+        // operator.leftBumper().whileTrue(
+        //     // manipulatorOUT.unless(() -> Robot.getManipulator().isCoralReady())
+        //     // new ConditionalCommand(manipulatorOUT, manipulatorOFF, () -> !Robot.getManipulator().isCoralReady())
+        //     new Intake()
         // ).whileFalse(
         //     new InstantCommand(() -> Robot.getManipulator().setManipState(ManipulatorStates.OFF), Robot.getManipulator())
         // );
 
-        operator.rightTrigger().whileTrue(
-          new InstantCommand(() -> Robot.getManipulator().setManipState(ManipulatorStates.SCORING), Robot.getManipulator())
-        ).whileFalse(
-            new InstantCommand(() -> Robot.getManipulator().setManipState(ManipulatorStates.OFF), Robot.getManipulator())
-        );
-
-        // operator.povUp().onTrue(
-        //   new InstantCommand(() -> Robot.getManipulator().setLateratorState(LateratorStates.IN), Robot.getManipulator()) //in
+        // operator.rightTrigger().whileTrue(
+        //   new InstantCommand(() -> Robot.getManipulator().setManipState(ManipulatorStates.SCORING), Robot.getManipulator())
+        // ).whileFalse(
+        //     new InstantCommand(() -> Robot.getManipulator().setManipState(ManipulatorStates.OFF), Robot.getManipulator())
         // );
 
         // Robot.getManipulator().setDefaultCommand(
@@ -152,18 +143,13 @@ public class RobotContainer {
         //             }, Robot.getManipulator()
         // ));
 
-        // Robot.getElevator().setDefaultCommand(
-        //   new RunCommand(() -> {
-        //     Robot.getElevator().adjustSetpoint(operator.getLeftY());
-        //   }, Robot.getElevator())
-        // );
 
         // Robot.getElevator().setDefaultCommand(
         //     new RunCommand(() -> { 
         //         double speed = (Math.abs(operator.getLeftY()) > Constants.Controllers.DEADBAND)
         //                     ? operator.getLeftY()
         //                     : 0;
-        //         Robot.getElevator().setRawPower(speed*0.3);
+        //         Robot.getElevator().setRawPower(-speed*0.3);
         //     }, Robot.getElevator()
         // ));
 
