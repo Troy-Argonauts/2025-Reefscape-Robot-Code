@@ -124,7 +124,9 @@ public class Manipulator extends SubsystemBase {
      * States of the Laterator (IN, OUT, OFF)
      */
     public enum LateratorStates {
-        IN,
+        OFF,
+
+        HOLD,
 
         OUT;
     }
@@ -135,10 +137,16 @@ public class Manipulator extends SubsystemBase {
      */
     public void setLateratorState(LateratorStates state) {
         switch (state) {
-            case IN: 
-                lateratorTarget = Constants.Manipulator.MIN_LATERATOR_POSITION;
             case OUT: 
-                lateratorTarget = Constants.Manipulator.MAX_LATERATOR_POSITION;
+                setLateratorRawPower(0.3);
+                break;
+            case OFF: 
+                setLateratorRawPower(0);
+                break;
+            case HOLD:
+                setLateratorRawPower(0.3);
+                break;
+            
         }
     }
 

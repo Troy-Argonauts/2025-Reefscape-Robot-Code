@@ -16,6 +16,7 @@ import edu.wpi.first.util.datalog.DataLog;
 import edu.wpi.first.util.datalog.DoubleLogEntry;
 import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj.DigitalInput;
+import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
@@ -203,10 +204,12 @@ public class Elevator extends SubsystemBase {
      * @param joyStickValue joystick value between 1 and -1
      */
     public void adjustSetpoint(double joyStickValue) {
-        double newTarget = target + (joyStickValue * 20);
-        if ((target <= 5 || target >= 0) && newTarget > 0 && target != newTarget) {
-            target = newTarget;
-        } else if (newTarget > target && getBottomLimit()) { // If elevator is moving down (new encoder value is less than current encoder value) and bottomLimitSwitch is not pressed
+        double deadbanded = (Math.abs(joyStickValue) > Constants.Controllers.DEADBAND)
+                            ? joyStickValue
+                            : 0;
+        double newTarget = target + (deadbanded * 0.2);
+        if ((newTarget >= target) || (newTarget <= target && !getBottomLimit())){
+            oldTarget = target;
             target = newTarget;
         }
     }
