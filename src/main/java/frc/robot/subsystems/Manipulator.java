@@ -69,11 +69,6 @@ public class Manipulator extends SubsystemBase {
         topConfiguration.MotorOutput.NeutralMode = NeutralModeValue.Coast;
         bottomConfiguration.MotorOutput.NeutralMode = NeutralModeValue.Coast;
         lateratorConfiguration.MotorOutput.NeutralMode = NeutralModeValue.Brake;
-        
-        slot0Config.kP = Constants.Manipulator.LateratorP;
-        slot0Config.kI = Constants.Manipulator.LateratorI;
-        slot0Config.kD = Constants.Manipulator.LateratorD;
-        slot0Config.kV = Constants.Manipulator.LateratorV;
 
         topMotor.getConfigurator().apply(topConfiguration);
         bottomMotor.getConfigurator().apply(bottomConfiguration);
