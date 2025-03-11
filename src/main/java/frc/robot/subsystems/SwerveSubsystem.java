@@ -15,7 +15,6 @@ import com.pathplanner.lib.controllers.PPHolonomicDriveController;
 import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
@@ -64,6 +63,8 @@ public class SwerveSubsystem extends SubsystemBase {
 
     public boolean xState = false;
 
+    public boolean slow = false;
+
     // The gyro sensor
     public final Pigeon2 gyro = new Pigeon2(PIGEON_CAN_ID, CANBUS_NAME);
 
@@ -77,17 +78,8 @@ public class SwerveSubsystem extends SubsystemBase {
     private SlewRateLimiter rotLimiter = new SlewRateLimiter(Swerve.ROTATIONAL_SLEW_RATE);
     private double prevTime = WPIUtilJNI.now() * 1e-6;
 
-    private SwerveDriveKinematics kinematics = new SwerveDriveKinematics();
-
     private ModuleConfig moduleConfig;
     private RobotConfig robotConfig;
-
-    private Translation2d[] moduleOffsets = {
-        new Translation2d(null, null),
-        new Translation2d(null, null), 
-        new Translation2d(null, null),
-        new Translation2d(null, null)}; // robot configs 2d translations
-
 
     // Odometry class for tracking robot pose
     SwerveDriveOdometry odometry = new SwerveDriveOdometry(
@@ -102,42 +94,42 @@ public class SwerveSubsystem extends SubsystemBase {
 
     /** Creates a new SwerveSubsystem. */
     public SwerveSubsystem() {
-        moduleConfig = new ModuleConfig(
-            Constants.Swerve.WHEEL_DIAMETER_METERS / 2, 
-            Constants.Swerve.MAX_SPEED_METERS_PER_SECOND * 0.85, 
-            Constants.PathPlanner.WHEEL_COF,
-            DCMotor.getKrakenX60(1), 
-            Constants.SwerveModule.DRIVING_MOTOR_CURRENT_LIMIT, 1);
+    //     moduleConfig = new ModuleConfig(
+    //         Constants.Swerve.WHEEL_DIAMETER_METERS / 2, 
+    //         Constants.Swerve.MAX_SPEED_METERS_PER_SECOND * 0.85, 
+    //         Constants.PathPlanner.WHEEL_COF,
+    //         DCMotor.getKrakenX60(1), 
+    //         Constants.SwerveModule.DRIVING_MOTOR_CURRENT_LIMIT, 1);
 
-        robotConfig = new RobotConfig(
-            Constants.PathPlanner.ROBOT_MASS, 
-            Constants.PathPlanner.MOMENT_OF_INERTIA, 
-            moduleConfig, 
-           moduleOffsets);
+    //     robotConfig = new RobotConfig(
+    //         Constants.PathPlanner.ROBOT_MASS, 
+    //         Constants.PathPlanner.MOMENT_OF_INERTIA, 
+    //         moduleConfig, 
+    //        moduleOffsets);
 
-           AutoBuilder.configure(
-            this::getPose, // Robot pose supplier
-            this::resetOdometry, // Method to reset odometry (will be called if your auto has a starting pose)
-            this::getChassisSpeeds, // ChassisSpeeds supplier. MUST BE ROBOT RELATIVE
-            (speeds, feedforwards) -> pathPlannerDrive(speeds, true), // Method that will drive the robot given ROBOT RELATIVE ChassisSpeeds. Also optionally outputs individual module feedforwards
-            new PPHolonomicDriveController( // PPHolonomicController is the built in path following controller for holonomic drive trains
-                    new PIDConstants(5.0, 0.0, 0.0), // Translation PID constants
-                    new PIDConstants(5.0, 0.0, 0.0) // Rotation PID constants
-            ),
-            robotConfig, // The robot configuration
-            () -> {
-              // Boolean supplier that controls when the path will be mirrored for the red alliance
-              // This will flip the path being followed to the red side of the field.
-              // THE ORIGIN WILL REMAIN ON THE BLUE SIDE
+    //        AutoBuilder.configure(
+    //         this::getPose, // Robot pose supplier
+    //         this::resetOdometry, // Method to reset odometry (will be called if your auto has a starting pose)
+    //         this::getChassisSpeeds, // ChassisSpeeds supplier. MUST BE ROBOT RELATIVE
+    //         (speeds, feedforwards) -> pathPlannerDrive(speeds, true), // Method that will drive the robot given ROBOT RELATIVE ChassisSpeeds. Also optionally outputs individual module feedforwards
+    //         new PPHolonomicDriveController( // PPHolonomicController is the built in path following controller for holonomic drive trains
+    //                 new PIDConstants(5.0, 0.0, 0.0), // Translation PID constants
+    //                 new PIDConstants(5.0, 0.0, 0.0) // Rotation PID constants
+    //         ),
+    //         robotConfig, // The robot configuration
+    //         () -> {
+    //           // Boolean supplier that controls when the path will be mirrored for the red alliance
+    //           // This will flip the path being followed to the red side of the field.
+    //           // THE ORIGIN WILL REMAIN ON THE BLUE SIDE
 
-              var alliance = DriverStation.getAlliance();
-              if (alliance.isPresent()) {
-                return alliance.get() == DriverStation.Alliance.Red;
-              }
-              return false;
-            },
-            this // Reference to this subsystem to set requirements
-    );
+    //           var alliance = DriverStation.getAlliance();
+    //           if (alliance.isPresent()) {
+    //             return alliance.get() == DriverStation.Alliance.Red;
+    //           }
+    //           return false;
+    //         },
+    //         this // Reference to this subsystem to set requirements
+    // );
     }
 
     /**
@@ -234,11 +226,6 @@ public class SwerveSubsystem extends SubsystemBase {
         SmartDashboard.putNumber("FR Desired State Velocity", frontRightModule.desiredState.speedMetersPerSecond);
         SmartDashboard.putNumber("BL Desired State Velocity", backLeftModule.desiredState.speedMetersPerSecond);
         SmartDashboard.putNumber("BR Desired State Velocity", backRightModule.desiredState.speedMetersPerSecond);
-
-        // SmartDashboard.putNumber("FL Desired State Speed", frontLeftModule.desiredState.speedMetersPerSecond);
-        // SmartDashboard.putNumber("FR Desired State Speed", frontRightModule.desiredState.speedMetersPerSecond);
-        // SmartDashboard.putNumber("BL Desired State Speed", backLeftModule.desiredState.speedMetersPerSecond);
-        // SmartDashboard.putNumber("BR Desired State Speed", backRightModule.desiredState.speedMetersPerSecond);
     }
 
 
@@ -281,6 +268,19 @@ public class SwerveSubsystem extends SubsystemBase {
         
         double xSpeedCommanded;
         double ySpeedCommanded;
+        double xSpeedCorrected;
+        double ySpeedCorrected;
+        double rotCorrected;
+
+        if(slow){
+            xSpeedCorrected = xSpeed *0.2;
+            ySpeedCorrected = ySpeed *0.2;
+            rotCorrected = rot *0.2;
+        } else {
+            xSpeedCorrected = xSpeed;
+            ySpeedCorrected = ySpeed;
+            rotCorrected = rot;
+        }
 
         if (xState){
             frontLeftModule.setDesiredState(new SwerveModuleState(0, Rotation2d.fromDegrees(45)));
@@ -290,8 +290,8 @@ public class SwerveSubsystem extends SubsystemBase {
         } else {
             if (rateLimit) {
                 // Convert XY to polar for rate limiting
-                double inputTranslationDir = Math.atan2(ySpeed, xSpeed);
-                double inputTranslationMag = Math.sqrt(Math.pow(xSpeed, 2) + Math.pow(ySpeed, 2));
+                double inputTranslationDir = Math.atan2(ySpeedCorrected, xSpeedCorrected);
+                double inputTranslationMag = Math.sqrt(Math.pow(xSpeedCorrected, 2) + Math.pow(ySpeedCorrected, 2));
 
                 // Calculate the direction slew rate based on an estimate of the lateral acceleration
                 double directionSlewRate;
@@ -322,13 +322,13 @@ public class SwerveSubsystem extends SubsystemBase {
                 prevTime = currentTime;
                 xSpeedCommanded = currentTranslationMag * Math.cos(currentTranslationDir);
                 ySpeedCommanded = currentTranslationMag * Math.sin(currentTranslationDir);
-                currentRotation = rotLimiter.calculate(rot);
+                currentRotation = rotLimiter.calculate(rotCorrected);
 
 
             } else {
-                xSpeedCommanded = xSpeed;
-                ySpeedCommanded = ySpeed;
-                currentRotation = rot;
+                xSpeedCommanded = xSpeedCorrected;
+                ySpeedCommanded = ySpeedCorrected;
+                currentRotation = rotCorrected;
             }
         
 
@@ -362,10 +362,10 @@ public class SwerveSubsystem extends SubsystemBase {
    * Sets the wheels into an X formation to prevent movement.
    */
     public void setToZero() {
-        frontLeftModule.setDesiredState(new SwerveModuleState(0, Rotation2d.fromDegrees(0)));
-        frontRightModule.setDesiredState(new SwerveModuleState(0, Rotation2d.fromDegrees(0)));
-        backLeftModule.setDesiredState(new SwerveModuleState(0, Rotation2d.fromDegrees(0)));
-        backRightModule.setDesiredState(new SwerveModuleState(0, Rotation2d.fromDegrees(0)));
+        frontLeftModule.setDesiredState(new SwerveModuleState(2, Rotation2d.fromDegrees(0)));
+        frontRightModule.setDesiredState(new SwerveModuleState(2, Rotation2d.fromDegrees(0)));
+        backLeftModule.setDesiredState(new SwerveModuleState(2, Rotation2d.fromDegrees(0)));
+        backRightModule.setDesiredState(new SwerveModuleState(2, Rotation2d.fromDegrees(0)));
     }
 
 
@@ -489,11 +489,15 @@ public class SwerveSubsystem extends SubsystemBase {
      * @return ChassisSpeed object.
      */
     public ChassisSpeeds getChassisSpeeds(){
-        ChassisSpeeds speeds = kinematics.toChassisSpeeds(
+        ChassisSpeeds speeds = Constants.Swerve.DRIVE_KINEMATICS.toChassisSpeeds(
             frontLeftModule.getState(), 
             frontRightModule.getState(),
             backLeftModule.getState(),
             backRightModule.getState());
         return speeds;
+    }
+
+    public void slowState(boolean state){
+        slow = state;
     }
 }

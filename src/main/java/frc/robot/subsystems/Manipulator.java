@@ -1,9 +1,12 @@
 package frc.robot.subsystems;
 
+import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.Follower;
+import com.ctre.phoenix6.controls.PositionVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.NeutralModeValue;
+
 
 import edu.wpi.first.util.datalog.DataLog;
 import edu.wpi.first.util.datalog.DoubleLogEntry;
@@ -24,6 +27,7 @@ public class Manipulator extends SubsystemBase {
     private DoubleLogEntry lateratorMotorSupplyCurrentLog;
 
     private double lateratorCurrentPosition; 
+    private double lateratorTarget;
 
     private TalonFX topMotor;
     private TalonFX bottomMotor;
@@ -32,18 +36,22 @@ public class Manipulator extends SubsystemBase {
     private DigitalInput lateratorLimit;
 
     private DigitalInput funnelBeamBreak;
-    private DigitalInput manipulatorA;
-    private DigitalInput manipulatorB;
+    private DigitalInput manipulatorBeamBreak;
 
+    private PositionVoltage positionVoltage = new PositionVoltage(0).withSlot(0);
+    
+    private TalonFXConfiguration config = new TalonFXConfiguration();
 
-
-
-
+    private Slot0Configs slot0Config = config.Slot0;
 
     /**
      * Constructor for the Manipulator class. Initializes motors, sensors, and configurations.
      */
     public Manipulator() {
+        TalonFXConfiguration topConfiguration = new TalonFXConfiguration();
+        TalonFXConfiguration bottomConfiguration = new TalonFXConfiguration();
+        TalonFXConfiguration lateratorConfiguration = new TalonFXConfiguration();
+
         topMotor = new TalonFX(Constants.Manipulator.TOP_MOTOR_CAN_ID);
         bottomMotor = new TalonFX(Constants.Manipulator.BOTTOM_MOTOR_CAN_ID);
         lateratorMotor = new TalonFX(Constants.Manipulator.LATERATOR_MOTOR_CAN_ID);
@@ -51,26 +59,22 @@ public class Manipulator extends SubsystemBase {
         lateratorLimit = new DigitalInput(Constants.Manipulator.LATERATOR_LIMIT_SWITCH);
 
         funnelBeamBreak = new DigitalInput(Constants.Manipulator.FUNNEL_BEAM_BREAK);
-        manipulatorA = new DigitalInput(Constants.Manipulator.MANIPULATOR_BEAM_BREAK_A);
-        manipulatorB = new DigitalInput(Constants.Manipulator.MANIPULATOR_BEAM_BREAK_B);
-
-        topMotor.setNeutralMode(NeutralModeValue.Coast);
-        bottomMotor.setNeutralMode(NeutralModeValue.Coast);
-        lateratorMotor.setNeutralMode(NeutralModeValue.Brake);
-
-        TalonFXConfiguration topConfiguration = new TalonFXConfiguration();
-        TalonFXConfiguration bottomConfiguration = new TalonFXConfiguration();
-        TalonFXConfiguration lateratorConfiguration = new TalonFXConfiguration();
-        
-        bottomMotor.setControl(new Follower(Constants.Manipulator.TOP_MOTOR_CAN_ID, false));
+        manipulatorBeamBreak = new DigitalInput(Constants.Manipulator.MANIPULATOR_BEAM_BREAK);
 
         topConfiguration.CurrentLimits.SupplyCurrentLimit = 30;
         bottomConfiguration.CurrentLimits.SupplyCurrentLimit = 30;
         lateratorConfiguration.CurrentLimits.SupplyCurrentLimit = 20;
 
+        topConfiguration.MotorOutput.NeutralMode = NeutralModeValue.Coast;
+        bottomConfiguration.MotorOutput.NeutralMode = NeutralModeValue.Coast;
+        lateratorConfiguration.MotorOutput.NeutralMode = NeutralModeValue.Brake;
+
         topMotor.getConfigurator().apply(topConfiguration);
         bottomMotor.getConfigurator().apply(bottomConfiguration);
         lateratorMotor.getConfigurator().apply(lateratorConfiguration);
+
+        bottomMotor.setControl(new Follower(Constants.Manipulator.TOP_MOTOR_CAN_ID, false));
+        lateratorMotor.getConfigurator().apply(slot0Config);
 
         DataLog log = DataLogManager.getLog();
 
@@ -79,7 +83,6 @@ public class Manipulator extends SubsystemBase {
         lateratorMotorSupplyCurrentLog = new DoubleLogEntry(log, "Laterator Motor Supply Current");
 
     }
-
 
      /**
      * This method is called periodically by the scheduler. Logs current values and updates 
@@ -92,10 +95,16 @@ public class Manipulator extends SubsystemBase {
         bottomMotorSupplyCurrentLog.append(bottomMotor.getSupplyCurrent().getValueAsDouble());   
         lateratorMotorSupplyCurrentLog.append(lateratorMotor.getSupplyCurrent().getValueAsDouble()); 
 
+        SmartDashboard.putBoolean("Coral Ready", isCoralReady());
+        SmartDashboard.putNumber("Lat Supply Current", lateratorMotor.getSupplyCurrent().getValueAsDouble());
 
-        if (getLateratorLimit() == true) {
-            resetLateratorEncoder();
-        }
+        // lateratorMotor.setControl(positionVoltage.withPosition(lateratorTarget));
+
+        // if (getLateratorLimit() == true) {
+        //     resetLateratorEncoder();
+        // }
+
+        
     }
 
     /**
@@ -104,7 +113,9 @@ public class Manipulator extends SubsystemBase {
     public enum ManipulatorStates {
         IN,
 
-        OUT,
+        INTAKE,
+
+        SCORING,
 
         OFF;
     }
@@ -115,9 +126,7 @@ public class Manipulator extends SubsystemBase {
     public enum LateratorStates {
         IN,
 
-        OUT,
-
-        OFF;
+        OUT;
     }
 
     /**
@@ -127,11 +136,9 @@ public class Manipulator extends SubsystemBase {
     public void setLateratorState(LateratorStates state) {
         switch (state) {
             case IN: 
-                setLateratorRawPower(-0.3);
+                lateratorTarget = Constants.Manipulator.MIN_LATERATOR_POSITION;
             case OUT: 
-                setLateratorRawPower(0.3);
-            case OFF:
-                setLateratorRawPower(0);
+                lateratorTarget = Constants.Manipulator.MAX_LATERATOR_POSITION;
         }
     }
 
@@ -154,41 +161,12 @@ public class Manipulator extends SubsystemBase {
         return lateratorLimit.get();
     }
 
-     /**
-     * Checks if the funnel beam break
-     *  is detected.
-     * @return True if the funnel beam break is detected, false otherwise.
-     */
-    public boolean getFunnelBeamBreak() {
-        return funnelBeamBreak.get();
-    }
-
     /**
-     * Checks if the manipulator A beam break is detected.
-     * @return True if the manipulator A beam break is detected, false otherwise.
-     */
-    public boolean getManipBeamBreakA() {
-        return manipulatorA.get();
-    }
-
-    /**
-     * Checks if the manipulator B beam break is detected.
-     * @return True if the manipulator B beam break is detected, false otherwise.
-     */
-    public boolean getManipBeamBreakB() {
-        return manipulatorB.get();
-    }
-
-
-    /**
-     * Returns true if beam break A or B is being triggered, this will happen when a coral is ready to score in the manipulator.
-     * @return true if either beam break A or B is true, false if both beam breaks are false
+     * Returns true if manipulator beam break is being triggered, this will happen when a coral is ready to score in the manipulator.
+     * @return true if manipualtor beam break is true, false if manipulator beam break are false
      */
     public boolean isCoralReady() {
-        if (getManipBeamBreakA() == true || getManipBeamBreakB() == true) {
-            return true;
-        }
-        return false;
+        return !manipulatorBeamBreak.get();
     }
 
     /**
@@ -215,10 +193,17 @@ public class Manipulator extends SubsystemBase {
         switch (state) {
             case IN: 
                 setManipulatorRawPower(-0.3); 
-            case OUT: 
-                setManipulatorRawPower(0.3);
+                break;
+            case INTAKE: 
+                setManipulatorRawPower(0.15);
+                break;
+            case SCORING:
+                setManipulatorRawPower(0.15);
+                break;
             case OFF:
                 setManipulatorRawPower(0);
+                break;
+            
         }
     }
 
@@ -239,9 +224,9 @@ public class Manipulator extends SubsystemBase {
 
     /**
      * Returns whether a coral has entered the funnel
-     * @return whether coral has entered funnels
+     * @return whether coral has entered funnel
      */
     public boolean hasCoralEntered() {
-        return getFunnelBeamBreak();
+        return funnelBeamBreak.get();
     }
 }

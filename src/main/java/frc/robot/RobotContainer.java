@@ -4,20 +4,26 @@
 
 package frc.robot;
 
+import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
 
+import edu.wpi.first.math.filter.Debouncer;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
-import frc.robot.commands.LateratorIN;
-import frc.robot.commands.LateratorOUT;
 import frc.robot.subsystems.Elevator.ElevatorStates;
+import frc.robot.subsystems.Manipulator.LateratorStates;
 import frc.robot.subsystems.Manipulator.ManipulatorStates;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
-import frc.robot.commands.PassiveIntake;
+import frc.robot.commands.Home;
+import frc.robot.commands.Intake;
 import frc.robot.commands.autonomous.RemoveAlgae;
+import frc.robot.commands.autonomous.ScoreLV4;
 
 /**
  * This class is where the bulk of the robot should be declared. Since
@@ -33,98 +39,126 @@ public class RobotContainer {
     public static final CommandXboxController operator = new CommandXboxController(Constants.Controllers.OPERATOR);
 
     public Trigger intakeTrigger;
+    // private final SendableChooser<Command> autoChooser;
+
+    public Trigger elevatorTrigger;
+
 
     public RobotContainer() {
         intakeTrigger = new Trigger(Robot.getManipulator() :: hasCoralEntered);
+        elevatorTrigger = new Trigger(() -> Robot.getElevator().getBottomLimit());
         // Register Commands for path planner
         registerNamedCommands();
-        // Configure the button bindings
+        // manipulatorOUT = new InstantCommand(() -> Robot.getManipulator().setManipState(ManipulatorStates.OUT), Robot.getManipulator());
+        // manipulatorOFF = new InstantCommand(() -> Robot.getManipulator().setManipState(ManipulatorStates.OFF), Robot.getManipulator());
+        // Configure the button binding
         configureBindings();
+
     }
 
     private void registerNamedCommands() {
         //Setting the Commands with names and subsystem commands
-        NamedCommands.registerCommand("removeAlgae", new RemoveAlgae());
-        NamedCommands.registerCommand("scoreLV4", new LateratorOUT());
+        // NamedCommands.registerCommand("removeAlgae", new RemoveAlgae());
+        // NamedCommands.registerCommand("scoreLV4", new ScoreLV4());
+        // NamedCommands.registerCommand("home", new Home());
     }
 
     /**
      * Use this method to define your controller->command mappings.
      */
     private void configureBindings() {
-        intakeTrigger.onTrue(
-           new PassiveIntake()
-        );
 
-        Robot.getDrivetrain().setDefaultCommand(
-                new RunCommand(
-                  () -> {
-                    double xSpeed = (Math.abs(driver.getLeftX()) > Constants.Controllers.DEADBAND)
-                        ? driver.getLeftX()
-                        : 0;
-                    double ySpeed = (Math.abs(driver.getLeftY()) > Constants.Controllers.DEADBAND)
-                        ? driver.getLeftY()
-                        : 0;
-                    double rotSpeed = (Math.abs(driver.getRightX()) > Constants.Controllers.DEADBAND)
-                        ? driver.getRightX()
-                        : 0;
+        // Robot.getDrivetrain().setDefaultCommand(
+        //         new RunCommand(
+        //           () -> {
+        //             double xSpeed = (Math.abs(driver.getLeftX()) > Constants.Controllers.DEADBAND)
+        //                 ? driver.getLeftX()
+        //                 : 0;
+        //             double ySpeed = (Math.abs(driver.getLeftY()) > Constants.Controllers.DEADBAND)
+        //                 ? driver.getLeftY()
+        //                 : 0;
+        //             double rotSpeed = (Math.abs(driver.getRightX()) > Constants.Controllers.DEADBAND)
+        //                 ? driver.getRightX()
+        //                 : 0;
 
-                    Robot.getDrivetrain().drive(ySpeed, xSpeed, rotSpeed, true, true);
-                  }, Robot.getDrivetrain()
+        //             Robot.getDrivetrain().drive(ySpeed, xSpeed, rotSpeed, true, true);
+        //           }, Robot.getDrivetrain()
 
-                ));
+        //         ));
 
-        driver.x().whileTrue(
-                new InstantCommand(() -> Robot.getDrivetrain().setXState(true))).whileFalse(
-                        new InstantCommand(() -> Robot.getDrivetrain().setXState(false)));
+        // driver.rightBumper().whileTrue(
+        //     new InstantCommand(() -> Robot.getDrivetrain().slowState(true), Robot.getDrivetrain())
+        // ).whileFalse(
+        //     new InstantCommand(() -> Robot.getDrivetrain().slowState(false), Robot.getDrivetrain())
+        // );
 
-        operator.y().onTrue(
-          new InstantCommand(() -> Robot.getElevator().setDesiredState(ElevatorStates.LV4))
-        );
+        // driver.x().whileTrue(
+        //     new InstantCommand(() -> Robot.getDrivetrain().setXState(true), Robot.getDrivetrain())
+        // ).whileFalse(
+        //     new InstantCommand(() -> Robot.getDrivetrain().setXState(false), Robot.getDrivetrain())
+        // );
 
-        operator.x().onTrue(
-          new InstantCommand(() -> Robot.getElevator().setDesiredState(ElevatorStates.LV3))
-        );
+        // operator.y().onTrue(
+        //   new InstantCommand(() -> Robot.getElevator().setDesiredState(ElevatorStates.LV4), Robot.getDrivetrain())
+        // );
 
-        operator.b().onTrue(
-          new InstantCommand(() -> Robot.getElevator().setDesiredState(ElevatorStates.LV2))
-        );
+        // operator.x().onTrue(
+        //   new InstantCommand(() -> Robot.getElevator().setDesiredState(ElevatorStates.LV3), Robot.getElevator())
+        // );
+
+        // operator.b().onTrue(
+        //   new InstantCommand(() -> Robot.getElevator().setDesiredState(ElevatorStates.LV2), Robot.getElevator())
+        // );
 
         operator.a().onTrue(
-          new InstantCommand(() -> Robot.getElevator().setDesiredState(ElevatorStates.LV1))
-        );
-
-        operator.leftBumper().onTrue(
-          new ParallelCommandGroup(
-            new InstantCommand(() -> Robot.getElevator().setDesiredState(ElevatorStates.LV1)),
-            new LateratorIN() //in
-          )
+          new InstantCommand(() -> Robot.getElevator().setDesiredState(ElevatorStates.LV1), Robot.getElevator())
         );
 
         operator.rightBumper().onTrue(
-          new InstantCommand(() -> Robot.getManipulator().setManipState(ManipulatorStates.IN))
+          new ParallelCommandGroup(
+            new Home()
+          )
         );
 
-        operator.rightTrigger().onTrue(
-          new InstantCommand(() -> Robot.getManipulator().setManipState(ManipulatorStates.OUT))
-        );
+        // operator.leftBumper().whileTrue(
+        //     // manipulatorOUT.unless(() -> Robot.getManipulator().isCoralReady())
+        //     // new ConditionalCommand(manipulatorOUT, manipulatorOFF, () -> !Robot.getManipulator().isCoralReady())
+        //     new Intake()
+        // ).whileFalse(
+        //     new InstantCommand(() -> Robot.getManipulator().setManipState(ManipulatorStates.OFF), Robot.getManipulator())
+        // );
 
-        operator.povUp().onTrue(
-          new LateratorIN() //in
-        );
+        // operator.rightTrigger().whileTrue(
+        //   new InstantCommand(() -> Robot.getManipulator().setManipState(ManipulatorStates.SCORING), Robot.getManipulator())
+        // ).whileFalse(
+        //     new InstantCommand(() -> Robot.getManipulator().setManipState(ManipulatorStates.OFF), Robot.getManipulator())
+        // );
 
-        operator.povDown().onTrue(
-          new LateratorOUT() //out
-        );
-        
-        Robot.getElevator().setDefaultCommand(
-          new RunCommand(() -> {
-            Robot.getElevator().adjustSetpoint(operator.getLeftY());
-          }, Robot.getElevator())
-        );
+        // Robot.getManipulator().setDefaultCommand(
+        //     new RunCommand(() -> { 
+        //                 double speed = (Math.abs(operator.getLeftY()) > Constants.Controllers.DEADBAND)
+        //                             ? operator.getLeftY()
+        //                             : 0;
+        //                 Robot.getManipulator().setLateratorRawPower(speed*0.1);
+        //             }, Robot.getManipulator()
+        // ));
+
+        // Robot.getElevator().setDefaultCommand(
+        //     new RunCommand(() -> { 
+        //         double speed = (Math.abs(operator.getLeftY()) > Constants.Controllers.DEADBAND)
+        //                     ? operator.getLeftY()
+        //                     : 0;
+        //         Robot.getElevator().setRawPower(-speed*0.3);
+        //     }, Robot.getElevator()
+        // ));
+
 
     }
 
+    // @Override
+    // public void periodic() {
+
+    // }
 
     public static CommandXboxController getDriver() {
         return driver;
@@ -140,7 +174,7 @@ public class RobotContainer {
      * @return the command to run in autonomous
      */
     public Command getAutonomousCommand() {
-        // An example command will be run in autonomous
-        return null;
+      //return autoChooser.getSelected();
+      return null;
     }
 }

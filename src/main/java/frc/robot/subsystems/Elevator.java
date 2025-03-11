@@ -1,10 +1,15 @@
 package frc.robot.subsystems;
 
+import com.ctre.phoenix6.configs.MotionMagicConfigs;
 import com.ctre.phoenix6.configs.Slot0Configs;
+import com.ctre.phoenix6.configs.SoftwareLimitSwitchConfigs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.Follower;
+import com.ctre.phoenix6.controls.MotionMagicVoltage;
 import com.ctre.phoenix6.controls.PositionVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
+import com.ctre.phoenix6.signals.GravityTypeValue;
+import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 
 import edu.wpi.first.util.datalog.DataLog;
@@ -24,16 +29,19 @@ public class Elevator extends SubsystemBase {
     private TalonFX leftMotor, rightMotor;
     private DigitalInput bottomLimit;
 
-    private double encoderValue, target, oldtarget = 0;
+    private double encoderValue, target;
+    private double oldTarget = 0;
 
     private DoubleLogEntry elevatorLeftOutputCurrentLog;
     private DoubleLogEntry elevatorRightOutputCurrentLog;
     private DoubleLogEntry elevatorEncoderLog;
+
+    boolean limitTriggered = false;
     
-
     TalonFXConfiguration config = new TalonFXConfiguration();
+    SoftwareLimitSwitchConfigs limitConfig = new SoftwareLimitSwitchConfigs();
 
-    PositionVoltage positionVoltage = new PositionVoltage(0).withSlot(0);
+    MotionMagicVoltage mmVoltage = new MotionMagicVoltage(0).withSlot(0);
     Slot0Configs slot0Configs = new Slot0Configs();
 
     /**
@@ -47,22 +55,34 @@ public class Elevator extends SubsystemBase {
         rightMotor = new TalonFX(Constants.Elevator.RIGHT_MOTOR_ID);
         bottomLimit = new DigitalInput(Constants.Elevator.BOTTOM_LIMIT_SWITCH_SLOT);
 
-        leftMotor.setNeutralMode(NeutralModeValue.Brake);
-        rightMotor.setNeutralMode(NeutralModeValue.Brake);
-
         leftMotorConfigs.CurrentLimits.SupplyCurrentLimit = 40;
         rightMotorConfigs.CurrentLimits.SupplyCurrentLimit = 40;
+        leftMotorConfigs.MotorOutput.NeutralMode = NeutralModeValue.Brake;
+        rightMotorConfigs.MotorOutput.NeutralMode = NeutralModeValue.Brake;
+        // leftMotorConfigs.HardwareLimitSwitch.ForwardLimitAutosetPositionValue = 0;
+        // rightMotorConfigs.HardwareLimitSwitch.ForwardLimitAutosetPositionValue = 0;
+
+        leftMotorConfigs.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
 
         slot0Configs.kP = Constants.Elevator.P;
         slot0Configs.kI = Constants.Elevator.I;
         slot0Configs.kD = Constants.Elevator.D;
         slot0Configs.kV = Constants.Elevator.V;
         slot0Configs.kG = Constants.Elevator.G;
+        slot0Configs.GravityType = GravityTypeValue.Elevator_Static;
+
+        MotionMagicConfigs motionMagic = new MotionMagicConfigs();
+        motionMagic.MotionMagicAcceleration = Constants.Elevator.MOTION_MAGIC_ACCEL;
+        motionMagic.MotionMagicCruiseVelocity = Constants.Elevator.MOTION_MAGIC_CRUISE_VELOCITY;
+
 
         leftMotor.getConfigurator().apply(leftMotorConfigs);
         rightMotor.getConfigurator().apply(rightMotorConfigs);
 
         rightMotor.setControl(new Follower(Constants.Elevator.LEFT_MOTOR_ID, true));
+        leftMotor.getConfigurator().apply(slot0Configs);
+        leftMotor.getConfigurator().apply(motionMagic);
+
 
         DataLog log = DataLogManager.getLog();
 
@@ -79,20 +99,31 @@ public class Elevator extends SubsystemBase {
     public void periodic() {
         encoderValue = leftMotor.getPosition().getValueAsDouble();
 
-        SmartDashboard.putNumber("target", target);
-        SmartDashboard.putNumber("Encoder Value", encoderValue);
-        SmartDashboard.putNumber("Left Motor Current", leftMotor.getSupplyCurrent().getValueAsDouble());
-        SmartDashboard.putNumber("Right Motor Current", rightMotor.getSupplyCurrent().getValueAsDouble());
-        SmartDashboard.putNumber("oldTarget", oldtarget);
+        // SmartDashboard.putNumber("target", target);
+        SmartDashboard.putNumber("Elevator Encoder Value", encoderValue);
+        // SmartDashboard.putNumber("Elevator Left Motor Current", leftMotor.getSupplyCurrent().getValueAsDouble());
+        // SmartDashboard.putNumber("Elevator Right Motor Current", rightMotor.getSupplyCurrent().getValueAsDouble());
+        // SmartDashboard.putNumber("Elevator oldTarget", oldTarget);
+        SmartDashboard.putBoolean("Elevator Limit", getBottomLimit());
+        SmartDashboard.putBoolean("Limit Triggered", limitTriggered);
+        SmartDashboard.putNumber("Elevator Voltage", leftMotor.getMotorVoltage().getValueAsDouble());
+
         
         elevatorLeftOutputCurrentLog.append(leftMotor.getSupplyCurrent().getValueAsDouble());
         elevatorRightOutputCurrentLog.append(rightMotor.getSupplyCurrent().getValueAsDouble());
         elevatorEncoderLog.append(leftMotor.getPosition().getValueAsDouble());
 
-        leftMotor.setControl(positionVoltage.withPosition(target));
+        // leftMotor.setControl(mmVoltage.withPosition(target));
 
+        SmartDashboard.putBoolean("Limit Switch Value", getBottomLimit() == true);
         if (getBottomLimit() == true) {
-            resetEncoders();
+            if (!limitTriggered) {
+                resetEncoders();
+                System.out.println("Reset Elevator Encoders");
+                limitTriggered = true;
+            } 
+        } else {
+            limitTriggered = false;
         }
     }
 
@@ -143,7 +174,7 @@ public class Elevator extends SubsystemBase {
      */
     public enum ElevatorStates{
         HOME(0),
-        LV1(0),
+        LV1(30),
         LV2(0),
         LV3(0),
         ALGAE_LOW(0),  
@@ -163,7 +194,7 @@ public class Elevator extends SubsystemBase {
      * @param state elevator state
      */
     public void setDesiredState(ElevatorStates state) {
-        oldtarget= target;
+        oldTarget = target;
         target = state.elevatorPosition;
     }
 
@@ -185,7 +216,7 @@ public class Elevator extends SubsystemBase {
      * @return bottom limit switch state
      */
     public boolean getBottomLimit() {
-        return bottomLimit.get();
+        return !bottomLimit.get();
     }
 
     /**
