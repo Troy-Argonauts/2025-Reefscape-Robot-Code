@@ -98,41 +98,45 @@ public class RobotContainer {
         //     new InstantCommand(() -> Robot.getDrivetrain().setXState(false), Robot.getDrivetrain())
         // );
 
-        // operator.y().onTrue(
-        //   new InstantCommand(() -> Robot.getElevator().setDesiredState(ElevatorStates.LV4), Robot.getDrivetrain())
-        // );
+        operator.rightBumper().onTrue(
+          new InstantCommand(() -> Robot.getElevator().setDesiredState(ElevatorStates.LV4), Robot.getDrivetrain())
+        );
 
-        // operator.x().onTrue(
-        //   new InstantCommand(() -> Robot.getElevator().setDesiredState(ElevatorStates.LV3), Robot.getElevator())
-        // );
+        operator.y().onTrue(
+          new InstantCommand(() -> Robot.getElevator().setDesiredState(ElevatorStates.LV3), Robot.getElevator())
+        );
 
-        // operator.b().onTrue(
-        //   new InstantCommand(() -> Robot.getElevator().setDesiredState(ElevatorStates.LV2), Robot.getElevator())
-        // );
+        operator.x().onTrue(
+          new InstantCommand(() -> Robot.getElevator().setDesiredState(ElevatorStates.LV2), Robot.getElevator())
+        );
 
-        operator.a().onTrue(
+        operator.b().onTrue(
           new InstantCommand(() -> Robot.getElevator().setDesiredState(ElevatorStates.LV1), Robot.getElevator())
         );
 
-        operator.rightBumper().onTrue(
+        operator.a().onTrue(
           new ParallelCommandGroup(
             new Home()
           )
         );
 
-        // operator.leftBumper().whileTrue(
-        //     // manipulatorOUT.unless(() -> Robot.getManipulator().isCoralReady())
-        //     // new ConditionalCommand(manipulatorOUT, manipulatorOFF, () -> !Robot.getManipulator().isCoralReady())
-        //     new Intake()
-        // ).whileFalse(
-        //     new InstantCommand(() -> Robot.getManipulator().setManipState(ManipulatorStates.OFF), Robot.getManipulator())
-        // );
+        operator.leftTrigger().whileTrue(
+            // manipulatorOUT.unless(() -> Robot.getManipulator().isCoralReady())
+            // new ConditionalCommand(manipulatorOUT, manipulatorOFF, () -> !Robot.getManipulator().isCoralReady())
+            // new Intake()
+            new ConditionalCommand(
+                new InstantCommand(() -> Robot.getManipulator().setManipState(ManipulatorStates.OFF)),
+                new Intake(),
+                () -> Robot.getManipulator().isCoralReady())
+        ).whileFalse(
+            new InstantCommand(() -> Robot.getManipulator().setManipState(ManipulatorStates.OFF), Robot.getManipulator())
+        );
 
-        // operator.rightTrigger().whileTrue(
-        //   new InstantCommand(() -> Robot.getManipulator().setManipState(ManipulatorStates.SCORING), Robot.getManipulator())
-        // ).whileFalse(
-        //     new InstantCommand(() -> Robot.getManipulator().setManipState(ManipulatorStates.OFF), Robot.getManipulator())
-        // );
+        operator.rightTrigger().whileTrue(
+          new InstantCommand(() -> Robot.getManipulator().setManipState(ManipulatorStates.SCORING), Robot.getManipulator())
+        ).whileFalse(
+            new InstantCommand(() -> Robot.getManipulator().setManipState(ManipulatorStates.OFF), Robot.getManipulator())
+        );
 
         // Robot.getManipulator().setDefaultCommand(
         //     new RunCommand(() -> { 
@@ -143,14 +147,11 @@ public class RobotContainer {
         //             }, Robot.getManipulator()
         // ));
 
-        // Robot.getElevator().setDefaultCommand(
-        //     new RunCommand(() -> { 
-        //         double speed = (Math.abs(operator.getLeftY()) > Constants.Controllers.DEADBAND)
-        //                     ? operator.getLeftY()
-        //                     : 0;
-        //         Robot.getElevator().setRawPower(-speed*0.3);
-        //     }, Robot.getElevator()
-        // ));
+        Robot.getElevator().setDefaultCommand(
+            new RunCommand(() -> {
+                Robot.getElevator().adjustSetpoint(-operator.getLeftY());
+            }, Robot.getElevator()
+        ));
 
 
     }

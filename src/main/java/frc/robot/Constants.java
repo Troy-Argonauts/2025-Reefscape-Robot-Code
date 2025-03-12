@@ -163,10 +163,10 @@ public final class Constants {
         int RIGHT_MOTOR_ID = 2;
         int BOTTOM_LIMIT_SWITCH_SLOT = 1;
 
-        int MOTION_MAGIC_CRUISE_VELOCITY = 20;
-        int MOTION_MAGIC_ACCEL = 40;
+        int MOTION_MAGIC_CRUISE_VELOCITY = 30;
+        int MOTION_MAGIC_ACCEL = 60;
 
-        double P = 2.75;
+        double P = 3.1;
         double I = 0.15;
         double D = 0.05;
         double V = 0.12;

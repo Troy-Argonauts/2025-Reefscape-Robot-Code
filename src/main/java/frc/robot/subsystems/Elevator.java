@@ -114,7 +114,7 @@ public class Elevator extends SubsystemBase {
         elevatorRightOutputCurrentLog.append(rightMotor.getSupplyCurrent().getValueAsDouble());
         elevatorEncoderLog.append(leftMotor.getPosition().getValueAsDouble());
 
-        // leftMotor.setControl(mmVoltage.withPosition(target));
+        leftMotor.setControl(mmVoltage.withPosition(target));
 
         SmartDashboard.putBoolean("Limit Switch Value", getBottomLimit() == true);
         if (getBottomLimit() == true) {
@@ -174,12 +174,12 @@ public class Elevator extends SubsystemBase {
      */
     public enum ElevatorStates{
         HOME(0),
-        LV1(30),
-        LV2(0),
-        LV3(0),
+        LV1(2.1),
+        LV2(8.2),
+        LV3(16.36),
         ALGAE_LOW(0),  
         ALGAE_HIGH(0),                                                                           
-        LV4(0);
+        LV4(30);
         //change the numbers above
         
         final double elevatorPosition;
@@ -206,8 +206,11 @@ public class Elevator extends SubsystemBase {
         double deadbanded = (Math.abs(joyStickValue) > Constants.Controllers.DEADBAND)
                             ? joyStickValue
                             : 0;
-        double newTarget = target + (deadbanded * 0.2);
-        if ((newTarget >= target) || (newTarget <= target && !getBottomLimit())){
+        double newTarget = target + (deadbanded * 0.3);
+        if (((newTarget >= target) && newTarget <= 30)){
+            oldTarget = target;
+            target = newTarget;
+        } else if ((newTarget <= target && newTarget >= 0)) {
             oldTarget = target;
             target = newTarget;
         }
