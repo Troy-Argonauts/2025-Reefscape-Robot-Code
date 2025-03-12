@@ -7,6 +7,9 @@ import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import frc.robot.Robot;
 import frc.robot.subsystems.Manipulator.ManipulatorStates;
 
+/**
+ * Sets manipulator to INTAKE state, waits for coral, then sets manipulator state to OFF. 
+ */
 public class Intake extends SequentialCommandGroup {
     public Intake() {
         super(

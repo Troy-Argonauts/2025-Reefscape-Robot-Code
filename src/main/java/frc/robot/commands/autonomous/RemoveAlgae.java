@@ -8,7 +8,8 @@ import frc.robot.subsystems.Manipulator.LateratorStates;
 import frc.robot.subsystems.Manipulator.ManipulatorStates;
 
 /**
- * Sets laterator state to OUT, when the laterator is fully extended sets the state to OFF
+ * Sets elevator to high algae position, sets laterator to OUT state, turns manipulator to SCORING state, then brings elevator back to home position,
+ * sets laterator to IN state, sets manipulator state to OFF, and brings elevator to HOME position. 
  */
 public class RemoveAlgae extends SequentialCommandGroup {
     public RemoveAlgae(){

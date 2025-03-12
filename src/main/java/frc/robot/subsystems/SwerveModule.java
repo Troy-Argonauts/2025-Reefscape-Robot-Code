@@ -19,15 +19,8 @@ import com.ctre.phoenix6.configs.*;
 import static frc.robot.Constants.Swerve.*;
 import static frc.robot.Constants.SwerveModule.*;
 
-/**
- * Constructor for SwerveModule. Sets up motors, encoders, and configurations.
- *
- * @param driveMotorID        ID for the drive motor
- * @param turnMotorID         ID for the turn motor
- * @param turnEncoderID       ID for the turn encoder
- * @param canbusName          CAN bus name
- * @param chassisAngularOffset Angular offset for chassis
- * @param driveInverted       Whether the drive motor is inverted
+/** 
+ * Class representing an individual Swerve Module.
 */
 public class SwerveModule extends SubsystemBase{
     private TalonFX driveMotor, turnMotor;
@@ -46,6 +39,22 @@ public class SwerveModule extends SubsystemBase{
     public SwerveModuleState desiredState = new SwerveModuleState(0.0, new Rotation2d());
     private double chassisAngularOffset;
 
+    /** 
+     * <ul>
+     *  <li>Instantiates motors and sensors; </li>
+     *  <li>Assigns CAN IDs. </li>
+     *  <li>Sets current limits, Neutral Modes, and Inversion direction for motors. </li>
+     *  <li>Configures CANcoder. </li>
+     *  <li>Configures PID control mode and associated constants. </li>
+     * </ul>
+     *
+     * @param driveMotorID        ID for the drive motor
+     * @param turnMotorID         ID for the turn motor
+     * @param turnEncoderID       ID for the turn encoder
+     * @param canbusName          CAN bus name
+     * @param chassisAngularOffset Angular offset for chassis
+     * @param driveInverted       Whether the drive motor is inverted
+    */
     public SwerveModule(int driveMotorID, int turnMotorID, int turnEncoderID, String canbusName, double chassisAngularOffset, boolean driveInverted){
         driveMotor = new TalonFX(driveMotorID, canbusName);
         turnMotor = new TalonFX(turnMotorID, canbusName);
@@ -99,7 +108,11 @@ public class SwerveModule extends SubsystemBase{
     }
 
     /**
-     * Updates the driveEncoder and turnEncoder periodically.
+     * <ul>
+     *  <li>This method is called periodically by the Command Scheduler. </li>
+     *  <li>Sets global drive encoder value and turn encoder variables. </li>
+     *  <li>Outputs values to SmartDashboard. </li>
+     * </ul>
      */
     @Override
     public void periodic() {
@@ -186,16 +199,15 @@ public class SwerveModule extends SubsystemBase{
     }
 
     /**
-     * Returns the velocity of the drive motor in meters per second.
+     * Retrieves the velocity of the drive motor in meters per second.
      * @return velocity of the drive motor in meters per second
      */
     public double getVelocity(){
         return driveMotor.getVelocity().getValueAsDouble() * WHEEL_CIRCUMFERENCE_METERS * WHEEL_CIRCUMFERENCE_METERS;
     }
 
-    /** Returns the angle of the drive motor 
-     * 360 accounts for the turnEncoder output from 0 to 1 to convert it to degrees
-     * @return returns turn encoder angle in degrees
+    /** Retrieves the angle of the turn encoder in degrees.
+     * @return turn encoder value converted to degrees
     */
     public double getAngle(){
         return turnEncoder.getPosition().getValueAsDouble() * 360;

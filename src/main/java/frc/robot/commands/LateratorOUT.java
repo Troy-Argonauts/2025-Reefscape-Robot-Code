@@ -5,7 +5,7 @@ import frc.robot.Robot;
 import frc.robot.subsystems.Manipulator;
 
 /**
- * Sets laterator state to OUT, when the laterator is fully extended sets the state to OFF
+ * Sets laterator state to OUT, when the laterator is fully extended sets the state to HOLD.
  */
 public class LateratorOUT extends SequentialCommandGroup {
     public LateratorOUT(){

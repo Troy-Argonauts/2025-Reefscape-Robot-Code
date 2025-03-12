@@ -17,7 +17,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 
 /**
- * Handles the manipulator, including motors, sensors, and states.
+ * Class representing the Manipulator Subsystem.
  * 
  * @author VedNakum, firearcher2012, ASH-will-WIN, Evan13019, shaquilleinoatmeal.
  */
@@ -46,6 +46,14 @@ public class Manipulator extends SubsystemBase {
 
     /**
      * Constructor for the Manipulator class. Initializes motors, sensors, and configurations.
+     * 
+     * <ul>
+     *  <li>Instantiates motors and limit switch.</li>
+     *  <li>Assigns CAN IDs and Sensor Slots. </li>
+     *  <li>Sets current limits, Nuetral Modes, and Inversion direction for motors.</li>
+     *  <li>Sets Bottom Manipulator Motor to follow Top Manipulator Motor</li>
+     *  <li>Creates data log objects.  </li>
+     * </ul>
      */
     public Manipulator() {
         TalonFXConfiguration topConfiguration = new TalonFXConfiguration();
@@ -85,8 +93,7 @@ public class Manipulator extends SubsystemBase {
     }
 
      /**
-     * This method is called periodically by the scheduler. Logs current values and updates 
-     * SmartDashboard with current and target RPMs.
+     * Outputs values to SmartDashboard; Appends logs with corresponding data.
      */
     @Override
     public void periodic() {
@@ -108,7 +115,7 @@ public class Manipulator extends SubsystemBase {
     }
 
     /**
-     * States of the Manipulator (IN, OUT, OFF)
+     * Represents the different states of the Manipulator
      */
     public enum ManipulatorStates {
         IN,
@@ -121,19 +128,26 @@ public class Manipulator extends SubsystemBase {
     }
 
     /**
-     * States of the Laterator (IN, OUT, OFF)
+     * Represents the different states of the Laterator.
      */
     public enum LateratorStates {
+        /**
+         * Turns off power to Laterator motor. Used to retract Laterator.
+         */
         OFF,
-
+        /**
+         * Apply power to Laterator motor to hold it in place.
+         */
         HOLD,
-
+        /**
+         * Apply power to Laterator Motor to move it outward.
+         */
         OUT;
     }
 
     /**
-     * Sets the laterator's state until it reaches the max laterator position if out or until it reaches 0 if in
-     * @param state The desired state of the laterator
+     * Applies power to Laterator Motor based on given state.
+     * @param state The desired {@code LateratorStates} enumerator
      */
     public void setLateratorState(LateratorStates state) {
         switch (state) {
@@ -151,7 +165,7 @@ public class Manipulator extends SubsystemBase {
     }
 
     /**
-     * Checks if laterator encoder has reached the max laterator position
+     * Checks if laterator encoder has reached the max laterator position.
      * @return True if encoder hits max laterator position, false if not
      */
     public boolean lateratorExtended() {
@@ -162,16 +176,16 @@ public class Manipulator extends SubsystemBase {
     }
 
     /**
-     * Checks if the limit switch is active.
-     * @return True if the limit switch is active, false otherwise.
+     * Retrieves current status of the Laterator’s limit switch.
+     * @return True if limit is detected, false if not
      */
     public boolean getLateratorLimit(){
         return lateratorLimit.get();
     }
 
     /**
-     * Returns true if manipulator beam break is being triggered, this will happen when a coral is ready to score in the manipulator.
-     * @return true if manipualtor beam break is true, false if manipulator beam break are false
+     * Retrieves current status of Manipulator Beam Brake sensor. If active, a Coral is within the Manipulator.
+     * @return true if Coral is detected, false if not
      */
     public boolean isCoralReady() {
         return !manipulatorBeamBreak.get();
@@ -186,16 +200,16 @@ public class Manipulator extends SubsystemBase {
     }
 
     /**
-     * Sets the raw power for the laterator motor.
-     * @param power The power to set for the laterator motor.
+     * Sets the Laterator motors to a percentage of available voltage.
+     * @param power The desired percentage value between -1 and 1
      */
     public void setLateratorRawPower(double power) {
         lateratorMotor.set(power);
     }
  
     /**
-     * Sets the manipulator motors state (Expecting manipulater state)
-     * @param state the state to set for the manipulator motor
+     * Applies power to Manipulator motors based on given state.
+     * @param state The desired {@code ManipulatorStates} enumerator
      */
     public void setManipState(ManipulatorStates state) {
         switch (state) {
@@ -216,8 +230,8 @@ public class Manipulator extends SubsystemBase {
     }
 
     /**
-     * Sets manipulator motors to provided raw power
-     * @param speed the raw power to set the motor to
+     * Sets the Manipulator motors to a percentage of available voltage.
+     * @param speed The desired percentage value between -1 and 1
      */
     public void setManipulatorRawPower(double speed){
         topMotor.set(speed);

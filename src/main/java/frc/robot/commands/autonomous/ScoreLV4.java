@@ -6,7 +6,7 @@ import frc.robot.subsystems.Elevator.ElevatorStates;
 import frc.robot.subsystems.Manipulator.ManipulatorStates;
 
 /**
- * Sets laterator state to OUT, when the laterator is fully extended sets the state to OFF
+ * Sets elevator to level 4 reef position, sets manipulator state to score, wait until coral is scored, turn manipulator off and set elevator to home position.
  */
 public class ScoreLV4 extends SequentialCommandGroup {
     public ScoreLV4(){

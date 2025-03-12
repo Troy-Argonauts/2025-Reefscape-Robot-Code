@@ -46,7 +46,13 @@ public class Elevator extends SubsystemBase {
     Slot0Configs slot0Configs = new Slot0Configs();
 
     /**
-     * Instantiates motors and limit switches; Set neutral modes; Assigns PID constants.
+     * <ul>
+     *   <li>Instantiates motors and limit switch.</li>
+     *   <li>Assigns CAN IDs and Sensor Slots.</li>
+     *   <li>Sets current Limits, Nuetral Modes, and Inversion direction for motors.</li>
+     *   <li>Sets Right Motor to follow Left; Cofigures PID control mode and associated constants.</li>
+     *   <li>Creates data log objects.</li>
+     * </ul>
      */
     public Elevator() {
         TalonFXConfiguration leftMotorConfigs = new TalonFXConfiguration();
@@ -94,7 +100,14 @@ public class Elevator extends SubsystemBase {
 
    
     /**
-     * Gets encoder value; Logs data; Sets position setpoint to target; Resets encoder.
+     * This method is called periodically by the Command Scheduler. 
+     * <ul>
+     *  <li>Sets global encoderValue variable. </li>
+     *  <li>Outputs values to SmartDashboard. </li>
+     *  <li>Sets PID control target value and sends PID control request. </li>
+     *  <li>Resets encoders using toggle based on bottom limit switch. </li>
+     *  <li>Appends logs with corresponding data. </li>
+     * </ul>
      */
     @Override
     public void periodic() {
@@ -129,16 +142,17 @@ public class Elevator extends SubsystemBase {
     }
 
     /**
-     * Sets raw power for left elevator motor. Right elevator motor is follower
-     * @param power desired raw power from -1 to 1
+     * Sets the elevator motors to a percentage of available voltage.
+     * @param power The desired percentage value between -1 and 1
      */
     public void setRawPower(double power) {
         leftMotor.set(power);
     }
 
     /**
-     * Checks if PID value for left motor is within given range
-     * @return whether PID is finished
+     * Checks if current Elevator position (from left motor) is within
+     * 0.2 motor ortations of the current target.
+     * @return true if current position is within threshold, false if not
      */
     public boolean isPIDFinished() {
         return (Math.abs(target - leftMotor.getPosition().getValueAsDouble()) < 0.01);
@@ -146,24 +160,24 @@ public class Elevator extends SubsystemBase {
 
 
     /**
-     * Gets motor position
-     * @return left motor position as double
+     * Retrieves the current Elevator position.
+     * @return The current position of the left motor in rotations
      */
     public double getPosition() {
         return leftMotor.getPosition().getValueAsDouble();
     }
 
     /**
-     * Returns value of current elevator target position
-     * @return current elevator target
+     * Retrieves the current Elevator target position.
+     * @return The current target position in motor rotations
      */
     public double getCurrentTarget() {
         return target;
     }
 
     /**
-     * Sets the desired elevator target
-     * @param target desired elevator target
+     * Sets the desired Elevator target position.
+     * @param target The desired Elevator target in motor rotations
      */
     public void setDesiredTarget(double target) {
         this.target = target;
@@ -171,17 +185,38 @@ public class Elevator extends SubsystemBase {
 
     
     /**
-     * Sets enumerators for encoder positions of various Elevator States
+     * Represents the different states of the Elevator subsystem with predefined positions. 
+     * Each state corresponds to a specific position value
      */
     public enum ElevatorStates{
+        /**
+         * Elevator position to intake a Coral.
+         */
         HOME(0),
+        /**
+         * Elevator position to score a Coral on Level 1 of the Reef.
+         */
         LV1(30),
+        /**
+         * Elevator position to score a Coral on Level 2 of the Reef.
+         */
         LV2(0),
+        /**
+         * Elevator position to score a Coral on Level 3 of the Reef.
+         */
         LV3(0),
-        ALGAE_LOW(0),  
-        ALGAE_HIGH(0),                                                                           
+        /**
+         * Elevator position to remove an Algae in the lowest position on the Reef.
+         */
+        ALGAE_LOW(0), 
+        /**
+         * Elevator position to remove an Algae in the highest position on the Reef.
+         */ 
+        ALGAE_HIGH(0), 
+        /**
+         * Elevator position to score a Coral on Level 2 of the Reef.
+         */                                                                          
         LV4(0);
-        //change the numbers above
         
         final double elevatorPosition;
 
@@ -191,8 +226,8 @@ public class Elevator extends SubsystemBase {
     }
 
     /**
-     * Sets target as the desired Elevator state
-     * @param state elevator state
+     * Updates the Elevator’s target position based on the desired state.
+     * @param state he desired {@code ElevatorStates} to set as the target for the Elevator PID control.
      */
     public void setDesiredState(ElevatorStates state) {
         oldTarget = target;
@@ -200,8 +235,8 @@ public class Elevator extends SubsystemBase {
     }
 
     /**
-     * Changes target depending on joystick position
-     * @param joyStickValue joystick value between 1 and -1
+     * Changes Elevator target incrementally based on value from a controller joystick. Includes limiting based on minimum and maximum position values.
+     * @param joyStickValue The joystick value between -1 and 1
      */
     public void adjustSetpoint(double joyStickValue) {
         double deadbanded = (Math.abs(joyStickValue) > Constants.Controllers.DEADBAND)
@@ -215,15 +250,15 @@ public class Elevator extends SubsystemBase {
     }
 
     /**
-     * Returns whether the bottom limit switch is pressed
-     * @return bottom limit switch state
+     * Returns whether the bottom limit switch is pressed.
+     * @return true if limit is detected, false if not
      */
     public boolean getBottomLimit() {
         return !bottomLimit.get();
     }
 
     /**
-     * Resets encoders
+     * Reset motor encoder values to 0.
      */
     public void resetEncoders() {
         leftMotor.setPosition(0);

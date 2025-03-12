@@ -30,6 +30,7 @@ public final class Constants {
     }
     
     // THIS NEEDS TO BE UPDATED FOR CTRE
+    /** SwerveSubsystem Constants */
     public interface Swerve {
         // PID Constants for drivetrain
         public static final double DRIVE_P = 0.38;
@@ -113,6 +114,7 @@ public final class Constants {
             new Translation2d(-WHEEL_BASE / 2, -TRACK_WIDTH / 2),};  // robot configs 2d translations
     }
 
+    /** SwerveModule Constants */
     public interface SwerveModule {
         // The MAXSwerve module can be configured with one of three pinion gears: 12T,
         // 13T, or 14T.
@@ -158,6 +160,7 @@ public final class Constants {
         public static final int TURNING_MOTOR_CURRENT_LIMIT = 20; // amps
     }
 
+    /** Elevator Constants */ 
     public interface Elevator {
         int LEFT_MOTOR_ID = 1;
         int RIGHT_MOTOR_ID = 2;
@@ -173,6 +176,7 @@ public final class Constants {
         double G = 0.46;
     }
 
+    /** Manipulator Constants */
     public interface Manipulator {
 
         public static final int TOP_MOTOR_CAN_ID = 4;
@@ -188,6 +192,8 @@ public final class Constants {
         public static final double MIN_LATERATOR_POSITION = 0.0;
     }
 
+
+    /** PathPlanner Constants */
     public interface PathPlanner {
         double MOMENT_OF_INERTIA = 0;
         double ROBOT_MASS = 0;

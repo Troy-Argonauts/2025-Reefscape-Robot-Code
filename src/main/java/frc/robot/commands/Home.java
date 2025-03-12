@@ -7,6 +7,9 @@ import frc.robot.Robot;
 import frc.robot.subsystems.Elevator.ElevatorStates;
 import frc.robot.subsystems.Manipulator.LateratorStates;
 
+/**
+ * Sets elevator state to HOME position. 
+ */
 public class Home extends SequentialCommandGroup{
     public Home(){
         super(

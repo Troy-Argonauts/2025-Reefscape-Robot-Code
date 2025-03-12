@@ -26,6 +26,7 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
+/** Class representing the Swerve Subsystem */
 public class SwerveSubsystem extends SubsystemBase {
     // Create SwerveModules
     private final SwerveModule frontLeftModule = new SwerveModule(
@@ -92,7 +93,7 @@ public class SwerveSubsystem extends SubsystemBase {
             backRightModule.getPosition()
     });
 
-    /** Creates a new SwerveSubsystem. */
+    /** Creates a new SwerveSubsystem and configures PathPlanner. */
     public SwerveSubsystem() {
     //     moduleConfig = new ModuleConfig(
     //         Constants.Swerve.WHEEL_DIAMETER_METERS / 2, 
@@ -193,8 +194,8 @@ public class SwerveSubsystem extends SubsystemBase {
 
 
     /**
-     * Updates the odometry to the current positions of all the wheels and gyro, outputs the turn and drive encoder values for 
-     * each swerve module, and also outputs the gyro angle.
+     * Updates the odometry to the current positions of all the wheels and gyro and outputs the turn and drive encoder values for 
+     * each swerve module and chassis gyro value using SmartDashboard.
      */
     @Override
     public void periodic() {
@@ -257,7 +258,7 @@ public class SwerveSubsystem extends SubsystemBase {
 
 
    /**
-   * Method to drive the robot using joystick info.
+   * Drive the robot using joystick information. Includes a slow driving mode and an X defense stance mode.
    * @param xSpeed        Speed of the robot in the x direction (forward).
    * @param ySpeed        Speed of the robot in the y direction (sideways).
    * @param rot           Angular rate of the robot.
@@ -352,14 +353,14 @@ public class SwerveSubsystem extends SubsystemBase {
     }
 
     /**
-   * Sets the wheels into an X formation to prevent movement.
+   * Sets the wheels into an X stance for defensive purposes. Only works when actively using the {@link #drive(double, double, double, boolean, boolean)} method.
    */
     public void setXState(boolean state) {
         xState = state;
     }
 
    /**
-   * Sets the wheels into an X formation to prevent movement.
+   * Sets the module states to 0 m/s and 0 degrees. Works independently; for calibration purposes only
    */
     public void setToZero() {
         frontLeftModule.setDesiredState(new SwerveModuleState(2, Rotation2d.fromDegrees(0)));
@@ -370,8 +371,8 @@ public class SwerveSubsystem extends SubsystemBase {
 
 
    /**
-   * Sets the swerve ModuleStates.
-   * @param desiredStates The desired SwerveModule states.
+   * Sets the desired states for each swerve module
+   * @param desiredStates Array of SwerveModuleState objects
    */
     public void setModuleStates(SwerveModuleState[] desiredStates) {
         SwerveDriveKinematics.desaturateWheelSpeeds(
@@ -390,13 +391,13 @@ public class SwerveSubsystem extends SubsystemBase {
         backRightModule.resetTurnEncoder();
     }
 
-    /** Zeroes the heading of the robot. */
+    /** Zeroes the heading of the robot by resetting the gyro angle to 0. */
     public void zeroHeading() {
         gyro.setYaw(0);
     }
 
    /**
-   * Returns the heading of the robot.
+   * Retrieves the heading of the robot using the gyro.
    * @return the robot's heading in degrees, from -180 to 180
    */
     public double getHeading() {
@@ -405,7 +406,7 @@ public class SwerveSubsystem extends SubsystemBase {
 
    /**
    * Returns the turn rate of the robot.
-   * @return The turn rate of the robot, in degrees per second
+   * @return Rate, in degrees per second. 
    */
     public double getTurnRate() {
         return gyro.getYaw().getValueAsDouble() * (Swerve.GYRO_REVERSED ? -1.0 : 1.0);
@@ -413,8 +414,8 @@ public class SwerveSubsystem extends SubsystemBase {
 
     /**
      * Drive for PathPlanner.
-     * @param chassisSpeeds Chassis speed (-1 to 1).
-     * @param limited Whether to enable rate limiting for smoother control.
+     * @param chassisSpeeds ChassisSpeed object representing the desired module states
+     * @param limited Enable/disable subsystem rate limiting
      */
     public void pathPlannerDrive(ChassisSpeeds chassisSpeeds, boolean limited){
         double xSpeed = chassisSpeeds.vxMetersPerSecond / MAX_SPEED_METERS_PER_SECOND;
@@ -485,7 +486,7 @@ public class SwerveSubsystem extends SubsystemBase {
     
 
     /**
-     * Gets ChassisSpeed object based on current module states.
+     * Creates ChassisSpeeds object based on current module states.
      * @return ChassisSpeed object.
      */
     public ChassisSpeeds getChassisSpeeds(){
@@ -497,6 +498,11 @@ public class SwerveSubsystem extends SubsystemBase {
         return speeds;
     }
 
+
+    /**
+     * Enables Slow State reducing driving speeds by 80%. Must be used with {@link #drive(double, double, double, boolean, boolean)}
+     * @param state Enable/disable slow state
+     */
     public void slowState(boolean state){
         slow = state;
     }

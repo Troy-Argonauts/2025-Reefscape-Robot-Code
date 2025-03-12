@@ -56,6 +56,9 @@ public class RobotContainer {
 
     }
 
+    /**
+     * Registers the set NamedCommands.
+     */
     private void registerNamedCommands() {
         //Setting the Commands with names and subsystem commands
         // NamedCommands.registerCommand("removeAlgae", new RemoveAlgae());
@@ -160,10 +163,18 @@ public class RobotContainer {
 
     // }
 
+    /** Retrieves driver controller object.
+     * 
+     * @return Driver controller object
+     */
     public static CommandXboxController getDriver() {
         return driver;
     }
 
+    /**
+     * Retrieves operator controller object.
+     * @return Operator controller object
+     */
     public static CommandXboxController getOperator() {
         return operator;
     }
