@@ -120,7 +120,6 @@ public class Elevator extends SubsystemBase {
         if (getBottomLimit() == true) {
             if (!limitTriggered) {
                 resetEncoders();
-                System.out.println("Reset Elevator Encoders");
                 limitTriggered = true;
             } 
         } else {
@@ -141,7 +140,7 @@ public class Elevator extends SubsystemBase {
      * @return whether PID is finished
      */
     public boolean isPIDFinished() {
-        return (Math.abs(target - leftMotor.getPosition().getValueAsDouble()) < 0.01);
+        return (Math.abs(target - leftMotor.getPosition().getValueAsDouble()) < 0.2);
     }
     //change the value above
 

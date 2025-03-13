@@ -10,7 +10,7 @@ import frc.robot.subsystems.Manipulator.ManipulatorStates;
 public class Intake extends SequentialCommandGroup {
     public Intake() {
         super(
-            new InstantCommand(() -> Robot.getManipulator().setManipState(ManipulatorStates.INTAKE)),
+            new InstantCommand(() -> Robot.getManipulator().setManipState(ManipulatorStates.FORWARD)),
             new WaitUntilCommand(() -> Robot.getManipulator().isCoralReady()),
             new WaitCommand(0.15),
             new InstantCommand(() -> Robot.getManipulator().setManipState(ManipulatorStates.OFF))

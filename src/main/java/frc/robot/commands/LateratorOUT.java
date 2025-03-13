@@ -12,7 +12,7 @@ public class LateratorOUT extends SequentialCommandGroup {
         super(
                 new InstantCommand(() -> Robot.getManipulator().setLateratorState(Manipulator.LateratorStates.OUT), Robot.getManipulator()),
 
-                new WaitUntilCommand(() -> Robot.getManipulator().lateratorExtended()),
+                new WaitUntilCommand(() -> Robot.getManipulator().getLateratorLimit()),
 
                 new InstantCommand(() -> Robot.getManipulator().setLateratorState(Manipulator.LateratorStates.HOLD), Robot.getManipulator())
             );

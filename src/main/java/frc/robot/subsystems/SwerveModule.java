@@ -74,16 +74,17 @@ public class SwerveModule extends SubsystemBase{
         TalonFXConfiguration driveConfigs = new TalonFXConfiguration();
 
         if (driveInverted){
+            driveConfigs.MotorOutput.NeutralMode = NeutralModeValue.Brake;
             driveConfigs.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
             driveConfigs.CurrentLimits.SupplyCurrentLimit = DRIVING_MOTOR_CURRENT_LIMIT;
             driveMotor.getConfigurator().apply(driveConfigs);
         } else {
+            driveConfigs.MotorOutput.NeutralMode = NeutralModeValue.Brake;
             driveConfigs.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
             driveConfigs.CurrentLimits.SupplyCurrentLimit = DRIVING_MOTOR_CURRENT_LIMIT;
             driveMotor.getConfigurator().apply(driveConfigs);
+            
         }
-        driveConfigs.MotorOutput.NeutralMode = NeutralModeValue.Brake;
-
         turnConfig.kP = TURN_P;
         turnConfig.kI = TURN_I;
         turnConfig.kD = TURN_D;

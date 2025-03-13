@@ -98,6 +98,7 @@ public class Manipulator extends SubsystemBase {
 
         SmartDashboard.putBoolean("Coral Ready", isCoralReady());
         SmartDashboard.putNumber("Lat Supply Current", lateratorMotor.getSupplyCurrent().getValueAsDouble());
+        SmartDashboard.putBoolean("Lat Limit Switch", getLateratorLimit());
 
         // lateratorMotor.setControl(positionVoltage.withPosition(lateratorTarget));
 
@@ -112,11 +113,9 @@ public class Manipulator extends SubsystemBase {
      * States of the Manipulator (IN, OUT, OFF)
      */
     public enum ManipulatorStates {
-        IN,
+        FORWARD,
 
-        INTAKE,
-
-        SCORING,
+        REVERSE,
 
         OFF;
     }
@@ -152,17 +151,6 @@ public class Manipulator extends SubsystemBase {
     }
 
     /**
-     * Checks if laterator encoder has reached the max laterator position
-     * @return True if encoder hits max laterator position, false if not
-     */
-    public boolean lateratorExtended() {
-        if (lateratorMotor.getPosition().getValueAsDouble() >= Constants.Manipulator.MAX_LATERATOR_POSITION) {
-            return true;
-        }
-        return false;
-    }
-
-    /**
      * Checks if the limit switch is active.
      * @return True if the limit switch is active, false otherwise.
      */
@@ -179,14 +167,6 @@ public class Manipulator extends SubsystemBase {
     }
 
     /**
-     * Gets the current position of the laterator.
-     * @return The current position of the laterator.
-     */
-    public double getCurrentLateratorPosition() {
-        return lateratorCurrentPosition;
-    }
-
-    /**
      * Sets the raw power for the laterator motor.
      * @param power The power to set for the laterator motor.
      */
@@ -200,13 +180,10 @@ public class Manipulator extends SubsystemBase {
      */
     public void setManipState(ManipulatorStates state) {
         switch (state) {
-            case IN: 
+            case REVERSE: 
                 setManipulatorRawPower(-0.15); 
                 break;
-            case INTAKE: 
-                setManipulatorRawPower(0.15);
-                break;
-            case SCORING:
+            case FORWARD: 
                 setManipulatorRawPower(0.15);
                 break;
             case OFF:
@@ -224,18 +201,11 @@ public class Manipulator extends SubsystemBase {
         topMotor.set(speed);
     }
 
-    /**
-     * Resets laterator motor encoder
-     */
-    public void resetLateratorEncoder() {
-        lateratorMotor.setPosition(0);
-    }
-
-    /**
-     * Returns whether a coral has entered the funnel
-     * @return whether coral has entered funnel
-     */
-    public boolean hasCoralEntered() {
-        return funnelBeamBreak.get();
-    }
+//     /**
+//      * Returns whether a coral has entered the funnel
+//      * @return whether coral has entered funnel
+//      */
+//     public boolean hasCoralEntered() {
+//         return funnelBeamBreak.get();
+//     }
 }

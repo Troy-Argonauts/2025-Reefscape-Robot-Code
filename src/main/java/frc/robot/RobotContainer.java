@@ -15,6 +15,7 @@ import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.RunCommand;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.subsystems.Elevator.ElevatorStates;
 import frc.robot.subsystems.Manipulator.LateratorStates;
@@ -39,13 +40,15 @@ public class RobotContainer {
     public static final CommandXboxController operator = new CommandXboxController(Constants.Controllers.OPERATOR);
 
     public Trigger intakeTrigger;
-    // private final SendableChooser<Command> autoChooser;
+
 
     public Trigger elevatorTrigger;
 
+    private final SendableChooser<Command> autoChooser;
+
 
     public RobotContainer() {
-        intakeTrigger = new Trigger(Robot.getManipulator() :: hasCoralEntered);
+        // intakeTrigger = new Trigger(Robot.getManipulator() :: hasCoralEntered);
         elevatorTrigger = new Trigger(() -> Robot.getElevator().getBottomLimit());
         // Register Commands for path planner
         registerNamedCommands();
@@ -53,6 +56,9 @@ public class RobotContainer {
         // manipulatorOFF = new InstantCommand(() -> Robot.getManipulator().setManipState(ManipulatorStates.OFF), Robot.getManipulator());
         // Configure the button binding
         configureBindings();
+        autoChooser = AutoBuilder.buildAutoChooser();
+        autoChooser.addOption("Do Nothing", new WaitCommand(10.0));
+        SmartDashboard.putData("Auto Chooser", autoChooser);
 
     }
 
@@ -68,35 +74,35 @@ public class RobotContainer {
      */
     private void configureBindings() {
 
-        // Robot.getDrivetrain().setDefaultCommand(
-        //         new RunCommand(
-        //           () -> {
-        //             double xSpeed = (Math.abs(driver.getLeftX()) > Constants.Controllers.DEADBAND)
-        //                 ? driver.getLeftX()
-        //                 : 0;
-        //             double ySpeed = (Math.abs(driver.getLeftY()) > Constants.Controllers.DEADBAND)
-        //                 ? driver.getLeftY()
-        //                 : 0;
-        //             double rotSpeed = (Math.abs(driver.getRightX()) > Constants.Controllers.DEADBAND)
-        //                 ? driver.getRightX()
-        //                 : 0;
+        Robot.getDrivetrain().setDefaultCommand(
+                new RunCommand(
+                  () -> {
+                    double xSpeed = (Math.abs(driver.getLeftX()) > Constants.Controllers.DEADBAND)
+                        ? driver.getLeftX()
+                        : 0;
+                    double ySpeed = (Math.abs(driver.getLeftY()) > Constants.Controllers.DEADBAND)
+                        ? driver.getLeftY()
+                        : 0;
+                    double rotSpeed = (Math.abs(driver.getRightX()) > Constants.Controllers.DEADBAND)
+                        ? driver.getRightX()
+                        : 0;
 
-        //             Robot.getDrivetrain().drive(ySpeed, xSpeed, rotSpeed, true, true);
-        //           }, Robot.getDrivetrain()
+                    Robot.getDrivetrain().drive(ySpeed, xSpeed, rotSpeed, true, true);
+                  }, Robot.getDrivetrain()
 
-        //         ));
+                ));
 
-        // driver.rightBumper().whileTrue(
-        //     new InstantCommand(() -> Robot.getDrivetrain().slowState(true), Robot.getDrivetrain())
-        // ).whileFalse(
-        //     new InstantCommand(() -> Robot.getDrivetrain().slowState(false), Robot.getDrivetrain())
-        // );
+        driver.rightBumper().whileTrue(
+            new InstantCommand(() -> Robot.getDrivetrain().slowState(true), Robot.getDrivetrain())
+        ).whileFalse(
+            new InstantCommand(() -> Robot.getDrivetrain().slowState(false), Robot.getDrivetrain())
+        );
 
-        // driver.x().whileTrue(
-        //     new InstantCommand(() -> Robot.getDrivetrain().setXState(true), Robot.getDrivetrain())
-        // ).whileFalse(
-        //     new InstantCommand(() -> Robot.getDrivetrain().setXState(false), Robot.getDrivetrain())
-        // );
+        driver.x().whileTrue(
+            new InstantCommand(() -> Robot.getDrivetrain().setXState(true), Robot.getDrivetrain())
+        ).whileFalse(
+            new InstantCommand(() -> Robot.getDrivetrain().setXState(false), Robot.getDrivetrain())
+        );
 
         operator.rightBumper().onTrue(
           new InstantCommand(() -> Robot.getElevator().setDesiredState(ElevatorStates.LV4), Robot.getDrivetrain())
@@ -133,7 +139,7 @@ public class RobotContainer {
         );
 
         operator.rightTrigger().whileTrue(
-          new InstantCommand(() -> Robot.getManipulator().setManipState(ManipulatorStates.SCORING), Robot.getManipulator())
+          new InstantCommand(() -> Robot.getManipulator().setManipState(ManipulatorStates.FORWARD), Robot.getManipulator())
         ).whileFalse(
             new InstantCommand(() -> Robot.getManipulator().setManipState(ManipulatorStates.OFF), Robot.getManipulator())
         );
@@ -152,6 +158,15 @@ public class RobotContainer {
                 Robot.getElevator().adjustSetpoint(-operator.getLeftY());
             }, Robot.getElevator()
         ));
+
+        // Robot.getElevator().setDefaultCommand(
+        //     new RunCommand(() -> { 
+        //                 double speed = (Math.abs(operator.getLeftY()) > Constants.Controllers.DEADBAND)
+        //                             ? operator.getLeftY()
+        //                             : 0;
+        //                 Robot.getElevator().setRawPower(speed*0.5);
+        //             }, Robot.getElevator()
+        // ));
 
 
     }
@@ -175,7 +190,6 @@ public class RobotContainer {
      * @return the command to run in autonomous
      */
     public Command getAutonomousCommand() {
-      //return autoChooser.getSelected();
-      return null;
+      return autoChooser.getSelected();
     }
 }
