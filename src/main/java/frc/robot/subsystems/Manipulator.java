@@ -68,7 +68,7 @@ public class Manipulator extends SubsystemBase {
 
         topConfiguration.MotorOutput.NeutralMode = NeutralModeValue.Coast;
         bottomConfiguration.MotorOutput.NeutralMode = NeutralModeValue.Coast;
-        lateratorConfiguration.MotorOutput.NeutralMode = NeutralModeValue.Brake;
+        lateratorConfiguration.MotorOutput.NeutralMode = NeutralModeValue.Coast;
 
         topMotor.getConfigurator().apply(topConfiguration);
         bottomMotor.getConfigurator().apply(bottomConfiguration);
@@ -138,13 +138,13 @@ public class Manipulator extends SubsystemBase {
     public void setLateratorState(LateratorStates state) {
         switch (state) {
             case OUT: 
-                setLateratorRawPower(0.3);
+                setLateratorRawPower(0.15);
                 break;
             case OFF: 
                 setLateratorRawPower(0);
                 break;
             case HOLD:
-                setLateratorRawPower(0.3);
+                setLateratorRawPower(0.07);
                 break;
             
         }
@@ -155,7 +155,7 @@ public class Manipulator extends SubsystemBase {
      * @return True if the limit switch is active, false otherwise.
      */
     public boolean getLateratorLimit(){
-        return lateratorLimit.get();
+        return !lateratorLimit.get();
     }
 
     /**

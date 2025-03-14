@@ -23,6 +23,7 @@ import frc.robot.subsystems.Manipulator.ManipulatorStates;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.commands.Home;
 import frc.robot.commands.Intake;
+import frc.robot.commands.LateratorOUT;
 import frc.robot.commands.autonomous.RemoveAlgae;
 import frc.robot.commands.autonomous.ScoreLV4;
 
@@ -41,15 +42,11 @@ public class RobotContainer {
 
     public Trigger intakeTrigger;
 
-
-    public Trigger elevatorTrigger;
-
     private final SendableChooser<Command> autoChooser;
 
 
     public RobotContainer() {
         // intakeTrigger = new Trigger(Robot.getManipulator() :: hasCoralEntered);
-        elevatorTrigger = new Trigger(() -> Robot.getElevator().getBottomLimit());
         // Register Commands for path planner
         registerNamedCommands();
         // manipulatorOUT = new InstantCommand(() -> Robot.getManipulator().setManipState(ManipulatorStates.OUT), Robot.getManipulator());
@@ -144,20 +141,28 @@ public class RobotContainer {
             new InstantCommand(() -> Robot.getManipulator().setManipState(ManipulatorStates.OFF), Robot.getManipulator())
         );
 
-        // Robot.getManipulator().setDefaultCommand(
-        //     new RunCommand(() -> { 
-        //                 double speed = (Math.abs(operator.getLeftY()) > Constants.Controllers.DEADBAND)
-        //                             ? operator.getLeftY()
-        //                             : 0;
-        //                 Robot.getManipulator().setLateratorRawPower(speed*0.1);
-        //             }, Robot.getManipulator()
-        // ));
+        operator.povUp().onTrue(
+          new InstantCommand(() -> Robot.getManipulator().setLateratorState(LateratorStates.OFF))
+        );
 
-        Robot.getElevator().setDefaultCommand(
-            new RunCommand(() -> {
-                Robot.getElevator().adjustSetpoint(-operator.getLeftY());
-            }, Robot.getElevator()
+        operator.povDown().onTrue(
+          new LateratorOUT()
+        );
+
+        Robot.getManipulator().setDefaultCommand(
+            new RunCommand(() -> { 
+                        double speed = (Math.abs(operator.getLeftY()) > Constants.Controllers.DEADBAND)
+                                    ? operator.getLeftY()
+                                    : 0;
+                        Robot.getManipulator().setLateratorRawPower(speed*0.3);
+                    }, Robot.getManipulator()
         ));
+
+        // Robot.getElevator().setDefaultCommand(
+        //     new RunCommand(() -> {
+        //         Robot.getElevator().adjustSetpoint(-operator.getLeftY());
+        //     }, Robot.getElevator()
+        // ));
 
         // Robot.getElevator().setDefaultCommand(
         //     new RunCommand(() -> { 

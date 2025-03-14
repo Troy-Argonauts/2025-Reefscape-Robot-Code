@@ -70,7 +70,7 @@ public class Robot extends TimedRobot {
     @Override
     public void robotPeriodic() {
         CommandScheduler.getInstance().run();
-        // SmartDashboard.putNumber("operator.getLeftY", RobotContainer.getOperator().getLeftY()*0.7);
+        SmartDashboard.putNumber("operator.getLeftY", RobotContainer.getOperator().getLeftY()*0.3);
     }
 
     @Override

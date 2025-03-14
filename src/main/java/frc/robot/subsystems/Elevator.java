@@ -28,7 +28,7 @@ import frc.robot.Constants;
  */
 public class Elevator extends SubsystemBase {
     private TalonFX leftMotor, rightMotor;
-    private DigitalInput bottomLimit;
+    private DigitalInput innerBottomLimit, outerBottomLimit;
 
     private double encoderValue, target;
     private double oldTarget = 0;
@@ -54,7 +54,8 @@ public class Elevator extends SubsystemBase {
 
         leftMotor = new TalonFX(Constants.Elevator.LEFT_MOTOR_ID);
         rightMotor = new TalonFX(Constants.Elevator.RIGHT_MOTOR_ID);
-        bottomLimit = new DigitalInput(Constants.Elevator.BOTTOM_LIMIT_SWITCH_SLOT);
+        innerBottomLimit = new DigitalInput(Constants.Elevator.INNER_BOTTOM_LIMIT_SWITCH_SLOT);
+        outerBottomLimit = new DigitalInput(Constants.Elevator.OUTER_BOTTOM_LIMIT_SWITCH_SLOT);
 
         leftMotorConfigs.CurrentLimits.SupplyCurrentLimit = 40;
         rightMotorConfigs.CurrentLimits.SupplyCurrentLimit = 40;
@@ -100,12 +101,11 @@ public class Elevator extends SubsystemBase {
     public void periodic() {
         encoderValue = leftMotor.getPosition().getValueAsDouble();
 
-        // SmartDashboard.putNumber("target", target);
+        SmartDashboard.putNumber("Elevator Target", target);
         SmartDashboard.putNumber("Elevator Encoder Value", encoderValue);
         // SmartDashboard.putNumber("Elevator Left Motor Current", leftMotor.getSupplyCurrent().getValueAsDouble());
         // SmartDashboard.putNumber("Elevator Right Motor Current", rightMotor.getSupplyCurrent().getValueAsDouble());
         // SmartDashboard.putNumber("Elevator oldTarget", oldTarget);
-        SmartDashboard.putBoolean("Elevator Limit", getBottomLimit());
         SmartDashboard.putBoolean("Limit Triggered", limitTriggered);
         SmartDashboard.putNumber("Elevator Voltage", leftMotor.getMotorVoltage().getValueAsDouble());
 
@@ -116,8 +116,9 @@ public class Elevator extends SubsystemBase {
 
         leftMotor.setControl(mmVoltage.withPosition(target));
 
-        SmartDashboard.putBoolean("Limit Switch Value", getBottomLimit() == true);
-        if (getBottomLimit() == true) {
+        SmartDashboard.putBoolean("Limit Inner Switch", getInnerBottomLimit());
+        SmartDashboard.putBoolean("Limit Outer Switch", getOuterBottomLimit());
+        if (getInnerBottomLimit() && getOuterBottomLimit()) {
             if (!limitTriggered) {
                 resetEncoders();
                 limitTriggered = true;
@@ -218,8 +219,15 @@ public class Elevator extends SubsystemBase {
     /**
      * Returns whether the bottom limit switch is pressed
      */
-    public boolean getBottomLimit() {
-        return !bottomLimit.get();
+    public boolean getInnerBottomLimit() {
+        return !innerBottomLimit.get();
+    }
+
+    /**
+     * Returns whether the bottom limit switch is pressed
+     */
+    public boolean getOuterBottomLimit() {
+        return !outerBottomLimit.get();
     }
 
     /**
