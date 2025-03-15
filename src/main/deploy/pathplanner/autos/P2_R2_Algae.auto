@@ -5,21 +5,22 @@
     "data": {
       "commands": [
         {
-          "type": "path",
+          "type": "sequential",
           "data": {
-            "pathName": "P2_R2"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "Place Level 4"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "Remove Algae"
+            "commands": [
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "P2_R2"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "scoreLV4"
+                }
+              }
+            ]
           }
         }
       ]

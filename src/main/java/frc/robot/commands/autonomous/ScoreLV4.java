@@ -11,6 +11,7 @@ import frc.robot.subsystems.Manipulator.ManipulatorStates;
 public class ScoreLV4 extends SequentialCommandGroup {
     public ScoreLV4(){
         super(  
+                new WaitCommand(4),
                 // new InstantCommand(() ->   System.out.println("PRINTLEVEL4")),
                 new InstantCommand(() -> Robot.getElevator().setDesiredState(ElevatorStates.LV4), Robot.getElevator()),
 

@@ -118,6 +118,7 @@ public class Elevator extends SubsystemBase {
 
         SmartDashboard.putBoolean("Limit Inner Switch", getInnerBottomLimit());
         SmartDashboard.putBoolean("Limit Outer Switch", getOuterBottomLimit());
+        SmartDashboard.putBoolean("PID Finished", isPIDFinished());
         if (getInnerBottomLimit() && getOuterBottomLimit()) {
             if (!limitTriggered) {
                 resetEncoders();
@@ -206,7 +207,7 @@ public class Elevator extends SubsystemBase {
         double deadbanded = (Math.abs(joyStickValue) > Constants.Controllers.DEADBAND)
                             ? joyStickValue
                             : 0;
-        double newTarget = target + (deadbanded * 0.3);
+        double newTarget = target + (deadbanded * 0.2);
         if (((newTarget >= target) && newTarget <= 30)){
             oldTarget = target;
             target = newTarget;

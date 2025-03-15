@@ -138,13 +138,13 @@ public class Manipulator extends SubsystemBase {
     public void setLateratorState(LateratorStates state) {
         switch (state) {
             case OUT: 
-                setLateratorRawPower(0.15);
+                setLateratorRawPower(0.07);
                 break;
             case OFF: 
                 setLateratorRawPower(0);
                 break;
             case HOLD:
-                setLateratorRawPower(0.07);
+                setLateratorRawPower(0.05);
                 break;
             
         }
@@ -181,7 +181,7 @@ public class Manipulator extends SubsystemBase {
     public void setManipState(ManipulatorStates state) {
         switch (state) {
             case REVERSE: 
-                setManipulatorRawPower(-0.15); 
+                setManipulatorRawPower(-0.30); 
                 break;
             case FORWARD: 
                 setManipulatorRawPower(0.15);

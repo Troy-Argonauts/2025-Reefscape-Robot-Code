@@ -12,7 +12,7 @@ public class Intake extends SequentialCommandGroup {
         super(
             new InstantCommand(() -> Robot.getManipulator().setManipState(ManipulatorStates.FORWARD)),
             new WaitUntilCommand(() -> Robot.getManipulator().isCoralReady()),
-            new WaitCommand(0.15),
+            new WaitCommand(0.10),
             new InstantCommand(() -> Robot.getManipulator().setManipState(ManipulatorStates.OFF))
         );
     }

@@ -54,7 +54,7 @@ public class Robot extends TimedRobot {
 
         DataLogManager.start("/media/sda1/logs");
 
-        CameraServer.startAutomaticCapture();
+        CameraServer.startAutomaticCapture().setFPS(14);
     }
 
     /**

@@ -62,7 +62,7 @@ public class RobotContainer {
     private void registerNamedCommands() {
         //Setting the Commands with names and subsystem commands
         // NamedCommands.registerCommand("removeAlgae", new RemoveAlgae());
-        // NamedCommands.registerCommand("scoreLV4", new ScoreLV4());
+        NamedCommands.registerCommand("scoreLV4", new ScoreLV4());
         // NamedCommands.registerCommand("home", new Home());
     }
 
@@ -149,20 +149,26 @@ public class RobotContainer {
           new LateratorOUT()
         );
 
-        Robot.getManipulator().setDefaultCommand(
-            new RunCommand(() -> { 
-                        double speed = (Math.abs(operator.getLeftY()) > Constants.Controllers.DEADBAND)
-                                    ? operator.getLeftY()
-                                    : 0;
-                        Robot.getManipulator().setLateratorRawPower(speed*0.3);
-                    }, Robot.getManipulator()
-        ));
+        operator.povRight().whileTrue(
+          new InstantCommand(() -> Robot.getManipulator().setManipState(ManipulatorStates.REVERSE))
+        ).whileFalse(
+          new InstantCommand(() -> Robot.getManipulator().setManipState(ManipulatorStates.OFF))
+        );
 
-        // Robot.getElevator().setDefaultCommand(
-        //     new RunCommand(() -> {
-        //         Robot.getElevator().adjustSetpoint(-operator.getLeftY());
-        //     }, Robot.getElevator()
+        // Robot.getManipulator().setDefaultCommand(
+        //     new RunCommand(() -> { 
+        //                 double speed = (Math.abs(operator.getLeftY()) > Constants.Controllers.DEADBAND)
+        //                             ? operator.getLeftY()
+        //                             : 0;
+        //                 Robot.getManipulator().setLateratorRawPower(speed*0.3);
+        //             }, Robot.getManipulator()
         // ));
+
+        Robot.getElevator().setDefaultCommand(
+            new RunCommand(() -> {
+                Robot.getElevator().adjustSetpoint(-operator.getLeftY());
+            }, Robot.getElevator()
+        ));
 
         // Robot.getElevator().setDefaultCommand(
         //     new RunCommand(() -> { 
