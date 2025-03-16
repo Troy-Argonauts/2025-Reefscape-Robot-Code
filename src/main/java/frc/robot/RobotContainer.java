@@ -6,8 +6,10 @@ package frc.robot;
 
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
+import com.pathplanner.lib.path.PathPlannerPath;
 
 import edu.wpi.first.math.filter.Debouncer;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -21,11 +23,14 @@ import frc.robot.subsystems.Elevator.ElevatorStates;
 import frc.robot.subsystems.Manipulator.LateratorStates;
 import frc.robot.subsystems.Manipulator.ManipulatorStates;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
+import frc.robot.Constants.PathPlanner;
 import frc.robot.commands.Home;
 import frc.robot.commands.Intake;
 import frc.robot.commands.LateratorOUT;
 import frc.robot.commands.autonomous.RemoveAlgae;
 import frc.robot.commands.autonomous.ScoreLV4;
+import frc.robot.commands.autonomous.TestAuton;
+
 
 /**
  * This class is where the bulk of the robot should be declared. Since
@@ -45,7 +50,19 @@ public class RobotContainer {
     private final SendableChooser<Command> autoChooser;
 
 
+    public static Command P2_Cross;
+
+
+
     public RobotContainer() {
+      // try {
+      //   PathPlannerPath P2_Cross_file = PathPlannerPath.fromPathFile("P2_Cross");
+      //   P2_Cross = AutoBuilder.followPath(P2_Cross_file);
+
+      // } catch (Exception e) {
+      //   DriverStation.reportError("Oops" + e.getMessage(), e.getStackTrace());
+      // }
+
         // intakeTrigger = new Trigger(Robot.getManipulator() :: hasCoralEntered);
         // Register Commands for path planner
         registerNamedCommands();
@@ -55,14 +72,17 @@ public class RobotContainer {
         configureBindings();
         autoChooser = AutoBuilder.buildAutoChooser();
         autoChooser.addOption("Do Nothing", new WaitCommand(10.0));
+        autoChooser.addOption("TestAuton", new TestAuton());
+        // autoChooser.addOption("Test P2_Cross", new ScoreLV4());
+        // autoChooser.addOption("Test1", P2_Cross);
         SmartDashboard.putData("Auto Chooser", autoChooser);
-
     }
 
     private void registerNamedCommands() {
         //Setting the Commands with names and subsystem commands
-        // NamedCommands.registerCommand("removeAlgae", new RemoveAlgae());
-        NamedCommands.registerCommand("scoreLV4", new ScoreLV4());
+        NamedCommands.registerCommand("removeAlgae", new RemoveAlgae());
+        NamedCommands.registerCommand("scoreLV4", new WaitCommand(5));
+        NamedCommands.registerCommand("Place Level 4", new WaitCommand(5));
         // NamedCommands.registerCommand("home", new Home());
     }
 
@@ -100,6 +120,15 @@ public class RobotContainer {
         ).whileFalse(
             new InstantCommand(() -> Robot.getDrivetrain().setXState(false), Robot.getDrivetrain())
         );
+
+        // driver.a().whileTrue(
+        //     new InstantCommand(() -> Robot.getDrivetrain().driveX(2))
+        // ).whileFalse(
+        //   new InstantCommand(() -> Robot.getDrivetrain().driveX(0))
+        // );
+
+        // driver.a().whileTrue(
+        // );
 
         operator.rightBumper().onTrue(
           new InstantCommand(() -> Robot.getElevator().setDesiredState(ElevatorStates.LV4), Robot.getDrivetrain())

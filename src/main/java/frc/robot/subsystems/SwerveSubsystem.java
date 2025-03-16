@@ -500,4 +500,11 @@ public class SwerveSubsystem extends SubsystemBase {
     public void slowState(boolean state){
         slow = state;
     }
+
+    public void driveX(double speed){
+        frontLeftModule.setDesiredState(new SwerveModuleState(speed, Rotation2d.fromDegrees(0)));
+        frontRightModule.setDesiredState(new SwerveModuleState(speed, Rotation2d.fromDegrees(0)));
+        backLeftModule.setDesiredState(new SwerveModuleState(speed, Rotation2d.fromDegrees(0)));
+        backRightModule.setDesiredState(new SwerveModuleState(speed, Rotation2d.fromDegrees(0)));
+    }
 }

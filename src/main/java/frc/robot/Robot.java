@@ -7,7 +7,6 @@ package frc.robot;
 
 import com.pathplanner.lib.auto.AutoBuilder;
 
-import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
@@ -18,6 +17,7 @@ import frc.robot.commands.autonomous.ScoreLV4;
 import frc.robot.subsystems.Elevator;
 import frc.robot.subsystems.SwerveSubsystem;
 import frc.robot.subsystems.Manipulator;
+import edu.wpi.first.cameraserver.CameraServer;
 
 /**
  * The VM is configured to automatically run this class, and to call the methods

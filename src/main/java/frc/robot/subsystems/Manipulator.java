@@ -100,7 +100,7 @@ public class Manipulator extends SubsystemBase {
         SmartDashboard.putNumber("Lat Supply Current", lateratorMotor.getSupplyCurrent().getValueAsDouble());
         SmartDashboard.putBoolean("Lat Limit Switch", getLateratorLimit());
 
-        // lateratorMotor.setControl(positionVoltage.withPosition(lateratorTarget));
+        // lateratorMotor.setControl(positionVoletage.withPosition(lateratorTarget));
 
         // if (getLateratorLimit() == true) {
         //     resetLateratorEncoder();
@@ -138,7 +138,7 @@ public class Manipulator extends SubsystemBase {
     public void setLateratorState(LateratorStates state) {
         switch (state) {
             case OUT: 
-                setLateratorRawPower(0.07);
+                setLateratorRawPower(0.1);
                 break;
             case OFF: 
                 setLateratorRawPower(0);
