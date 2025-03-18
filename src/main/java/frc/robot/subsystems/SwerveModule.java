@@ -76,6 +76,7 @@ public class SwerveModule extends SubsystemBase{
         driveConfig.kD = DRIVE_D;
         driveConfig.kS = DRIVE_S;
         driveConfig.kV = DRIVE_V;
+        driveConfig.kA = DRIVE_A;
 
 
 
