@@ -1,5 +1,7 @@
 package frc.robot.subsystems;
 
+import com.ctre.phoenix6.controls.MotionMagicVelocityVoltage;
+import com.ctre.phoenix6.controls.MotionMagicVoltage;
 // Necessary imports for our SwerveModule
 import com.ctre.phoenix6.controls.PositionVoltage;
 import com.ctre.phoenix6.controls.VelocityVoltage;
@@ -46,11 +48,15 @@ public class SwerveModule extends SubsystemBase{
     public SwerveModuleState desiredState = new SwerveModuleState(0.0, new Rotation2d());
     private double chassisAngularOffset;
 
+    private final MotionMagicVelocityVoltage mmRequest = new MotionMagicVelocityVoltage(0);
+    MotionMagicConfigs mmConfig = config.MotionMagic;
+    
     public SwerveModule(int driveMotorID, int turnMotorID, int turnEncoderID, String canbusName, double chassisAngularOffset, boolean driveInverted){
         driveMotor = new TalonFX(driveMotorID, canbusName);
         turnMotor = new TalonFX(turnMotorID, canbusName);
         driveValue = 0;
         turnEncoder = new CANcoder(turnEncoderID, canbusName);
+
 
         CANcoderConfiguration encoderConfigs = new CANcoderConfiguration();
         encoderConfigs.MagnetSensor.MagnetOffset = chassisAngularOffset; // make sure this is in rotations
@@ -70,6 +76,8 @@ public class SwerveModule extends SubsystemBase{
         driveConfig.kD = DRIVE_D;
         driveConfig.kS = DRIVE_S;
         driveConfig.kV = DRIVE_V;
+
+
 
         TalonFXConfiguration driveConfigs = new TalonFXConfiguration();
 
@@ -153,8 +161,8 @@ public class SwerveModule extends SubsystemBase{
         correctedDesiredState.optimize(Rotation2d.fromDegrees(turnEncoderValue));
 
         // Command driving and turning motors towards their respective setpoints (velocity and position).
-        driveMotor.setControl(velocityVoltage.withVelocity(correctedDesiredState.speedMetersPerSecond / WHEEL_CIRCUMFERENCE_METERS));
         turnMotor.setControl(positionVoltage.withPosition(correctedDesiredState.angle.getDegrees() / 360));
+        driveMotor.setControl(mmRequest.withVelocity(correctedDesiredState.speedMetersPerSecond / WHEEL_CIRCUMFERENCE_METERS));
 
         SmartDashboard.putNumber("Target Position", correctedDesiredState.angle.getDegrees() / 360);
 
