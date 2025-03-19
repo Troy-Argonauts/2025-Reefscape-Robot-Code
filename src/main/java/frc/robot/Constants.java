@@ -37,7 +37,6 @@ public final class Constants {
         public static final double DRIVE_D = 0.00058;
         public static final double DRIVE_S = 0.0;
         public static final double DRIVE_V = 1.2;
-        public static final double DRIVE_A = 0.0;
 
         // PID Constants for Turn
         public static final double TURN_P = 56.5; // 21
