@@ -2,6 +2,10 @@ package frc.robot.subsystems;
 
 import static frc.robot.Constants.Swerve.*;
 
+import java.io.IOException;
+
+import org.json.simple.parser.ParseException;
+
 import frc.robot.Constants;
 import frc.robot.Constants.Swerve;
 
@@ -92,7 +96,6 @@ public class SwerveSubsystem extends SubsystemBase {
             backRightModule.getPosition()
     });
 
-    /** Creates a new SwerveSubsystem. */
     public SwerveSubsystem() {
         moduleConfig = new ModuleConfig(
             Constants.Swerve.WHEEL_DIAMETER_METERS / 2, 
@@ -100,12 +103,17 @@ public class SwerveSubsystem extends SubsystemBase {
             Constants.PathPlanner.WHEEL_COF,
             DCMotor.getKrakenX60(1), 
             Constants.SwerveModule.DRIVING_MOTOR_CURRENT_LIMIT, 1);
-
         robotConfig = new RobotConfig(
             Constants.PathPlanner.ROBOT_MASS, 
             Constants.PathPlanner.MOMENT_OF_INERTIA, 
             moduleConfig, 
             moduleOffsets);
+        // robotConfig = RobotConfig.fromGUISettings();
+        // try {
+        //     robotConfig = RobotConfig.fromGUISettings();
+        // } catch (Exception e) {
+        //     e.printStackTrace();
+        // }
 
             AutoBuilder.configure(
             this::getPose, // Robot pose supplier
@@ -362,10 +370,10 @@ public class SwerveSubsystem extends SubsystemBase {
    * Sets the wheels into an X formation to prevent movement.
    */
     public void setToZero() {
-        frontLeftModule.setDesiredState(new SwerveModuleState(2, Rotation2d.fromDegrees(0)));
-        frontRightModule.setDesiredState(new SwerveModuleState(2, Rotation2d.fromDegrees(0)));
-        backLeftModule.setDesiredState(new SwerveModuleState(2, Rotation2d.fromDegrees(0)));
-        backRightModule.setDesiredState(new SwerveModuleState(2, Rotation2d.fromDegrees(0)));
+        frontLeftModule.setDesiredState(new SwerveModuleState(0, Rotation2d.fromDegrees(0)));
+        frontRightModule.setDesiredState(new SwerveModuleState(0, Rotation2d.fromDegrees(0)));
+        backLeftModule.setDesiredState(new SwerveModuleState(0, Rotation2d.fromDegrees(0)));
+        backRightModule.setDesiredState(new SwerveModuleState(0, Rotation2d.fromDegrees(0)));
     }
 
 
@@ -506,5 +514,9 @@ public class SwerveSubsystem extends SubsystemBase {
         frontRightModule.setDesiredState(new SwerveModuleState(speed, Rotation2d.fromDegrees(0)));
         backLeftModule.setDesiredState(new SwerveModuleState(speed, Rotation2d.fromDegrees(0)));
         backRightModule.setDesiredState(new SwerveModuleState(speed, Rotation2d.fromDegrees(0)));
+    }
+
+    public void setXSpeed(double speed){
+        
     }
 }

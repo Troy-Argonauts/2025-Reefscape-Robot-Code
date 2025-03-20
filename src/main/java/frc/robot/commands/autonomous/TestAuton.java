@@ -10,7 +10,7 @@ public class TestAuton extends SequentialCommandGroup {
     public TestAuton(){
         super(
 
-            new DriveX(2, Robot.getDrivetrain()).withTimeout(3),
+            new DriveX(-0.75, Robot.getDrivetrain()).withTimeout(3),
 
             new WaitCommand(0.5),
             

@@ -17,6 +17,11 @@ public class DriveX extends Command {
 
     @Override
     public void execute(){
-        swerveSubsystem.drive(speed, 0, 0, false, true);
+        swerveSubsystem.driveX(speed);
+    }
+
+    @Override
+    public void end(boolean interrupted){
+        swerveSubsystem.driveX(0);
     }
 }

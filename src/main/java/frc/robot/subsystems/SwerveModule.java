@@ -14,6 +14,8 @@ import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants;
+import frc.robot.Robot;
 
 import com.ctre.phoenix6.configs.*;
 import static frc.robot.Constants.Swerve.*;
@@ -37,6 +39,7 @@ public class SwerveModule extends SubsystemBase{
     public double turnEncoderRotation = 0;
 
     private TalonFXConfiguration config = new TalonFXConfiguration();
+    public SwerveModuleState globalDesiredState = new SwerveModuleState();
 
     PositionVoltage positionVoltage = new PositionVoltage(0).withSlot(1);
     VelocityVoltage velocityVoltage = new VelocityVoltage(0).withSlot(0);
@@ -71,6 +74,9 @@ public class SwerveModule extends SubsystemBase{
         driveConfig.kS = DRIVE_S;
         driveConfig.kV = DRIVE_V;
 
+        // mmConfig.MotionMagicAcceleration = Constants.Swerve.MOTION_MAGIC_ACCEL;
+        // mmConfig.MotionMagicJerk = Constants.Swerve.MOTION_MAGIC_JERK;
+        
         TalonFXConfiguration driveConfigs = new TalonFXConfiguration();
 
         if (driveInverted){
@@ -108,8 +114,16 @@ public class SwerveModule extends SubsystemBase{
         turnEncoderValue = getAngle();
         turnEncoderRotation = turnEncoder.getPosition().getValueAsDouble();
 
+
+        turnMotor.setControl(positionVoltage.withPosition(globalDesiredState.angle.getDegrees() / 360));
+        // driveMotor.setControl(mmRequest.withVelocity(globalDesiredState.speedMetersPerSecond * Constants.Swerve.DRIVING_MOTOR_REDUCTION / WHEEL_CIRCUMFERENCE_METERS));
+        driveMotor.setControl(velocityVoltage.withVelocity(globalDesiredState.speedMetersPerSecond * Constants.Swerve.DRIVING_MOTOR_REDUCTION / WHEEL_CIRCUMFERENCE_METERS));
+
+        SmartDashboard.putNumber("Corrected Rotation", globalDesiredState.angle.getDegrees() / 360);
+        SmartDashboard.putNumber("Corrected Speed", globalDesiredState.speedMetersPerSecond);
         SmartDashboard.putNumber("Desired State Rotation", desiredState.angle.getDegrees());
         SmartDashboard.putNumber("Desired State Speed", desiredState.speedMetersPerSecond);
+
     }
 
    /**
@@ -153,12 +167,13 @@ public class SwerveModule extends SubsystemBase{
         correctedDesiredState.optimize(Rotation2d.fromDegrees(turnEncoderValue));
 
         // Command driving and turning motors towards their respective setpoints (velocity and position).
-        driveMotor.setControl(velocityVoltage.withVelocity(correctedDesiredState.speedMetersPerSecond / WHEEL_CIRCUMFERENCE_METERS));
-        turnMotor.setControl(positionVoltage.withPosition(correctedDesiredState.angle.getDegrees() / 360));
+        // turnMotor.setControl(positionVoltage.withPosition(correctedDesiredState.angle.getDegrees() / 360));
+        // driveMotor.setControl(mmRequest.withVelocity(correctedDesiredState.speedMetersPerSecond / WHEEL_CIRCUMFERENCE_METERS));
 
-        SmartDashboard.putNumber("Target Position", correctedDesiredState.angle.getDegrees() / 360);
+        
 
         this.desiredState = desiredState;
+        globalDesiredState = correctedDesiredState;
     }
 
     // /**
@@ -191,7 +206,7 @@ public class SwerveModule extends SubsystemBase{
      * @return velocity of the drive motor in meters per second
      */
     public double getVelocity(){
-        return driveMotor.getVelocity().getValueAsDouble() * WHEEL_CIRCUMFERENCE_METERS * WHEEL_CIRCUMFERENCE_METERS;
+        return driveMotor.getVelocity().getValueAsDouble() * WHEEL_CIRCUMFERENCE_METERS / Constants.Swerve.DRIVING_MOTOR_REDUCTION ;
     }
 
     /** Returns the angle of the drive motor 

@@ -27,6 +27,7 @@ import frc.robot.Constants.PathPlanner;
 import frc.robot.commands.Home;
 import frc.robot.commands.Intake;
 import frc.robot.commands.LateratorOUT;
+import frc.robot.commands.autonomous.DriveX;
 import frc.robot.commands.autonomous.RemoveAlgae;
 import frc.robot.commands.autonomous.ScoreLV4;
 import frc.robot.commands.autonomous.TestAuton;
@@ -46,6 +47,7 @@ public class RobotContainer {
     public static final CommandXboxController operator = new CommandXboxController(Constants.Controllers.OPERATOR);
 
     public Trigger intakeTrigger;
+    public Trigger elevatorTrigger;
 
     private final SendableChooser<Command> autoChooser;
 
@@ -65,6 +67,7 @@ public class RobotContainer {
 
         // intakeTrigger = new Trigger(Robot.getManipulator() :: hasCoralEntered);
         // Register Commands for path planner
+        elevatorTrigger = new Trigger(() -> Robot.getElevator().checkHeight());
         registerNamedCommands();
         // manipulatorOUT = new InstantCommand(() -> Robot.getManipulator().setManipState(ManipulatorStates.OUT), Robot.getManipulator());
         // manipulatorOFF = new InstantCommand(() -> Robot.getManipulator().setManipState(ManipulatorStates.OFF), Robot.getManipulator());
@@ -73,6 +76,7 @@ public class RobotContainer {
         autoChooser = AutoBuilder.buildAutoChooser();
         autoChooser.addOption("Do Nothing", new WaitCommand(10.0));
         autoChooser.addOption("TestAuton", new TestAuton());
+        autoChooser.addOption("DriveX", new DriveX(2, Robot.getDrivetrain()));
         // autoChooser.addOption("Test P2_Cross", new ScoreLV4());
         // autoChooser.addOption("Test1", P2_Cross);
         SmartDashboard.putData("Auto Chooser", autoChooser);
@@ -81,7 +85,7 @@ public class RobotContainer {
     private void registerNamedCommands() {
         //Setting the Commands with names and subsystem commands
         NamedCommands.registerCommand("removeAlgae", new RemoveAlgae());
-        NamedCommands.registerCommand("scoreLV4", new WaitCommand(5));
+        NamedCommands.registerCommand("scoreLV4", new ScoreLV4());
         NamedCommands.registerCommand("Place Level 4", new WaitCommand(5));
         // NamedCommands.registerCommand("home", new Home());
     }
@@ -109,9 +113,15 @@ public class RobotContainer {
 
                 ));
 
-        driver.rightBumper().whileTrue(
+        // elevatorTrigger.onTrue(
+        //   new InstantCommand(() -> Robot.getDrivetrain().slowState(true))
+        // ).onFalse(
+        //   new InstantCommand(() -> Robot.getDrivetrain().slowState(false))
+        // );
+
+        driver.rightBumper().onTrue(
             new InstantCommand(() -> Robot.getDrivetrain().slowState(true), Robot.getDrivetrain())
-        ).whileFalse(
+        ).onFalse(
             new InstantCommand(() -> Robot.getDrivetrain().slowState(false), Robot.getDrivetrain())
         );
 

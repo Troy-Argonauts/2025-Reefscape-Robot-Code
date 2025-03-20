@@ -32,11 +32,22 @@ public final class Constants {
     // THIS NEEDS TO BE UPDATED FOR CTRE
     public interface Swerve {
         // PID Constants for drivetrain
-        public static final double DRIVE_P = 0.38;
-        public static final double DRIVE_I = 0.0001;
-        public static final double DRIVE_D = 0.00058;
+        public static final double DRIVE_P = 0.4;
+        public static final double DRIVE_I = 1.6;
+        public static final double DRIVE_D = 0.000085;
         public static final double DRIVE_S = 0.0;
-        public static final double DRIVE_V = 1.2;
+        public static final double DRIVE_V = 0;
+        public static final double DRIVE_A = 0.0;
+
+        // public static final double MOTION_MAGIC_ACCEL = 400;
+        // public static final double MOTION_MAGIC_JERK = 3000;
+        
+
+        // public static final double DRIVE_P = 2;
+        // public static final double DRIVE_I = 0;
+        // public static final double DRIVE_D = 0;
+        // public static final double DRIVE_S = 0.0;
+        // public static final double DRIVE_V = 0.25;
 
         // PID Constants for Turn
         public static final double TURN_P = 56.5; // 21
@@ -56,7 +67,7 @@ public final class Constants {
 
         // Driving Parameters - Note that these are not the maximum capable speeds of
         // the robot, rather the allowed maximum speeds
-        public static final double MAX_SPEED_METERS_PER_SECOND = 4.572;
+        public static final double MAX_SPEED_METERS_PER_SECOND = 4.724;
         public static final double MAX_ANGULAR_SPEED = 2 * Math.PI; // radians per second
 
         public static final double DIRECTION_SLEW_RATE = 1.2; // radians per second
@@ -155,7 +166,7 @@ public final class Constants {
         public static final double TURNING_MIN_OUTPUT = -1;
         public static final double TURNING_MAX_OUTPUT = 1;
 
-        public static final int DRIVING_MOTOR_CURRENT_LIMIT = 50; // amps
+        public static final int DRIVING_MOTOR_CURRENT_LIMIT = 60; // amps
         public static final int TURNING_MOTOR_CURRENT_LIMIT = 20; // amps
     }
 

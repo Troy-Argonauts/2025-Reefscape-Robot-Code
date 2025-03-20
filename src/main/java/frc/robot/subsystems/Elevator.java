@@ -18,6 +18,7 @@ import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 
@@ -119,9 +120,11 @@ public class Elevator extends SubsystemBase {
         SmartDashboard.putBoolean("Limit Inner Switch", getInnerBottomLimit());
         SmartDashboard.putBoolean("Limit Outer Switch", getOuterBottomLimit());
         SmartDashboard.putBoolean("PID Finished", isPIDFinished());
+
         if (getInnerBottomLimit() && getOuterBottomLimit()) {
             if (!limitTriggered) {
                 resetEncoders();
+                resetTarget();
                 limitTriggered = true;
             } 
         } else {
@@ -142,7 +145,7 @@ public class Elevator extends SubsystemBase {
      * @return whether PID is finished
      */
     public boolean isPIDFinished() {
-        return (Math.abs(target - leftMotor.getPosition().getValueAsDouble()) < 0.2);
+        return (Math.abs(target - leftMotor.getPosition().getValueAsDouble()) < 0.5);
     }
     //change the value above
 
@@ -211,7 +214,7 @@ public class Elevator extends SubsystemBase {
         if (((newTarget >= target) && newTarget <= 30)){
             oldTarget = target;
             target = newTarget;
-        } else if ((newTarget <= target && newTarget >= 0)) {
+        } else if ((newTarget <= target)) {
             oldTarget = target;
             target = newTarget;
         }
@@ -237,6 +240,18 @@ public class Elevator extends SubsystemBase {
     public void resetEncoders() {
         leftMotor.setPosition(0);
         rightMotor.setPosition(0);
+    }
+
+    public boolean checkHeight() {
+        if (target >= 3) {
+            return true;
+        } else{
+            return false;
+        }
+    }
+
+    public void resetTarget() {
+        target = 0;
     }
 }
 

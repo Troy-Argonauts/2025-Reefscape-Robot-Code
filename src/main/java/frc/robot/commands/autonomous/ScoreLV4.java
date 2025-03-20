@@ -12,9 +12,9 @@ import frc.robot.subsystems.Manipulator.ManipulatorStates;
 public class ScoreLV4 extends SequentialCommandGroup {
     public ScoreLV4(){
         super(  
-                RobotContainer.P2_Cross,
+                // RobotContainer.P2_Cross,
 
-                new WaitCommand(1.7),
+                // new WaitCommand(1.7),
 
                 new InstantCommand(() -> Robot.getDrivetrain().drive(0, 0, 0, false, true)),
                 // new InstantCommand(() ->   System.out.println("PRINTLEVEL4")),
