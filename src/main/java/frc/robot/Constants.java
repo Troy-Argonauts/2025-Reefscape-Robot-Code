@@ -32,11 +32,22 @@ public final class Constants {
     // THIS NEEDS TO BE UPDATED FOR CTRE
     public interface Swerve {
         // PID Constants for drivetrain
-        public static final double DRIVE_P = 0.39;
-        public static final double DRIVE_I = 0.0001;
-        public static final double DRIVE_D = 0.00058;
+        public static final double DRIVE_P = 0.4;
+        public static final double DRIVE_I = 1.6;
+        public static final double DRIVE_D = 0.000085;
         public static final double DRIVE_S = 0.0;
-        public static final double DRIVE_V = 1.2;
+        public static final double DRIVE_V = 0;
+        public static final double DRIVE_A = 0.0;
+
+        // public static final double MOTION_MAGIC_ACCEL = 400;
+        // public static final double MOTION_MAGIC_JERK = 3000;
+        
+
+        // public static final double DRIVE_P = 2;
+        // public static final double DRIVE_I = 0;
+        // public static final double DRIVE_D = 0;
+        // public static final double DRIVE_S = 0.0;
+        // public static final double DRIVE_V = 0.25;
 
         // PID Constants for Turn
         public static final double TURN_P = 56.5; // 21
@@ -56,7 +67,7 @@ public final class Constants {
 
         // Driving Parameters - Note that these are not the maximum capable speeds of
         // the robot, rather the allowed maximum speeds
-        public static final double MAX_SPEED_METERS_PER_SECOND = 4.572;
+        public static final double MAX_SPEED_METERS_PER_SECOND = 4.724;
         public static final double MAX_ANGULAR_SPEED = 2 * Math.PI; // radians per second
 
         public static final double DIRECTION_SLEW_RATE = 1.2; // radians per second
@@ -75,10 +86,10 @@ public final class Constants {
                 new Translation2d(-WHEEL_BASE / 2, -TRACK_WIDTH / 2));
 
         // Angular offsets of the modules relative to the chassis in radians
-        public static final double FRONT_LEFT_CHASSIS_ANGULAR_OFFSET = -0.2626953125; // -0.25341796875 + Math.PI/4;
-        public static final double FRONT_RIGHT_CHASSIS_ANGULAR_OFFSET = 0.044189453125; // 0.051513671875;
-        public static final double BACK_LEFT_CHASSIS_ANGULAR_OFFSET = -0.059326171875; // -0.056884765625;
-        public static final double BACK_RIGHT_CHASSIS_ANGULAR_OFFSET = 0.09423828125; // 0.095947265625;
+        public static final double FRONT_LEFT_CHASSIS_ANGULAR_OFFSET = -0.0166015625; // -0.25341796875 + Math.PI/4;
+        public static final double FRONT_RIGHT_CHASSIS_ANGULAR_OFFSET = 0.171875; // 0.051513671875;
+        public static final double BACK_LEFT_CHASSIS_ANGULAR_OFFSET = 0.2138671875; // -0.056884765625;
+        public static final double BACK_RIGHT_CHASSIS_ANGULAR_OFFSET = 0.0927734375; // 0.095947265625;
 
         // SPARK MAX CAN IDs
         public static final int FRONT_LEFT_DRIVING_CAN_ID = 6;
@@ -101,16 +112,16 @@ public final class Constants {
         public static final int BACK_LEFT_CAN_ENCODER = 12;
         public static final int BACK_RIGHT_CAN_ENCODER = 9;
 
-        public static final int PIGEON_CAN_ID = 13;
+        public static final int PIGEON_CAN_ID = 0;
 
         public static final boolean GYRO_REVERSED = false;
 
         public static final String CANBUS_NAME = "Swerve CAN Bus";
         Translation2d[] moduleOffsets = {
-            new Translation2d(0, Rotation2d.fromRadians(FRONT_LEFT_CHASSIS_ANGULAR_OFFSET)),
-            new Translation2d(0, Rotation2d.fromRadians(FRONT_RIGHT_CHASSIS_ANGULAR_OFFSET)),
-            new Translation2d(0, Rotation2d.fromRadians(BACK_LEFT_CHASSIS_ANGULAR_OFFSET)),
-            new Translation2d(0, Rotation2d.fromRadians(BACK_RIGHT_CHASSIS_ANGULAR_OFFSET)),};  // robot configs 2d translations
+            new Translation2d(WHEEL_BASE / 2, TRACK_WIDTH / 2),
+            new Translation2d(WHEEL_BASE / 2, -TRACK_WIDTH / 2),
+            new Translation2d(-WHEEL_BASE / 2, TRACK_WIDTH / 2),
+            new Translation2d(-WHEEL_BASE / 2, -TRACK_WIDTH / 2),};  // robot configs 2d translations
     }
 
     public interface SwerveModule {
@@ -133,7 +144,8 @@ public final class Constants {
         public static final double WHEEL_CIRCUMFERENCE_METERS = WHEEL_DIAMETER_METERS * Math.PI;
         // 45 teeth on the wheel's bevel gear, 22 teeth on the first-stage spur gear, 15
         // teeth on the bevel pinion
-        public static final double DRIVING_MOTOR_REDUCTION = (45.0 * 22) / (Swerve.DRIVE_MOTOR_PINION_TEETH * 15);
+        // public static final double DRIVING_MOTOR_REDUCTION = (45.0 * 22) / (Swerve.DRIVE_MOTOR_PINION_TEETH * 15);
+        public static final double DRIVING_MOTOR_REDUCTION = 6.75;
         public static final double DRIVE_WHEEL_FREE_SPEED_RPS = (DRIVING_MOTOR_FREE_SPEED_RPS
                 * WHEEL_CIRCUMFERENCE_METERS) / DRIVING_MOTOR_REDUCTION;
 
@@ -154,44 +166,44 @@ public final class Constants {
         public static final double TURNING_MIN_OUTPUT = -1;
         public static final double TURNING_MAX_OUTPUT = 1;
 
-        public static final int DRIVING_MOTOR_CURRENT_LIMIT = 50; // amps
+        public static final int DRIVING_MOTOR_CURRENT_LIMIT = 60; // amps
         public static final int TURNING_MOTOR_CURRENT_LIMIT = 20; // amps
     }
 
     public interface Elevator {
         int LEFT_MOTOR_ID = 1;
         int RIGHT_MOTOR_ID = 2;
-        int BOTTOM_LIMIT_SWITCH_SLOT = 0;
+        int INNER_BOTTOM_LIMIT_SWITCH_SLOT = 1;
+        int OUTER_BOTTOM_LIMIT_SWITCH_SLOT = 5;
 
-        double P = 0;
-        double I = 0;
-        double D = 0;
-        double V = 0;
-        double G = 0;
+        int MOTION_MAGIC_CRUISE_VELOCITY = 30;
+        int MOTION_MAGIC_ACCEL = 60;
+
+        double P = 3.1;
+        double I = 0.15;
+        double D = 0.05;
+        double V = 0.12;
+        double G = 0.46;
     }
 
     public interface Manipulator {
-        public static final double LateratorP = 0;
-        public static final double LateratorI = 0.;
-        public static final double LateratorD = 0;
-        public static final double LateratorV = 0;
 
         public static final int TOP_MOTOR_CAN_ID = 4;
         public static final int BOTTOM_MOTOR_CAN_ID = 5;
 
         public static final int LATERATOR_MOTOR_CAN_ID = 3;
-        public static final int LATERATOR_LIMIT_SWITCH = 1;
+        public static final int LATERATOR_LIMIT_SWITCH = 4;
 
         public static final int FUNNEL_BEAM_BREAK = 2;
-        public static final int MANIPULATOR_BEAM_BREAK = 4;
+        public static final int MANIPULATOR_BEAM_BREAK = 3;
 
         public static final double MAX_LATERATOR_POSITION = 0.0;
         public static final double MIN_LATERATOR_POSITION = 0.0;
     }
 
     public interface PathPlanner {
-        double MOMENT_OF_INERTIA = 0;
-        double ROBOT_MASS = 0;
+        double MOMENT_OF_INERTIA = 65.536;
+        double ROBOT_MASS = 45.035372;
         double WHEEL_COF = 1.1;
     }
 } // Evan is not cool. Ved is cool.

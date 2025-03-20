@@ -5,13 +5,19 @@
 
 package frc.robot;
 
+import com.pathplanner.lib.auto.AutoBuilder;
+
 import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import frc.robot.commands.autonomous.ScoreLV4;
 import frc.robot.subsystems.Elevator;
 import frc.robot.subsystems.SwerveSubsystem;
 import frc.robot.subsystems.Manipulator;
+import edu.wpi.first.cameraserver.CameraServer;
 
 /**
  * The VM is configured to automatically run this class, and to call the methods
@@ -29,6 +35,8 @@ public class Robot extends TimedRobot {
     private static Manipulator manipulator;
     private static RobotContainer robotContainer;
 
+    // public static final CommandXboxController operator = new CommandXboxController(Constants.Controllers.OPERATOR);
+
     /**
      * This function is run when the robot is first started up and should be used
      * for any
@@ -45,6 +53,8 @@ public class Robot extends TimedRobot {
         robotContainer = new RobotContainer();
 
         DataLogManager.start("/media/sda1/logs");
+
+        CameraServer.startAutomaticCapture().setFPS(14);
     }
 
     /**
@@ -60,14 +70,18 @@ public class Robot extends TimedRobot {
     @Override
     public void robotPeriodic() {
         CommandScheduler.getInstance().run();
+        SmartDashboard.putNumber("operator.getLeftY", RobotContainer.getOperator().getLeftY()*0.3);
     }
 
     @Override
     public void disabledInit() {
+        getDrivetrain().setToZero();
+        getElevator().resetTarget();
     }
 
     @Override
     public void autonomousInit() {
+        m_autonomousCommand = robotContainer.getAutonomousCommand();
         // schedule the autonomous command (example)
         if (m_autonomousCommand != null) {
             m_autonomousCommand.schedule();

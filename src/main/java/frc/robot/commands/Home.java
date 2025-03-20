@@ -10,8 +10,8 @@ import frc.robot.subsystems.Manipulator.LateratorStates;
 public class Home extends SequentialCommandGroup{
     public Home(){
         super(
-            new InstantCommand(() -> Robot.getElevator().setDesiredState(ElevatorStates.HOME), Robot.getElevator()),
-            new InstantCommand(() -> Robot.getManipulator().setLateratorState(LateratorStates.IN), Robot.getManipulator())
+            new InstantCommand(() -> Robot.getElevator().setDesiredState(ElevatorStates.HOME), Robot.getElevator())
+            // new InstantCommand(() -> Robot.getManipulator().setLateratorState(LateratorStates.IN), Robot.getManipulator())
         );
     }
 }

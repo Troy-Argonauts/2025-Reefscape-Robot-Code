@@ -1,17 +1,24 @@
 package frc.robot.subsystems;
 
+import com.ctre.phoenix6.configs.MotionMagicConfigs;
 import com.ctre.phoenix6.configs.Slot0Configs;
+import com.ctre.phoenix6.configs.SoftwareLimitSwitchConfigs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.Follower;
+import com.ctre.phoenix6.controls.MotionMagicVoltage;
 import com.ctre.phoenix6.controls.PositionVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
+import com.ctre.phoenix6.signals.GravityTypeValue;
+import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 
 import edu.wpi.first.util.datalog.DataLog;
 import edu.wpi.first.util.datalog.DoubleLogEntry;
 import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj.DigitalInput;
+import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 
@@ -22,18 +29,21 @@ import frc.robot.Constants;
  */
 public class Elevator extends SubsystemBase {
     private TalonFX leftMotor, rightMotor;
-    private DigitalInput bottomLimit;
+    private DigitalInput innerBottomLimit, outerBottomLimit;
 
-    private double encoderValue, target, oldtarget = 0;
+    private double encoderValue, target;
+    private double oldTarget = 0;
 
     private DoubleLogEntry elevatorLeftOutputCurrentLog;
     private DoubleLogEntry elevatorRightOutputCurrentLog;
     private DoubleLogEntry elevatorEncoderLog;
+
+    boolean limitTriggered = false;
     
-
     TalonFXConfiguration config = new TalonFXConfiguration();
+    SoftwareLimitSwitchConfigs limitConfig = new SoftwareLimitSwitchConfigs();
 
-    PositionVoltage positionVoltage = new PositionVoltage(0).withSlot(0);
+    MotionMagicVoltage mmVoltage = new MotionMagicVoltage(0).withSlot(0);
     Slot0Configs slot0Configs = new Slot0Configs();
 
     /**
@@ -45,24 +55,37 @@ public class Elevator extends SubsystemBase {
 
         leftMotor = new TalonFX(Constants.Elevator.LEFT_MOTOR_ID);
         rightMotor = new TalonFX(Constants.Elevator.RIGHT_MOTOR_ID);
-        bottomLimit = new DigitalInput(Constants.Elevator.BOTTOM_LIMIT_SWITCH_SLOT);
-
-        leftMotor.setNeutralMode(NeutralModeValue.Brake);
-        rightMotor.setNeutralMode(NeutralModeValue.Brake);
+        innerBottomLimit = new DigitalInput(Constants.Elevator.INNER_BOTTOM_LIMIT_SWITCH_SLOT);
+        outerBottomLimit = new DigitalInput(Constants.Elevator.OUTER_BOTTOM_LIMIT_SWITCH_SLOT);
 
         leftMotorConfigs.CurrentLimits.SupplyCurrentLimit = 40;
         rightMotorConfigs.CurrentLimits.SupplyCurrentLimit = 40;
+        leftMotorConfigs.MotorOutput.NeutralMode = NeutralModeValue.Brake;
+        rightMotorConfigs.MotorOutput.NeutralMode = NeutralModeValue.Brake;
+        // leftMotorConfigs.HardwareLimitSwitch.ForwardLimitAutosetPositionValue = 0;
+        // rightMotorConfigs.HardwareLimitSwitch.ForwardLimitAutosetPositionValue = 0;
+
+        leftMotorConfigs.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
 
         slot0Configs.kP = Constants.Elevator.P;
         slot0Configs.kI = Constants.Elevator.I;
         slot0Configs.kD = Constants.Elevator.D;
         slot0Configs.kV = Constants.Elevator.V;
         slot0Configs.kG = Constants.Elevator.G;
+        slot0Configs.GravityType = GravityTypeValue.Elevator_Static;
+
+        MotionMagicConfigs motionMagic = new MotionMagicConfigs();
+        motionMagic.MotionMagicAcceleration = Constants.Elevator.MOTION_MAGIC_ACCEL;
+        motionMagic.MotionMagicCruiseVelocity = Constants.Elevator.MOTION_MAGIC_CRUISE_VELOCITY;
+
 
         leftMotor.getConfigurator().apply(leftMotorConfigs);
         rightMotor.getConfigurator().apply(rightMotorConfigs);
 
         rightMotor.setControl(new Follower(Constants.Elevator.LEFT_MOTOR_ID, true));
+        leftMotor.getConfigurator().apply(slot0Configs);
+        leftMotor.getConfigurator().apply(motionMagic);
+
 
         DataLog log = DataLogManager.getLog();
 
@@ -79,20 +102,33 @@ public class Elevator extends SubsystemBase {
     public void periodic() {
         encoderValue = leftMotor.getPosition().getValueAsDouble();
 
-        SmartDashboard.putNumber("target", target);
-        SmartDashboard.putNumber("Encoder Value", encoderValue);
-        SmartDashboard.putNumber("Left Motor Current", leftMotor.getSupplyCurrent().getValueAsDouble());
-        SmartDashboard.putNumber("Right Motor Current", rightMotor.getSupplyCurrent().getValueAsDouble());
-        SmartDashboard.putNumber("oldTarget", oldtarget);
+        SmartDashboard.putNumber("Elevator Target", target);
+        SmartDashboard.putNumber("Elevator Encoder Value", encoderValue);
+        // SmartDashboard.putNumber("Elevator Left Motor Current", leftMotor.getSupplyCurrent().getValueAsDouble());
+        // SmartDashboard.putNumber("Elevator Right Motor Current", rightMotor.getSupplyCurrent().getValueAsDouble());
+        // SmartDashboard.putNumber("Elevator oldTarget", oldTarget);
+        SmartDashboard.putBoolean("Limit Triggered", limitTriggered);
+        SmartDashboard.putNumber("Elevator Voltage", leftMotor.getMotorVoltage().getValueAsDouble());
+
         
         elevatorLeftOutputCurrentLog.append(leftMotor.getSupplyCurrent().getValueAsDouble());
         elevatorRightOutputCurrentLog.append(rightMotor.getSupplyCurrent().getValueAsDouble());
         elevatorEncoderLog.append(leftMotor.getPosition().getValueAsDouble());
 
-        leftMotor.setControl(positionVoltage.withPosition(target));
+        leftMotor.setControl(mmVoltage.withPosition(target));
 
-        if (getBottomLimit() == true) {
-            resetEncoders();
+        SmartDashboard.putBoolean("Limit Inner Switch", getInnerBottomLimit());
+        SmartDashboard.putBoolean("Limit Outer Switch", getOuterBottomLimit());
+        SmartDashboard.putBoolean("PID Finished", isPIDFinished());
+
+        if (getInnerBottomLimit() && getOuterBottomLimit()) {
+            if (!limitTriggered) {
+                resetEncoders();
+                resetTarget();
+                limitTriggered = true;
+            } 
+        } else {
+            limitTriggered = false;
         }
     }
 
@@ -109,7 +145,7 @@ public class Elevator extends SubsystemBase {
      * @return whether PID is finished
      */
     public boolean isPIDFinished() {
-        return (Math.abs(target - leftMotor.getPosition().getValueAsDouble()) < 0.01);
+        return (Math.abs(target - leftMotor.getPosition().getValueAsDouble()) < 0.5);
     }
     //change the value above
 
@@ -142,12 +178,12 @@ public class Elevator extends SubsystemBase {
      */
     public enum ElevatorStates{
         HOME(0),
-        LV1(0),
-        LV2(0),
-        LV3(0),
+        LV1(2.1),
+        LV2(8.2),
+        LV3(16.36),
         ALGAE_LOW(0),  
         ALGAE_HIGH(0),                                                                           
-        LV4(0);
+        LV4(30);
         //change the numbers above
         
         final double elevatorPosition;
@@ -162,7 +198,7 @@ public class Elevator extends SubsystemBase {
      * @param state elevator state
      */
     public void setDesiredState(ElevatorStates state) {
-        oldtarget= target;
+        oldTarget = target;
         target = state.elevatorPosition;
     }
 
@@ -171,10 +207,15 @@ public class Elevator extends SubsystemBase {
      * @param joyStickValue joystick value between 1 and -1
      */
     public void adjustSetpoint(double joyStickValue) {
-        double newTarget = target + (joyStickValue * 20);
-        if ((target <= 5 || target >= 0) && newTarget > 0 && target != newTarget) {
+        double deadbanded = (Math.abs(joyStickValue) > Constants.Controllers.DEADBAND)
+                            ? joyStickValue
+                            : 0;
+        double newTarget = target + (deadbanded * 0.2);
+        if (((newTarget >= target) && newTarget <= 30)){
+            oldTarget = target;
             target = newTarget;
-        } else if (newTarget > target && getBottomLimit()) { // If elevator is moving down (new encoder value is less than current encoder value) and bottomLimitSwitch is not pressed
+        } else if ((newTarget <= target)) {
+            oldTarget = target;
             target = newTarget;
         }
     }
@@ -182,8 +223,15 @@ public class Elevator extends SubsystemBase {
     /**
      * Returns whether the bottom limit switch is pressed
      */
-    public boolean getBottomLimit() {
-        return bottomLimit.get();
+    public boolean getInnerBottomLimit() {
+        return !innerBottomLimit.get();
+    }
+
+    /**
+     * Returns whether the bottom limit switch is pressed
+     */
+    public boolean getOuterBottomLimit() {
+        return !outerBottomLimit.get();
     }
 
     /**
@@ -192,6 +240,18 @@ public class Elevator extends SubsystemBase {
     public void resetEncoders() {
         leftMotor.setPosition(0);
         rightMotor.setPosition(0);
+    }
+
+    public boolean checkHeight() {
+        if (target >= 3) {
+            return true;
+        } else{
+            return false;
+        }
+    }
+
+    public void resetTarget() {
+        target = 0;
     }
 }
 

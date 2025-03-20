@@ -7,19 +7,19 @@
         {
           "type": "path",
           "data": {
-            "pathName": "P2_R2"
+            "pathName": "P2_Cross"
+          }
+        },
+        {
+          "type": "wait",
+          "data": {
+            "waitTime": 0.01
           }
         },
         {
           "type": "named",
           "data": {
-            "name": "Place Level 4"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "Remove Algae"
+            "name": "scoreLV4"
           }
         }
       ]
