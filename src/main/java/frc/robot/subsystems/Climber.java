@@ -34,6 +34,8 @@ public class Climber extends SubsystemBase{
     public double armCurrentPosition;
     public double tongueCurrentPosition;
 
+    private boolean armTriggered = false;
+
 
     /**
     * Initializes the Climber subsystem with the motors and sensors.
@@ -99,8 +101,13 @@ public class Climber extends SubsystemBase{
         
         tongueCurrentPosition = tongueMotor.getPosition().getValueAsDouble();
         armCurrentPosition = leftArmMotor.getPosition().getValueAsDouble();
-        if (getArmLimit() == true) {
-            resetArmEncoders();
+        if (getArmLimit()) {
+            if (!armTriggered) {
+                resetArmEncoders();
+                armTriggered = true;
+            } 
+        } else {
+            armTriggered = false;
         }
         
     }
@@ -252,5 +259,13 @@ public class Climber extends SubsystemBase{
         } else {
             setArmRawPower(0);
         }
+    }
+
+    public void ArmIN() {
+
+    }
+
+    public void ArmOUT() {
+
     }
 }
