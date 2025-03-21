@@ -191,14 +191,8 @@ public final class Constants {
         public static final int TOP_MOTOR_CAN_ID = 4;
         public static final int BOTTOM_MOTOR_CAN_ID = 5;
 
-        public static final int LATERATOR_MOTOR_CAN_ID = 3;
-        public static final int LATERATOR_LIMIT_SWITCH = 4;
-
         public static final int FUNNEL_BEAM_BREAK = 2;
         public static final int MANIPULATOR_BEAM_BREAK = 3;
-
-        public static final double MAX_LATERATOR_POSITION = 0.0;
-        public static final double MIN_LATERATOR_POSITION = 0.0;
     }
 
     public interface PathPlanner {

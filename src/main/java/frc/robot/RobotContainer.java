@@ -20,15 +20,13 @@ import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.subsystems.Elevator.ElevatorStates;
-import frc.robot.subsystems.Manipulator.LateratorStates;
 import frc.robot.subsystems.Manipulator.ManipulatorStates;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.PathPlanner;
 import frc.robot.commands.Home;
 import frc.robot.commands.Intake;
-import frc.robot.commands.LateratorOUT;
 import frc.robot.commands.autonomous.DriveX;
-import frc.robot.commands.autonomous.RemoveAlgae;
+
 import frc.robot.commands.autonomous.ScoreLV4;
 import frc.robot.commands.autonomous.TestAuton;
 
@@ -84,7 +82,7 @@ public class RobotContainer {
 
     private void registerNamedCommands() {
         //Setting the Commands with names and subsystem commands
-        NamedCommands.registerCommand("removeAlgae", new RemoveAlgae());
+
         NamedCommands.registerCommand("scoreLV4", new ScoreLV4());
         NamedCommands.registerCommand("Place Level 4", new WaitCommand(5));
         // NamedCommands.registerCommand("home", new Home());
@@ -180,28 +178,11 @@ public class RobotContainer {
             new InstantCommand(() -> Robot.getManipulator().setManipState(ManipulatorStates.OFF), Robot.getManipulator())
         );
 
-        operator.povUp().onTrue(
-          new InstantCommand(() -> Robot.getManipulator().setLateratorState(LateratorStates.OFF))
-        );
-
-        operator.povDown().onTrue(
-          new LateratorOUT()
-        );
-
         operator.povRight().whileTrue(
           new InstantCommand(() -> Robot.getManipulator().setManipState(ManipulatorStates.REVERSE))
         ).whileFalse(
           new InstantCommand(() -> Robot.getManipulator().setManipState(ManipulatorStates.OFF))
         );
-
-        // Robot.getManipulator().setDefaultCommand(
-        //     new RunCommand(() -> { 
-        //                 double speed = (Math.abs(operator.getLeftY()) > Constants.Controllers.DEADBAND)
-        //                             ? operator.getLeftY()
-        //                             : 0;
-        //                 Robot.getManipulator().setLateratorRawPower(speed*0.3);
-        //             }, Robot.getManipulator()
-        // ));
 
         Robot.getElevator().setDefaultCommand(
             new RunCommand(() -> {
