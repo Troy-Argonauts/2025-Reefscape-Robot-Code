@@ -16,6 +16,7 @@ import com.pathplanner.lib.config.PIDConstants;
 import com.pathplanner.lib.config.RobotConfig;
 import com.pathplanner.lib.controllers.PPHolonomicDriveController;
 
+import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -84,6 +85,11 @@ public class SwerveSubsystem extends SubsystemBase {
 
     private ModuleConfig moduleConfig;
     private RobotConfig robotConfig;
+
+    public PIDController pidX = new PIDController(0, 0, 0);
+    public PIDController pidY = new PIDController(0, 0, 0);
+    public PIDController pidRot = new PIDController(0, 0, 0);
+
 
     // Odometry class for tracking robot pose
     SwerveDriveOdometry odometry = new SwerveDriveOdometry(
@@ -518,5 +524,9 @@ public class SwerveSubsystem extends SubsystemBase {
 
     public void setXSpeed(double speed){
         
+    }
+
+   public double getFrontMeterValue(){
+        return (frontLeftModule.getFrontPositionMeters() + frontRightModule.getFrontPositionMeters()) / 2;
     }
 }
