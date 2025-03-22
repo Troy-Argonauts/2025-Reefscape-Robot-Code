@@ -18,6 +18,7 @@ import frc.robot.subsystems.Elevator;
 import frc.robot.subsystems.SwerveSubsystem;
 import frc.robot.subsystems.Manipulator;
 import edu.wpi.first.cameraserver.CameraServer;
+import frc.robot.subsystems.Climber;
 
 /**
  * The VM is configured to automatically run this class, and to call the methods
@@ -33,9 +34,8 @@ public class Robot extends TimedRobot {
     private static SwerveSubsystem drivetrain;
     private static Elevator elevator;
     private static Manipulator manipulator;
+    private static Climber climber;
     private static RobotContainer robotContainer;
-
-    // public static final CommandXboxController operator = new CommandXboxController(Constants.Controllers.OPERATOR);
 
     /**
      * This function is run when the robot is first started up and should be used
@@ -49,6 +49,7 @@ public class Robot extends TimedRobot {
         elevator = new Elevator();
         drivetrain = new SwerveSubsystem();
         manipulator = new Manipulator();
+        climber = new Climber();
 
         robotContainer = new RobotContainer();
 
@@ -161,4 +162,9 @@ public class Robot extends TimedRobot {
         robotContainer = new RobotContainer();
         return robotContainer;
     }
+
+  public static Climber getClimber() {
+    if (climber == null) climber = new Climber();
+    return climber;
+}
 }

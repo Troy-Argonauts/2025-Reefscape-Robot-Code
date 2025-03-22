@@ -28,6 +28,19 @@ public final class Constants {
         public static final int OPERATOR = 1;
         public static final double DEADBAND = 0.08;
     }
+
+    public interface Climber {
+        int LEFT_MOTOR_ID = 1;
+        int RIGHT_MOTOR_ID = 2;
+        int TONGUE_MOTOR_ID = 4;
+
+        int ARM_LIMIT_SWITCH = 0;
+        int TONGUE_LIMIT_SWITCH = 0;
+
+        public static final double MAX_ARM_POSITION = 0.0;
+        public static final double MAX_Tongue_POSITION = 0.0;
+
+    }
     
     // THIS NEEDS TO BE UPDATED FOR CTRE
     public interface Swerve {
