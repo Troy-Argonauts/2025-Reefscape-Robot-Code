@@ -22,7 +22,7 @@ public class ScoreLV4 extends SequentialCommandGroup {
 
                 new WaitUntilCommand(() -> Robot.getElevator().isPIDFinished()),
 
-                new InstantCommand(() -> Robot.getManipulator().setManipState(ManipulatorStates.FORWARD), Robot.getManipulator()),
+                new InstantCommand(() -> Robot.getManipulator().setManipState(ManipulatorStates.OUTAKE), Robot.getManipulator()),
 
                 new WaitCommand(1),
 

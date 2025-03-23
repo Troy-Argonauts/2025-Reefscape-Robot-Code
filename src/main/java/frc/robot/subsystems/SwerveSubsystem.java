@@ -287,9 +287,9 @@ public class SwerveSubsystem extends SubsystemBase {
         double rotCorrected;
 
         if(slow){
-            xSpeedCorrected = xSpeed *0.2;
-            ySpeedCorrected = ySpeed *0.2;
-            rotCorrected = rot *0.2;
+            xSpeedCorrected = xSpeed *0.09;
+            ySpeedCorrected = ySpeed *0.09;
+            rotCorrected = rot *0.09;
         } else {
             xSpeedCorrected = xSpeed;
             ySpeedCorrected = ySpeed;
@@ -515,11 +515,13 @@ public class SwerveSubsystem extends SubsystemBase {
         slow = state;
     }
 
-    public void driveX(double speed){
-        frontLeftModule.setDesiredState(new SwerveModuleState(speed, Rotation2d.fromDegrees(0)));
-        frontRightModule.setDesiredState(new SwerveModuleState(speed, Rotation2d.fromDegrees(0)));
-        backLeftModule.setDesiredState(new SwerveModuleState(speed, Rotation2d.fromDegrees(0)));
-        backRightModule.setDesiredState(new SwerveModuleState(speed, Rotation2d.fromDegrees(0)));
+    //public void driveX(double speed){
+    public void driveX(double power){
+        drive(power, 0, 0, false, true);
+        // frontLeftModule.setDesiredState(new SwerveModuleState(speed, Rotation2d.fromDegrees(0)));
+        // frontRightModule.setDesiredState(new SwerveModuleState(speed, Rotation2d.fromDegrees(0)));
+        // backLeftModule.setDesiredState(new SwerveModuleState(speed, Rotation2d.fromDegrees(0)));
+        // backRightModule.setDesiredState(new SwerveModuleState(speed, Rotation2d.fromDegrees(0)));
     }
 
     public void setXSpeed(double speed){

@@ -21,8 +21,12 @@ import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.subsystems.Elevator.ElevatorStates;
 import frc.robot.subsystems.Manipulator.ManipulatorStates;
+import frc.robot.subsystems.Tongue.TongueStates;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.PathPlanner;
+import frc.robot.commands.ClimberArmOUT;
+import frc.robot.commands.ClimberRun;
+import frc.robot.commands.ClimberTongueOUT;
 import frc.robot.commands.Home;
 import frc.robot.commands.Intake;
 import frc.robot.commands.autonomous.DriveX;
@@ -93,6 +97,12 @@ public class RobotContainer {
      */
     private void configureBindings() {
 
+      elevatorTrigger.whileTrue(
+        new InstantCommand(() -> Robot.getDrivetrain().slowState(true))
+      ).whileFalse(
+        new InstantCommand(() -> Robot.getDrivetrain().slowState(false))
+      );
+
         Robot.getDrivetrain().setDefaultCommand(
                 new RunCommand(
                   () -> {
@@ -106,16 +116,16 @@ public class RobotContainer {
                         ? driver.getRightX()
                         : 0;
 
-                    Robot.getDrivetrain().drive(ySpeed, xSpeed, rotSpeed, true, true);
+                    Robot.getDrivetrain().drive(ySpeed * 0.65, xSpeed * 0.65, rotSpeed * 0.65, true, true);
                   }, Robot.getDrivetrain()
 
                 ));
 
-        // elevatorTrigger.onTrue(
-        //   new InstantCommand(() -> Robot.getDrivetrain().slowState(true))
-        // ).onFalse(
-        //   new InstantCommand(() -> Robot.getDrivetrain().slowState(false))
-        // );
+        elevatorTrigger.onTrue(
+          new InstantCommand(() -> Robot.getDrivetrain().slowState(true))
+        ).onFalse(
+          new InstantCommand(() -> Robot.getDrivetrain().slowState(false))
+        );
 
         driver.rightBumper().onTrue(
             new InstantCommand(() -> Robot.getDrivetrain().slowState(true), Robot.getDrivetrain())
@@ -129,6 +139,70 @@ public class RobotContainer {
             new InstantCommand(() -> Robot.getDrivetrain().setXState(false), Robot.getDrivetrain())
         );
 
+        // Robot.getClimber().setDefaultCommand(
+        //   new RunCommand(
+        //     () -> {
+        //      double speed = ((getDriverTriggerAxis()) > Constants.Controllers.DEADBAND)
+        //               ? getDriverTriggerAxis()
+        //               : 0;
+        //       Robot.getClimber().setArmPower(speed);
+        //     }, Robot.getClimber())
+        // );
+
+        // driver.a().onTrue(
+        //   new ClimberArmOUT()
+        // );
+
+        driver.b().onTrue(
+          new ClimberTongueOUT()
+        );
+
+        // Robot.getClimber().setDefaultCommand(
+        //   new RunCommand(
+        //     () -> {
+        //       double out = (Math.abs(driver.getRightTriggerAxis()) > Constants.Controllers.DEADBAND)
+        //                 ? driver.getRightTriggerAxis()
+        //                 : 0;
+        //       double in = (Math.abs(driver.getLeftTriggerAxis()) > Constants.Controllers.DEADBAND)
+        //                 ? driver.getLeftTriggerAxis()
+        //                 : 0;
+
+        //       Robot.getClimber().climberRetract(out);
+              
+        //     }, Robot.getClimber()
+        // ));
+
+
+        // Robot.getClimber().setDefaultCommand(
+        //   new RunCommand(
+        //     () -> {
+        //       double positiveSpeed = (Math.abs(driver.getRightTriggerAxis()) > Constants.Controllers.DEADBAND)
+        //                       ? driver.getRightTriggerAxis()
+        //                       : 0;
+        //       double negativeSpeed = (Math.abs(driver.getLeftTriggerAxis()) > Constants.Controllers.DEADBAND)
+        //                       ? driver.getLeftTriggerAxis()
+        //                       : 0;
+        //       if (positiveSpeed > 0) {
+        //         Robot.getClimber().climberRetract(positiveSpeed);
+        //       } else if (negativeSpeed > 0) {
+        //         Robot.getClimber().climberRetract(-negativeSpeed);
+        //       }else {
+        //         Robot.getClimber().climberRetract(0);
+        //       }
+        //     }, Robot.getClimber()
+        //   )
+        // );
+
+        // Robot.getTongue().setDefaultCommand(
+        //     new RunCommand(() -> {
+        //         Robot.getTongue().setTongueRawPower(-driver.getLeftY() * 0.7);
+        //     }, Robot.getTongue()
+        // ));
+
+        // driver.a().onTrue(
+        //   new ClimberTongueOUT()
+        // );
+
         // driver.a().whileTrue(
         //     new InstantCommand(() -> Robot.getDrivetrain().driveX(2))
         // ).whileFalse(
@@ -140,6 +214,12 @@ public class RobotContainer {
 
         operator.rightBumper().onTrue(
           new InstantCommand(() -> Robot.getElevator().setDesiredState(ElevatorStates.LV4), Robot.getDrivetrain())
+        );
+
+        operator.povDown().whileTrue(
+          new InstantCommand(() -> Robot.getManipulator().setManipState(ManipulatorStates.LV1SCORE), Robot.getManipulator())
+        ).whileFalse(
+          new InstantCommand(() -> Robot.getManipulator().setManipState(ManipulatorStates.OFF), Robot.getManipulator())
         );
 
         operator.y().onTrue(
@@ -173,7 +253,7 @@ public class RobotContainer {
         );
 
         operator.rightTrigger().whileTrue(
-          new InstantCommand(() -> Robot.getManipulator().setManipState(ManipulatorStates.FORWARD), Robot.getManipulator())
+          new InstantCommand(() -> Robot.getManipulator().setManipState(ManipulatorStates.OUTAKE), Robot.getManipulator())
         ).whileFalse(
             new InstantCommand(() -> Robot.getManipulator().setManipState(ManipulatorStates.OFF), Robot.getManipulator())
         );
@@ -214,6 +294,10 @@ public class RobotContainer {
     public static CommandXboxController getOperator() {
         return operator;
     }
+
+    public double getDriverTriggerAxis() {
+      return driver.getRightTriggerAxis() - driver.getLeftTriggerAxis();
+    } 
 
     /**
      * Use this to pass the autonomous command to the main {@link Robot} class.

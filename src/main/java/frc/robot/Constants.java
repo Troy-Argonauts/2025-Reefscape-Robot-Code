@@ -30,24 +30,22 @@ public final class Constants {
     }
 
     public interface Climber {
-        int LEFT_MOTOR_ID = 1;
-        int RIGHT_MOTOR_ID = 2;
-        int TONGUE_MOTOR_ID = 4;
 
-        int ARM_LIMIT_SWITCH = 0;
-        int TONGUE_LIMIT_SWITCH = 0;
+        int LEFT_MOTOR_ID = 10;
+        int RIGHT_MOTOR_ID = 11;
+        int TONGUE_MOTOR_ID = 12;
 
-        public static final double MAX_ARM_POSITION = 0.0;
-        public static final double MAX_Tongue_POSITION = 0.0;
+        public static final double MAX_ARM_POSITION = -29.16;
+        public static final double MAX_Tongue_POSITION = 2.4;
 
     }
     
     // THIS NEEDS TO BE UPDATED FOR CTRE
     public interface Swerve {
         // PID Constants for drivetrain
-        public static final double DRIVE_P = 0.4;
+        public static final double DRIVE_P = 0.32;
         public static final double DRIVE_I = 1.6;
-        public static final double DRIVE_D = 0.000085;
+        public static final double DRIVE_D = 0.000075;
         public static final double DRIVE_S = 0.0;
         public static final double DRIVE_V = 0;
         public static final double DRIVE_A = 0.0;
@@ -189,14 +187,14 @@ public final class Constants {
         int INNER_BOTTOM_LIMIT_SWITCH_SLOT = 1;
         int OUTER_BOTTOM_LIMIT_SWITCH_SLOT = 5;
 
-        int MOTION_MAGIC_CRUISE_VELOCITY = 30;
-        int MOTION_MAGIC_ACCEL = 60;
+        int MOTION_MAGIC_CRUISE_VELOCITY = 25;
+        int MOTION_MAGIC_ACCEL = 50;
 
-        double P = 3.1;
-        double I = 0.15;
-        double D = 0.05;
-        double V = 0.12;
-        double G = 0.46;
+        double P = 5.5;
+        double I = 0.3;
+        double D = 0.0005;
+        double V = 0.16;
+        double G = 0.5;
     }
 
     public interface Manipulator {

@@ -16,6 +16,7 @@ import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.robot.commands.autonomous.ScoreLV4;
 import frc.robot.subsystems.Elevator;
 import frc.robot.subsystems.SwerveSubsystem;
+import frc.robot.subsystems.Tongue;
 import frc.robot.subsystems.Manipulator;
 import edu.wpi.first.cameraserver.CameraServer;
 import frc.robot.subsystems.Climber;
@@ -36,6 +37,7 @@ public class Robot extends TimedRobot {
     private static Manipulator manipulator;
     private static Climber climber;
     private static RobotContainer robotContainer;
+    private static Tongue tongue;
 
     /**
      * This function is run when the robot is first started up and should be used
@@ -50,10 +52,14 @@ public class Robot extends TimedRobot {
         drivetrain = new SwerveSubsystem();
         manipulator = new Manipulator();
         climber = new Climber();
+        tongue = new Tongue();
 
         robotContainer = new RobotContainer();
 
         DataLogManager.start("/media/sda1/logs");
+
+        getClimber().resetArmEncoders();
+
 
         // CameraServer.startAutomaticCapture().setFPS(14);
     }
@@ -77,8 +83,7 @@ public class Robot extends TimedRobot {
     @Override
     public void disabledInit() {
         getDrivetrain().setToZero();
-        getElevator().resetTarget();
-    }
+        getElevator().resetTarget();    }
 
     @Override
     public void autonomousInit() {
@@ -167,4 +172,9 @@ public class Robot extends TimedRobot {
     if (climber == null) climber = new Climber();
     return climber;
 }
+
+    public static Tongue getTongue() {
+        if (tongue == null) tongue = new Tongue();
+        return tongue;
+    }
 }
