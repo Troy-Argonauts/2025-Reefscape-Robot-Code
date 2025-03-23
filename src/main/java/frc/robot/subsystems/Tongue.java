@@ -74,7 +74,7 @@ public class Tongue extends SubsystemBase{
         tongueCurrentPosition = tongueMotor.getPosition().getValueAsDouble();
 
         boolean retval = false;
-        if (tongueCurrentPosition <= Constants.Climber.MAX_Tongue_POSITION) {
+        if (tongueCurrentPosition >= Constants.Climber.MAX_Tongue_POSITION) {
             retval =  true;
         }
 
