@@ -98,7 +98,9 @@ public class Manipulator extends SubsystemBase {
 
         LV1SCORE,
 
-        OFF;
+        OFF,
+
+        FLICK;
     }
 
     /**
@@ -129,6 +131,9 @@ public class Manipulator extends SubsystemBase {
                 break;
             case OFF:
                 setManipulatorRawPower(0);
+                break;
+            case FLICK:
+                setManipulatorRawPower(0.1);
                 break;
             
         }

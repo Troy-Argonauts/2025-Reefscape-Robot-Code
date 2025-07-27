@@ -287,9 +287,9 @@ public class SwerveSubsystem extends SubsystemBase {
         double rotCorrected;
 
         if(slow){
-            xSpeedCorrected = xSpeed *0.09;
-            ySpeedCorrected = ySpeed *0.09;
-            rotCorrected = rot *0.09;
+            xSpeedCorrected = xSpeed *0.11;
+            ySpeedCorrected = ySpeed *0.11;
+            rotCorrected = rot *0.11;
         } else {
             xSpeedCorrected = xSpeed;
             ySpeedCorrected = ySpeed;

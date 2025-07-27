@@ -180,10 +180,12 @@ public class Elevator extends SubsystemBase {
         HOME(0),
         LV1(2.1),
         LV2(7.1),
-        LV3(16.36),
+        LV3(15.4),
         ALGAE_LOW(0),  
-        ALGAE_HIGH(0),                                                                           
-        LV4(29.8);
+        ALGAE_HIGH(0),
+        LV4(29.3);    
+
+        // LV4(29.8); 
         //change the numbers above
         
         final double elevatorPosition;

@@ -55,6 +55,7 @@ public class RobotContainer {
 
 
     public static Command P2_Cross;
+    public boolean field_centric = true;
 
 
 
@@ -97,10 +98,20 @@ public class RobotContainer {
      */
     private void configureBindings() {
 
+      // elevatorTrigger.whileTrue(
+      //   new InstantCommand(() -> Robot.getDrivetrain().slowState(true))
+      // ).whileFalse(
+      //   new InstantCommand(() -> Robot.getDrivetrain().slowState(false))
+      // );
+
       elevatorTrigger.whileTrue(
-        new InstantCommand(() -> Robot.getDrivetrain().slowState(true))
+        new ParallelCommandGroup(
+          new InstantCommand(() -> Robot.getDrivetrain().slowState(true)),
+          new InstantCommand(() -> setFieldCentric(false)) 
+          )
       ).whileFalse(
-        new InstantCommand(() -> Robot.getDrivetrain().slowState(false))
+        new ParallelCommandGroup(new InstantCommand(() -> Robot.getDrivetrain().slowState(false)),
+        new InstantCommand(() -> setFieldCentric(true)))
       );
 
         Robot.getDrivetrain().setDefaultCommand(
@@ -116,10 +127,11 @@ public class RobotContainer {
                         ? driver.getRightX()
                         : 0;
 
-                    Robot.getDrivetrain().drive(ySpeed * 0.65, xSpeed * 0.65, rotSpeed * 0.65, true, true);
+                    Robot.getDrivetrain().drive(ySpeed * 0.5, xSpeed * 0.5, rotSpeed * 0.5, field_centric, true);
                   }, Robot.getDrivetrain()
 
                 ));
+        
 
         elevatorTrigger.onTrue(
           new InstantCommand(() -> Robot.getDrivetrain().slowState(true))
@@ -127,10 +139,20 @@ public class RobotContainer {
           new InstantCommand(() -> Robot.getDrivetrain().slowState(false))
         );
 
+        // driver.rightBumper().onTrue(
+        //     new InstantCommand(() -> Robot.getDrivetrain().slowState(true), Robot.getDrivetrain())
+        // ).onFalse(
+        //     new InstantCommand(() -> Robot.getDrivetrain().slowState(false), Robot.getDrivetrain())
+        // );
+
         driver.rightBumper().onTrue(
-            new InstantCommand(() -> Robot.getDrivetrain().slowState(true), Robot.getDrivetrain())
-        ).onFalse(
-            new InstantCommand(() -> Robot.getDrivetrain().slowState(false), Robot.getDrivetrain())
+          new ParallelCommandGroup(
+            new InstantCommand(() -> Robot.getDrivetrain().slowState(true)),
+            new InstantCommand(() -> setFieldCentric(false)) 
+            )
+        ).whileFalse(
+          new ParallelCommandGroup(new InstantCommand(() -> Robot.getDrivetrain().slowState(false)),
+          new InstantCommand(() -> setFieldCentric(true)))
         );
 
         driver.x().whileTrue(
@@ -153,9 +175,9 @@ public class RobotContainer {
         //   new ClimberArmOUT()
         // );
 
-        driver.b().onTrue(
-          new ClimberTongueOUT()
-        );
+        // driver.b().onTrue(
+        //   new ClimberTongueOUT()
+        // );
 
         // Robot.getClimber().setDefaultCommand(
         //   new RunCommand(
@@ -217,7 +239,7 @@ public class RobotContainer {
         );
 
         operator.povDown().whileTrue(
-          new InstantCommand(() -> Robot.getManipulator().setManipState(ManipulatorStates.LV1SCORE), Robot.getManipulator())
+          new InstantCommand(() -> Robot.getManipulator().setManipState(ManipulatorStates.FLICK), Robot.getManipulator())
         ).whileFalse(
           new InstantCommand(() -> Robot.getManipulator().setManipState(ManipulatorStates.OFF), Robot.getManipulator())
         );
@@ -306,5 +328,9 @@ public class RobotContainer {
      */
     public Command getAutonomousCommand() {
       return autoChooser.getSelected();
+    }
+
+    public void setFieldCentric(boolean state) {
+      field_centric = state;
     }
 }
