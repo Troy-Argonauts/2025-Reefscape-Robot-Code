@@ -16,6 +16,7 @@ import com.pathplanner.lib.config.PIDConstants;
 import com.pathplanner.lib.config.RobotConfig;
 import com.pathplanner.lib.controllers.PPHolonomicDriveController;
 
+import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -84,6 +85,11 @@ public class SwerveSubsystem extends SubsystemBase {
 
     private ModuleConfig moduleConfig;
     private RobotConfig robotConfig;
+
+    public PIDController pidX = new PIDController(0, 0, 0);
+    public PIDController pidY = new PIDController(0, 0, 0);
+    public PIDController pidRot = new PIDController(0, 0, 0);
+
 
     // Odometry class for tracking robot pose
     SwerveDriveOdometry odometry = new SwerveDriveOdometry(
@@ -281,9 +287,9 @@ public class SwerveSubsystem extends SubsystemBase {
         double rotCorrected;
 
         if(slow){
-            xSpeedCorrected = xSpeed *0.2;
-            ySpeedCorrected = ySpeed *0.2;
-            rotCorrected = rot *0.2;
+            xSpeedCorrected = xSpeed *0.11;
+            ySpeedCorrected = ySpeed *0.11;
+            rotCorrected = rot *0.11;
         } else {
             xSpeedCorrected = xSpeed;
             ySpeedCorrected = ySpeed;
@@ -509,14 +515,20 @@ public class SwerveSubsystem extends SubsystemBase {
         slow = state;
     }
 
-    public void driveX(double speed){
-        frontLeftModule.setDesiredState(new SwerveModuleState(speed, Rotation2d.fromDegrees(0)));
-        frontRightModule.setDesiredState(new SwerveModuleState(speed, Rotation2d.fromDegrees(0)));
-        backLeftModule.setDesiredState(new SwerveModuleState(speed, Rotation2d.fromDegrees(0)));
-        backRightModule.setDesiredState(new SwerveModuleState(speed, Rotation2d.fromDegrees(0)));
+    //public void driveX(double speed){
+    public void driveX(double power){
+        drive(power, 0, 0, false, true);
+        // frontLeftModule.setDesiredState(new SwerveModuleState(speed, Rotation2d.fromDegrees(0)));
+        // frontRightModule.setDesiredState(new SwerveModuleState(speed, Rotation2d.fromDegrees(0)));
+        // backLeftModule.setDesiredState(new SwerveModuleState(speed, Rotation2d.fromDegrees(0)));
+        // backRightModule.setDesiredState(new SwerveModuleState(speed, Rotation2d.fromDegrees(0)));
     }
 
     public void setXSpeed(double speed){
         
+    }
+
+   public double getFrontMeterValue(){
+        return (frontLeftModule.getFrontPositionMeters() + frontRightModule.getFrontPositionMeters()) / 2;
     }
 }

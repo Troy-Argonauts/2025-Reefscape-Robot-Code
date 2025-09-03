@@ -20,15 +20,17 @@ import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.subsystems.Elevator.ElevatorStates;
-import frc.robot.subsystems.Manipulator.LateratorStates;
 import frc.robot.subsystems.Manipulator.ManipulatorStates;
+import frc.robot.subsystems.Tongue.TongueStates;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.PathPlanner;
+import frc.robot.commands.ClimberArmOUT;
+import frc.robot.commands.ClimberRun;
+import frc.robot.commands.ClimberTongueOUT;
 import frc.robot.commands.Home;
 import frc.robot.commands.Intake;
-import frc.robot.commands.LateratorOUT;
 import frc.robot.commands.autonomous.DriveX;
-import frc.robot.commands.autonomous.RemoveAlgae;
+
 import frc.robot.commands.autonomous.ScoreLV4;
 import frc.robot.commands.autonomous.TestAuton;
 
@@ -53,6 +55,7 @@ public class RobotContainer {
 
 
     public static Command P2_Cross;
+    public boolean field_centric = true;
 
 
 
@@ -84,7 +87,7 @@ public class RobotContainer {
 
     private void registerNamedCommands() {
         //Setting the Commands with names and subsystem commands
-        NamedCommands.registerCommand("removeAlgae", new RemoveAlgae());
+
         NamedCommands.registerCommand("scoreLV4", new ScoreLV4());
         NamedCommands.registerCommand("Place Level 4", new WaitCommand(5));
         // NamedCommands.registerCommand("home", new Home());
@@ -94,6 +97,22 @@ public class RobotContainer {
      * Use this method to define your controller->command mappings.
      */
     private void configureBindings() {
+
+      // elevatorTrigger.whileTrue(
+      //   new InstantCommand(() -> Robot.getDrivetrain().slowState(true))
+      // ).whileFalse(
+      //   new InstantCommand(() -> Robot.getDrivetrain().slowState(false))
+      // );
+
+      elevatorTrigger.whileTrue(
+        new ParallelCommandGroup(
+          new InstantCommand(() -> Robot.getDrivetrain().slowState(true)),
+          new InstantCommand(() -> setFieldCentric(false)) 
+          )
+      ).whileFalse(
+        new ParallelCommandGroup(new InstantCommand(() -> Robot.getDrivetrain().slowState(false)),
+        new InstantCommand(() -> setFieldCentric(true)))
+      );
 
         Robot.getDrivetrain().setDefaultCommand(
                 new RunCommand(
@@ -108,21 +127,32 @@ public class RobotContainer {
                         ? driver.getRightX()
                         : 0;
 
-                    Robot.getDrivetrain().drive(ySpeed, xSpeed, rotSpeed, true, true);
+                    Robot.getDrivetrain().drive(ySpeed * 0.5, xSpeed * 0.5, rotSpeed * 0.5, field_centric, true);
                   }, Robot.getDrivetrain()
 
                 ));
+        
 
-        // elevatorTrigger.onTrue(
-        //   new InstantCommand(() -> Robot.getDrivetrain().slowState(true))
+        elevatorTrigger.onTrue(
+          new InstantCommand(() -> Robot.getDrivetrain().slowState(true))
+        ).onFalse(
+          new InstantCommand(() -> Robot.getDrivetrain().slowState(false))
+        );
+
+        // driver.rightBumper().onTrue(
+        //     new InstantCommand(() -> Robot.getDrivetrain().slowState(true), Robot.getDrivetrain())
         // ).onFalse(
-        //   new InstantCommand(() -> Robot.getDrivetrain().slowState(false))
+        //     new InstantCommand(() -> Robot.getDrivetrain().slowState(false), Robot.getDrivetrain())
         // );
 
         driver.rightBumper().onTrue(
-            new InstantCommand(() -> Robot.getDrivetrain().slowState(true), Robot.getDrivetrain())
-        ).onFalse(
-            new InstantCommand(() -> Robot.getDrivetrain().slowState(false), Robot.getDrivetrain())
+          new ParallelCommandGroup(
+            new InstantCommand(() -> Robot.getDrivetrain().slowState(true)),
+            new InstantCommand(() -> setFieldCentric(false)) 
+            )
+        ).whileFalse(
+          new ParallelCommandGroup(new InstantCommand(() -> Robot.getDrivetrain().slowState(false)),
+          new InstantCommand(() -> setFieldCentric(true)))
         );
 
         driver.x().whileTrue(
@@ -130,6 +160,70 @@ public class RobotContainer {
         ).whileFalse(
             new InstantCommand(() -> Robot.getDrivetrain().setXState(false), Robot.getDrivetrain())
         );
+
+        // Robot.getClimber().setDefaultCommand(
+        //   new RunCommand(
+        //     () -> {
+        //      double speed = ((getDriverTriggerAxis()) > Constants.Controllers.DEADBAND)
+        //               ? getDriverTriggerAxis()
+        //               : 0;
+        //       Robot.getClimber().setArmPower(speed);
+        //     }, Robot.getClimber())
+        // );
+
+        // driver.a().onTrue(
+        //   new ClimberArmOUT()
+        // );
+
+        // driver.b().onTrue(
+        //   new ClimberTongueOUT()
+        // );
+
+        // Robot.getClimber().setDefaultCommand(
+        //   new RunCommand(
+        //     () -> {
+        //       double out = (Math.abs(driver.getRightTriggerAxis()) > Constants.Controllers.DEADBAND)
+        //                 ? driver.getRightTriggerAxis()
+        //                 : 0;
+        //       double in = (Math.abs(driver.getLeftTriggerAxis()) > Constants.Controllers.DEADBAND)
+        //                 ? driver.getLeftTriggerAxis()
+        //                 : 0;
+
+        //       Robot.getClimber().climberRetract(out);
+              
+        //     }, Robot.getClimber()
+        // ));
+
+
+        // Robot.getClimber().setDefaultCommand(
+        //   new RunCommand(
+        //     () -> {
+        //       double positiveSpeed = (Math.abs(driver.getRightTriggerAxis()) > Constants.Controllers.DEADBAND)
+        //                       ? driver.getRightTriggerAxis()
+        //                       : 0;
+        //       double negativeSpeed = (Math.abs(driver.getLeftTriggerAxis()) > Constants.Controllers.DEADBAND)
+        //                       ? driver.getLeftTriggerAxis()
+        //                       : 0;
+        //       if (positiveSpeed > 0) {
+        //         Robot.getClimber().climberRetract(positiveSpeed);
+        //       } else if (negativeSpeed > 0) {
+        //         Robot.getClimber().climberRetract(-negativeSpeed);
+        //       }else {
+        //         Robot.getClimber().climberRetract(0);
+        //       }
+        //     }, Robot.getClimber()
+        //   )
+        // );
+
+        // Robot.getTongue().setDefaultCommand(
+        //     new RunCommand(() -> {
+        //         Robot.getTongue().setTongueRawPower(-driver.getLeftY() * 0.7);
+        //     }, Robot.getTongue()
+        // ));
+
+        // driver.a().onTrue(
+        //   new ClimberTongueOUT()
+        // );
 
         // driver.a().whileTrue(
         //     new InstantCommand(() -> Robot.getDrivetrain().driveX(2))
@@ -142,6 +236,12 @@ public class RobotContainer {
 
         operator.rightBumper().onTrue(
           new InstantCommand(() -> Robot.getElevator().setDesiredState(ElevatorStates.LV4), Robot.getDrivetrain())
+        );
+
+        operator.povDown().whileTrue(
+          new InstantCommand(() -> Robot.getManipulator().setManipState(ManipulatorStates.FLICK), Robot.getManipulator())
+        ).whileFalse(
+          new InstantCommand(() -> Robot.getManipulator().setManipState(ManipulatorStates.OFF), Robot.getManipulator())
         );
 
         operator.y().onTrue(
@@ -175,17 +275,9 @@ public class RobotContainer {
         );
 
         operator.rightTrigger().whileTrue(
-          new InstantCommand(() -> Robot.getManipulator().setManipState(ManipulatorStates.FORWARD), Robot.getManipulator())
+          new InstantCommand(() -> Robot.getManipulator().setManipState(ManipulatorStates.OUTAKE), Robot.getManipulator())
         ).whileFalse(
             new InstantCommand(() -> Robot.getManipulator().setManipState(ManipulatorStates.OFF), Robot.getManipulator())
-        );
-
-        operator.povUp().onTrue(
-          new InstantCommand(() -> Robot.getManipulator().setLateratorState(LateratorStates.OFF))
-        );
-
-        operator.povDown().onTrue(
-          new LateratorOUT()
         );
 
         operator.povRight().whileTrue(
@@ -193,15 +285,6 @@ public class RobotContainer {
         ).whileFalse(
           new InstantCommand(() -> Robot.getManipulator().setManipState(ManipulatorStates.OFF))
         );
-
-        // Robot.getManipulator().setDefaultCommand(
-        //     new RunCommand(() -> { 
-        //                 double speed = (Math.abs(operator.getLeftY()) > Constants.Controllers.DEADBAND)
-        //                             ? operator.getLeftY()
-        //                             : 0;
-        //                 Robot.getManipulator().setLateratorRawPower(speed*0.3);
-        //             }, Robot.getManipulator()
-        // ));
 
         Robot.getElevator().setDefaultCommand(
             new RunCommand(() -> {
@@ -234,6 +317,10 @@ public class RobotContainer {
         return operator;
     }
 
+    public double getDriverTriggerAxis() {
+      return driver.getRightTriggerAxis() - driver.getLeftTriggerAxis();
+    } 
+
     /**
      * Use this to pass the autonomous command to the main {@link Robot} class.
      *
@@ -241,5 +328,9 @@ public class RobotContainer {
      */
     public Command getAutonomousCommand() {
       return autoChooser.getSelected();
+    }
+
+    public void setFieldCentric(boolean state) {
+      field_centric = state;
     }
 }

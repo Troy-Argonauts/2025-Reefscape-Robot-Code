@@ -215,4 +215,8 @@ public class SwerveModule extends SubsystemBase{
     public double getAngle(){
         return turnEncoder.getPosition().getValueAsDouble() * 360;
     }
+
+    public double getFrontPositionMeters(){
+        return driveMotor.getPosition().getValueAsDouble() * WHEEL_CIRCUMFERENCE_METERS / Constants.Swerve.DRIVING_MOTOR_REDUCTION;
+    }
 }

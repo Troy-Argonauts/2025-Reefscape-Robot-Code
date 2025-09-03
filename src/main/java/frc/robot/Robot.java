@@ -16,8 +16,10 @@ import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.robot.commands.autonomous.ScoreLV4;
 import frc.robot.subsystems.Elevator;
 import frc.robot.subsystems.SwerveSubsystem;
+import frc.robot.subsystems.Tongue;
 import frc.robot.subsystems.Manipulator;
 import edu.wpi.first.cameraserver.CameraServer;
+import frc.robot.subsystems.Climber;
 
 /**
  * The VM is configured to automatically run this class, and to call the methods
@@ -33,9 +35,9 @@ public class Robot extends TimedRobot {
     private static SwerveSubsystem drivetrain;
     private static Elevator elevator;
     private static Manipulator manipulator;
+    private static Climber climber;
     private static RobotContainer robotContainer;
-
-    // public static final CommandXboxController operator = new CommandXboxController(Constants.Controllers.OPERATOR);
+    private static Tongue tongue;
 
     /**
      * This function is run when the robot is first started up and should be used
@@ -49,12 +51,17 @@ public class Robot extends TimedRobot {
         elevator = new Elevator();
         drivetrain = new SwerveSubsystem();
         manipulator = new Manipulator();
+        climber = new Climber();
+        tongue = new Tongue();
 
         robotContainer = new RobotContainer();
 
         DataLogManager.start("/media/sda1/logs");
 
-        CameraServer.startAutomaticCapture().setFPS(14);
+        getClimber().resetArmEncoders();
+
+
+        // CameraServer.startAutomaticCapture().setFPS(14);
     }
 
     /**
@@ -76,8 +83,7 @@ public class Robot extends TimedRobot {
     @Override
     public void disabledInit() {
         getDrivetrain().setToZero();
-        getElevator().resetTarget();
-    }
+        getElevator().resetTarget();    }
 
     @Override
     public void autonomousInit() {
@@ -160,5 +166,15 @@ public class Robot extends TimedRobot {
         if (robotContainer == null)
         robotContainer = new RobotContainer();
         return robotContainer;
+    }
+
+  public static Climber getClimber() {
+    if (climber == null) climber = new Climber();
+    return climber;
+}
+
+    public static Tongue getTongue() {
+        if (tongue == null) tongue = new Tongue();
+        return tongue;
     }
 }

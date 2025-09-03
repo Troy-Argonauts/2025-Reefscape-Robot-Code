@@ -24,17 +24,13 @@ import frc.robot.Constants;
 public class Manipulator extends SubsystemBase {
     private DoubleLogEntry topMotorSupplyCurrentLog;
     private DoubleLogEntry bottomMotorSupplyCurrentLog;
-    private DoubleLogEntry lateratorMotorSupplyCurrentLog;
 
 
-    private double lateratorCurrentPosition; 
-    private double lateratorTarget;
+
 
     private TalonFX topMotor;
     private TalonFX bottomMotor;
-    private TalonFX lateratorMotor;
     
-    private DigitalInput lateratorLimit;
 
     private DigitalInput funnelBeamBreak;
     private DigitalInput manipulatorBeamBreak;
@@ -51,37 +47,29 @@ public class Manipulator extends SubsystemBase {
     public Manipulator() {
         TalonFXConfiguration topConfiguration = new TalonFXConfiguration();
         TalonFXConfiguration bottomConfiguration = new TalonFXConfiguration();
-        TalonFXConfiguration lateratorConfiguration = new TalonFXConfiguration();
 
         topMotor = new TalonFX(Constants.Manipulator.TOP_MOTOR_CAN_ID);
         bottomMotor = new TalonFX(Constants.Manipulator.BOTTOM_MOTOR_CAN_ID);
-        lateratorMotor = new TalonFX(Constants.Manipulator.LATERATOR_MOTOR_CAN_ID);
 
-        lateratorLimit = new DigitalInput(Constants.Manipulator.LATERATOR_LIMIT_SWITCH);
 
         funnelBeamBreak = new DigitalInput(Constants.Manipulator.FUNNEL_BEAM_BREAK);
         manipulatorBeamBreak = new DigitalInput(Constants.Manipulator.MANIPULATOR_BEAM_BREAK);
 
         topConfiguration.CurrentLimits.SupplyCurrentLimit = 30;
         bottomConfiguration.CurrentLimits.SupplyCurrentLimit = 30;
-        lateratorConfiguration.CurrentLimits.SupplyCurrentLimit = 20;
 
         topConfiguration.MotorOutput.NeutralMode = NeutralModeValue.Coast;
         bottomConfiguration.MotorOutput.NeutralMode = NeutralModeValue.Coast;
-        lateratorConfiguration.MotorOutput.NeutralMode = NeutralModeValue.Coast;
 
         topMotor.getConfigurator().apply(topConfiguration);
         bottomMotor.getConfigurator().apply(bottomConfiguration);
-        lateratorMotor.getConfigurator().apply(lateratorConfiguration);
 
         bottomMotor.setControl(new Follower(Constants.Manipulator.TOP_MOTOR_CAN_ID, false));
-        lateratorMotor.getConfigurator().apply(slot0Config);
 
         DataLog log = DataLogManager.getLog();
 
         topMotorSupplyCurrentLog = new DoubleLogEntry((log), "Top Manipulator Motor Supply Current");
         bottomMotorSupplyCurrentLog = new DoubleLogEntry(log, "Bottom Manipulator Motor Supply Current");
-        lateratorMotorSupplyCurrentLog = new DoubleLogEntry(log, "Laterator Motor Supply Current");
 
     }
 
@@ -94,68 +82,25 @@ public class Manipulator extends SubsystemBase {
 
         topMotorSupplyCurrentLog.append(topMotor.getSupplyCurrent().getValueAsDouble());
         bottomMotorSupplyCurrentLog.append(bottomMotor.getSupplyCurrent().getValueAsDouble());   
-        lateratorMotorSupplyCurrentLog.append(lateratorMotor.getSupplyCurrent().getValueAsDouble()); 
 
         SmartDashboard.putBoolean("Coral Ready", isCoralReady());
-        SmartDashboard.putNumber("Lat Supply Current", lateratorMotor.getSupplyCurrent().getValueAsDouble());
-        SmartDashboard.putBoolean("Lat Limit Switch", getLateratorLimit());
-
-        // lateratorMotor.setControl(positionVoletage.withPosition(lateratorTarget));
-
-        // if (getLateratorLimit() == true) {
-        //     resetLateratorEncoder();
-        // }
-
-        
     }
 
     /**
      * States of the Manipulator (IN, OUT, OFF)
      */
     public enum ManipulatorStates {
-        FORWARD,
-
         REVERSE,
 
-        OFF;
-    }
+        INTAKE,
 
-    /**
-     * States of the Laterator (IN, OUT, OFF)
-     */
-    public enum LateratorStates {
+        OUTAKE,
+
+        LV1SCORE,
+
         OFF,
 
-        HOLD,
-
-        OUT;
-    }
-
-    /**
-     * Sets the laterator's state until it reaches the max laterator position if out or until it reaches 0 if in
-     * @param state The desired state of the laterator
-     */
-    public void setLateratorState(LateratorStates state) {
-        switch (state) {
-            case OUT: 
-                setLateratorRawPower(0.1);
-                break;
-            case OFF: 
-                setLateratorRawPower(0);
-                break;
-            case HOLD:
-                setLateratorRawPower(0.05);
-                break;
-            
-        }
-    }
-
-    /**
-     * Checks if the limit switch is active.
-     * @return True if the limit switch is active, false otherwise.
-     */
-    public boolean getLateratorLimit(){
-        return !lateratorLimit.get();
+        FLICK;
     }
 
     /**
@@ -165,14 +110,6 @@ public class Manipulator extends SubsystemBase {
     public boolean isCoralReady() {
         return !manipulatorBeamBreak.get();
     }
-
-    /**
-     * Sets the raw power for the laterator motor.
-     * @param power The power to set for the laterator motor.
-     */
-    public void setLateratorRawPower(double power) {
-        lateratorMotor.set(power);
-    }
  
     /**
      * Sets the manipulator motors state (Expecting manipulater state)
@@ -181,13 +118,22 @@ public class Manipulator extends SubsystemBase {
     public void setManipState(ManipulatorStates state) {
         switch (state) {
             case REVERSE: 
-                setManipulatorRawPower(-0.30); 
+                setManipulatorRawPower(-0.15); 
                 break;
-            case FORWARD: 
+            case INTAKE: //FORWARD
                 setManipulatorRawPower(0.15);
+                break;
+            case OUTAKE:
+                setManipulatorRawPower(0.25);
+                break;
+            case LV1SCORE:
+                setManipulatorRawPower(0.20);
                 break;
             case OFF:
                 setManipulatorRawPower(0);
+                break;
+            case FLICK:
+                setManipulatorRawPower(0.1);
                 break;
             
         }

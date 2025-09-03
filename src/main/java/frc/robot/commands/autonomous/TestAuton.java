@@ -10,15 +10,18 @@ public class TestAuton extends SequentialCommandGroup {
     public TestAuton(){
         super(
 
-            new DriveX(-0.75, Robot.getDrivetrain()).withTimeout(3),
+            //new DriveX(-1.25, Robot.getDrivetrain()).withTimeout(1.2), //-1.25
+            new DriveX(-0.25, Robot.getDrivetrain()).withTimeout(1.2), //-1.25
 
-            new WaitCommand(0.5),
+            new DriveX(0, Robot.getDrivetrain()).withTimeout(0.5),
+
+           // new WaitCommand(0.5),
             
             new InstantCommand(() -> Robot.getElevator().setDesiredState(ElevatorStates.LV4), Robot.getElevator()),
 
             new WaitUntilCommand(() -> Robot.getElevator().isPIDFinished()),
 
-            new InstantCommand(() -> Robot.getManipulator().setManipState(ManipulatorStates.FORWARD), Robot.getManipulator()),
+            new InstantCommand(() -> Robot.getManipulator().setManipState(ManipulatorStates.OUTAKE), Robot.getManipulator()),
 
             new WaitCommand(1),
 
@@ -27,5 +30,6 @@ public class TestAuton extends SequentialCommandGroup {
             new InstantCommand(() -> Robot.getElevator().setDesiredState(ElevatorStates.HOME), Robot.getElevator())
 
         );
+        // Evan is soo not tuff, ved is soo much more tuff
     }
 }

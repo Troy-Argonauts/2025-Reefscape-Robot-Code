@@ -145,7 +145,7 @@ public class Elevator extends SubsystemBase {
      * @return whether PID is finished
      */
     public boolean isPIDFinished() {
-        return (Math.abs(target - leftMotor.getPosition().getValueAsDouble()) < 0.5);
+        return (Math.abs(target - leftMotor.getPosition().getValueAsDouble()) < 0.2);
     }
     //change the value above
 
@@ -179,11 +179,13 @@ public class Elevator extends SubsystemBase {
     public enum ElevatorStates{
         HOME(0),
         LV1(2.1),
-        LV2(8.2),
-        LV3(16.36),
+        LV2(7.1),
+        LV3(15.4),
         ALGAE_LOW(0),  
-        ALGAE_HIGH(0),                                                                           
-        LV4(30);
+        ALGAE_HIGH(0),
+        LV4(29.3);    
+
+        // LV4(29.8); 
         //change the numbers above
         
         final double elevatorPosition;

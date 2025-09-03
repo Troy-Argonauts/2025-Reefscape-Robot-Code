@@ -28,13 +28,24 @@ public final class Constants {
         public static final int OPERATOR = 1;
         public static final double DEADBAND = 0.08;
     }
+
+    public interface Climber {
+
+        int LEFT_MOTOR_ID = 10;
+        int RIGHT_MOTOR_ID = 11;
+        int TONGUE_MOTOR_ID = 12;
+
+        public static final double MAX_ARM_POSITION = -29.16;
+        public static final double MAX_Tongue_POSITION = 2.4;
+
+    }
     
     // THIS NEEDS TO BE UPDATED FOR CTRE
     public interface Swerve {
         // PID Constants for drivetrain
-        public static final double DRIVE_P = 0.4;
+        public static final double DRIVE_P = 0.32;
         public static final double DRIVE_I = 1.6;
-        public static final double DRIVE_D = 0.000085;
+        public static final double DRIVE_D = 0.000075;
         public static final double DRIVE_S = 0.0;
         public static final double DRIVE_V = 0;
         public static final double DRIVE_A = 0.0;
@@ -176,14 +187,14 @@ public final class Constants {
         int INNER_BOTTOM_LIMIT_SWITCH_SLOT = 1;
         int OUTER_BOTTOM_LIMIT_SWITCH_SLOT = 5;
 
-        int MOTION_MAGIC_CRUISE_VELOCITY = 30;
-        int MOTION_MAGIC_ACCEL = 60;
+        int MOTION_MAGIC_CRUISE_VELOCITY = 25;
+        int MOTION_MAGIC_ACCEL = 50;
 
-        double P = 3.1;
-        double I = 0.15;
-        double D = 0.05;
-        double V = 0.12;
-        double G = 0.46;
+        double P = 5.5;
+        double I = 0.3;
+        double D = 0.0005;
+        double V = 0.16;
+        double G = 0.5;
     }
 
     public interface Manipulator {
@@ -191,14 +202,8 @@ public final class Constants {
         public static final int TOP_MOTOR_CAN_ID = 4;
         public static final int BOTTOM_MOTOR_CAN_ID = 5;
 
-        public static final int LATERATOR_MOTOR_CAN_ID = 3;
-        public static final int LATERATOR_LIMIT_SWITCH = 4;
-
         public static final int FUNNEL_BEAM_BREAK = 2;
         public static final int MANIPULATOR_BEAM_BREAK = 3;
-
-        public static final double MAX_LATERATOR_POSITION = 0.0;
-        public static final double MIN_LATERATOR_POSITION = 0.0;
     }
 
     public interface PathPlanner {
